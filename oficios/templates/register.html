@@ -1,0 +1,472 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CHAMBA - Crear cuenta | Registro por pasos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Syne:wght@400..800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .logo-header {
+            text-align: center;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .logo-header img {
+            height: 150px;
+            width: auto;
+        }
+
+        .logo-header span {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0A66C2;
+            margin-top: 0.5rem;
+        }
+
+        .info-box {
+            background: #E8F0FE;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .info-box i {
+            font-size: 1.5rem;
+            color: #0A66C2;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-box p {
+            margin: 0.3rem 0;
+            font-size: 0.8rem;
+            color: #1F2937;
+        }
+    </style>
+</head>
+
+<body class="body-register">
+
+    <div class="wizard-container">
+        <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> Volver</a>
+        <div class="wizard-card">
+            <div class="logo-header">
+                <img src="{% static 'img/logochamba.png' %}" alt="CHAMBA">
+            </div>
+
+            <div class="steps-indicator">
+                <div class="step" id="step1-indicator">
+                    <div class="step-number">1</div><span>Datos personales</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" id="step2-indicator">
+                    <div class="step-number">2</div><span>Rol en la plataforma</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" id="step3-indicator">
+                    <div class="step-number">3</div><span>Confirmar y registrarse</span>
+                </div>
+            </div>
+
+            <form id="registerForm" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="rol" id="rolInput" value="trabajador">
+
+                <!-- PASO 1 -->
+                <div id="step1" class="step-content active">
+                    <div class="input-group"><i class="fas fa-user"></i><input type="text" name="nombre" id="nombre"
+                            placeholder="Nombre completo" required></div>
+                    <div class="input-group"><i class="fas fa-envelope"></i><input type="email" name="email" id="email"
+                            placeholder="Correo electrónico" required></div>
+                    <div class="input-group"><i class="fas fa-phone"></i><input type="tel" name="telefono" id="telefono"
+                            placeholder="Teléfono" required></div>
+                    <div class="input-group"><i class="fas fa-map-marker-alt"></i><input type="text" name="ubicacion"
+                            id="ubicacion" placeholder="Ubicación (ciudad/zona)" required></div>
+                    <div class="input-group"><i class="fas fa-lock"></i><input type="password" name="password"
+                            id="password" placeholder="Contraseña" required></div>
+                    <div class="strength-meter" id="strengthMeter" style="display: none;">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div><span class="strength-text" id="strengthText">Débil</span>
+                    </div>
+                    <div class="input-group"><i class="fas fa-check-circle"></i><input type="password"
+                            id="confirmPassword" placeholder="Confirmar contraseña" required></div>
+                    <div id="confirmError" class="error-msg"><i class="fas fa-exclamation-circle"></i> Las contraseñas
+                        no coinciden</div>
+                </div>
+
+                <!-- PASO 2 -->
+                <div id="step2" class="step-content">
+                    <div class="role-tabs">
+                        <button type="button" id="tab-trabajador" class="role-tab active">
+                            <i class="fas fa-hard-hat"></i> Trabajador
+                        </button>
+                        <button type="button" id="tab-empleador" class="role-tab">
+                            <i class="fas fa-building"></i> Empleador
+                        </button>
+                        <button type="button" id="tab-cliente" class="role-tab">
+                            <i class="fas fa-user"></i> Cliente
+                        </button>
+                    </div>
+
+                    <!-- Campos para TRABAJADOR (ofrece servicios) -->
+                    <div id="trabajadorFields" class="dynamic-fields">
+                        <div class="input-group"><i class="fas fa-tools"></i>
+                            <select name="oficio" id="oficio">
+                                <option value="">Selecciona tu oficio principal</option>
+                                <option>Carpintería</option>
+                                <option>Plomería</option>
+                                <option>Electricidad</option>
+                                <option>Cocina / Gastronomía</option>
+                                <option>Limpieza</option>
+                                <option>Construcción</option>
+                                <option>Pintura</option>
+                                <option>Mecánica</option>
+                                <option>Jardinería</option>
+                                <option>Albañilería</option>
+                                <option>Soldadura</option>
+                            </select>
+                        </div>
+                        <div class="input-group"><i class="fas fa-calendar-alt"></i>
+                            <input type="number" name="anios_experiencia" id="anios_experiencia"
+                                placeholder="Años de experiencia" min="0" max="50" value="0">
+                        </div>
+                        <div class="input-group"><i class="fas fa-file-alt"></i>
+                            <textarea name="descripcion_personal" rows="2"
+                                placeholder="Describe tu experiencia, habilidades y servicios..."></textarea>
+                        </div>
+                        <div class="info-box">
+                            <i class="fas fa-tools"></i>
+                            <p><strong>Como trabajador podrás:</strong></p>
+                            <p>✓ Ofrecer tus servicios</p>
+                            <p>✓ Recibir ofertas de trabajo</p>
+                            <p>✓ Construir tu reputación</p>
+                        </div>
+                    </div>
+
+                    <!-- Campos para EMPLEADOR (publica ofertas, tiene empresa) -->
+                    <div id="empleadorFields" class="dynamic-fields hidden">
+                        <div class="input-group"><i class="fas fa-building"></i>
+                            <input type="text" name="nombre_empresa" id="empresaNombre"
+                                placeholder="Nombre de la empresa / negocio">
+                        </div>
+                        <div class="input-group"><i class="fas fa-tag"></i>
+                            <input type="text" name="rubro" id="rubro"
+                                placeholder="Rubro (ej: Construcción, Restaurante, Servicios)">
+                        </div>
+                        <div class="input-group"><i class="fas fa-info-circle"></i>
+                            <textarea name="descripcion_empresa" rows="2"
+                                placeholder="Descripción de tu empresa..."></textarea>
+                        </div>
+                        <div class="info-box">
+                            <i class="fas fa-bullhorn"></i>
+                            <p><strong>Como empleador podrás:</strong></p>
+                            <p>✓ Publicar ofertas de trabajo</p>
+                            <p>✓ Contratar trabajadores calificados</p>
+                            <p>✓ Calificar servicios recibidos</p>
+                        </div>
+                    </div>
+
+                    <!-- Campos para CLIENTE (solo datos básicos, puede publicar ofertas) -->
+                    <div id="clienteFields" class="dynamic-fields hidden">
+                        <div class="info-box" style="background: #F0FDF4;">
+                            <i class="fas fa-store" style="color: #10B981;"></i>
+                            <p><strong>Como cliente podrás:</strong></p>
+                            <p>✓ Publicar ofertas de trabajo</p>
+                            <p>✓ Buscar y contratar trabajadores</p>
+                            <p>✓ Calificar las experiencias</p>
+                            <p>✓ Guardar tus trabajadores favoritos</p>
+                            <p style="margin-top: 0.5rem; font-size: 0.75rem;">No necesitas empresa ni oficio, solo
+                                regístrate con tus datos.</p>
+                        </div>
+                        <input type="hidden" name="oficio" value="">
+                        <input type="hidden" name="anios_experiencia" value="0">
+                        <input type="hidden" name="descripcion_personal" value="Usuario cliente de CHAMBA">
+                        <input type="hidden" name="nombre_empresa" value="">
+                        <input type="hidden" name="rubro" value="">
+                    </div>
+                </div>
+
+                <!-- PASO 3 -->
+                <div id="step3" class="step-content">
+                    <div
+                        style="background: var(--gris-claro); border-radius: 1.5rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <p><i class="fas fa-check-circle" style="color: #10b981;"></i> <strong>Revisa tus datos antes de
+                                registrarte:</strong></p>
+                        <div id="reviewData" style="margin-top: 1rem; font-size: 1.3rem;"></div>
+                    </div>
+                    <label class="terms">
+                        <input type="checkbox" id="termsCheckbox" required>
+                        Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>
+                    </label>
+                    <div id="termError" class="error-msg" style="display: none;">Debes aceptar los términos para
+                        continuar</div>
+                </div>
+
+                <div class="step-buttons">
+                    <button type="button" id="prevBtn" class="btn-step btn-prev"><i class="fas fa-arrow-left"></i>
+                        Anterior</button>
+                    <button type="button" id="nextBtn" class="btn-step btn-next">Siguiente <i
+                            class="fas fa-arrow-right"></i></button>
+                    <button type="submit" id="submitBtn" class="btn-step btn-next" style="display: none;">Registrarme <i
+                            class="fas fa-user-plus"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const stepIndicators = { 1: document.getElementById('step1-indicator'), 2: document.getElementById('step2-indicator'), 3: document.getElementById('step3-indicator') };
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            let currentStep = 1;
+            const totalSteps = 3;
+
+            const nombreInput = document.getElementById('nombre');
+            const emailInput = document.getElementById('email');
+            const telefonoInput = document.getElementById('telefono');
+            const ubicacionInput = document.getElementById('ubicacion');
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('confirmPassword');
+            const confirmError = document.getElementById('confirmError');
+            const tabTrabajador = document.getElementById('tab-trabajador');
+            const tabEmpleador = document.getElementById('tab-empleador');
+            const tabCliente = document.getElementById('tab-cliente');
+            const trabajadorDiv = document.getElementById('trabajadorFields');
+            const empleadorDiv = document.getElementById('empleadorFields');
+            const clienteDiv = document.getElementById('clienteFields');
+            const oficioSelect = document.getElementById('oficio');
+            const empresaNombre = document.getElementById('empresaNombre');
+            const strengthMeter = document.getElementById('strengthMeter');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            const termsCheck = document.getElementById('termsCheckbox');
+            const termError = document.getElementById('termError');
+            const reviewData = document.getElementById('reviewData');
+            const form = document.getElementById('registerForm');
+            const rolInput = document.getElementById('rolInput');
+
+            function showStep(step) {
+                step1.classList.remove('active'); step2.classList.remove('active'); step3.classList.remove('active');
+                if (step === 1) step1.classList.add('active');
+                else if (step === 2) step2.classList.add('active');
+                else if (step === 3) step3.classList.add('active');
+                for (let i = 1; i <= totalSteps; i++) {
+                    const indicator = stepIndicators[i];
+                    indicator.classList.remove('active', 'completed');
+                    if (i < step) indicator.classList.add('completed');
+                    else if (i === step) indicator.classList.add('active');
+                }
+                if (step === totalSteps) {
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'inline-flex';
+                } else {
+                    nextBtn.style.display = 'inline-flex';
+                    submitBtn.style.display = 'none';
+                }
+                prevBtn.style.display = (step === 1) ? 'none' : 'inline-flex';
+            }
+
+            function validateStep1() {
+                const nombre = nombreInput.value.trim();
+                const email = emailInput.value.trim();
+                const telefono = telefonoInput.value.trim();
+                const ubicacion = ubicacionInput.value.trim();
+                const pwd = passwordInput.value;
+                const confirm = confirmInput.value;
+                if (!nombre || !email || !telefono || !ubicacion) {
+                    alert('Completa todos los campos personales.');
+                    return false;
+                }
+                if (pwd.length < 6) {
+                    alert('La contraseña debe tener al menos 6 caracteres.');
+                    return false;
+                }
+                if (pwd !== confirm) {
+                    confirmError.classList.add('show');
+                    alert('Las contraseñas no coinciden.');
+                    return false;
+                }
+                confirmError.classList.remove('show');
+                return true;
+            }
+
+            function validateStep2() {
+                const isTrabajador = tabTrabajador.classList.contains('active');
+                const isEmpleador = tabEmpleador.classList.contains('active');
+
+                if (isTrabajador) {
+                    if (!oficioSelect.value) {
+                        alert('Por favor selecciona tu oficio.');
+                        return false;
+                    }
+                }
+                else if (isEmpleador) {
+                    const empNombre = empresaNombre ? empresaNombre.value.trim() : '';
+                    if (!empNombre) {
+                        alert('Ingresa el nombre de tu empresa.');
+                        return false;
+                    }
+                }
+                // Cliente no necesita validación adicional
+                return true;
+            }
+
+            function updateReviewData() {
+                const isTrabajador = tabTrabajador.classList.contains('active');
+                const isEmpleador = tabEmpleador.classList.contains('active');
+                const isCliente = tabCliente.classList.contains('active');
+
+                let roleText = '';
+                let specificInfo = '';
+
+                if (isTrabajador) {
+                    roleText = 'Trabajador';
+                    const años = document.getElementById('anios_experiencia')?.value || '0';
+                    specificInfo = `<strong>Oficio:</strong> ${oficioSelect.value || 'No seleccionado'}<br>
+                                   <strong>Años de experiencia:</strong> ${años}<br>
+                                   <strong>Rol:</strong> Ofrece servicios`;
+                }
+                else if (isEmpleador) {
+                    roleText = 'Empleador';
+                    specificInfo = `<strong>Empresa:</strong> ${empresaNombre ? empresaNombre.value : ''}<br>
+                                   <strong>Rubro:</strong> ${document.getElementById('rubro') ? document.getElementById('rubro').value : ''}<br>
+                                   <strong>Rol:</strong> Publica ofertas y contrata`;
+                }
+                else {
+                    roleText = 'Cliente';
+                    specificInfo = `<strong>Rol:</strong> Publica ofertas y contrata servicios<br>
+                                   <em>No requiere empresa ni oficio</em>`;
+                }
+
+                reviewData.innerHTML = `<p><strong>Nombre:</strong> ${nombreInput.value}</p>
+                                       <p><strong>Email:</strong> ${emailInput.value}</p>
+                                       <p><strong>Teléfono:</strong> ${telefonoInput.value}</p>
+                                       <p><strong>Ubicación:</strong> ${ubicacionInput.value}</p>
+                                       <p><strong>Rol:</strong> ${roleText}</p>
+                                       ${specificInfo}`;
+            }
+
+            nextBtn.addEventListener('click', () => {
+                let valid = false;
+                if (currentStep === 1) valid = validateStep1();
+                else if (currentStep === 2) valid = validateStep2();
+                if (valid && currentStep < totalSteps) {
+                    currentStep++;
+                    if (currentStep === 3) updateReviewData();
+                    showStep(currentStep);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+
+            function setRole(role) {
+                if (role === 'trabajador') {
+                    tabTrabajador.classList.add('active');
+                    tabEmpleador.classList.remove('active');
+                    tabCliente.classList.remove('active');
+                    trabajadorDiv.classList.remove('hidden');
+                    empleadorDiv.classList.add('hidden');
+                    clienteDiv.classList.add('hidden');
+                    rolInput.value = 'trabajador';
+                } else if (role === 'empleador') {
+                    tabEmpleador.classList.add('active');
+                    tabTrabajador.classList.remove('active');
+                    tabCliente.classList.remove('active');
+                    trabajadorDiv.classList.add('hidden');
+                    empleadorDiv.classList.remove('hidden');
+                    clienteDiv.classList.add('hidden');
+                    rolInput.value = 'empleador';
+                } else {
+                    tabCliente.classList.add('active');
+                    tabTrabajador.classList.remove('active');
+                    tabEmpleador.classList.remove('active');
+                    trabajadorDiv.classList.add('hidden');
+                    empleadorDiv.classList.add('hidden');
+                    clienteDiv.classList.remove('hidden');
+                    rolInput.value = 'empleador';  // Cliente se guarda como empleador sin empresa
+                }
+            }
+
+            tabTrabajador.addEventListener('click', () => setRole('trabajador'));
+            tabEmpleador.addEventListener('click', () => setRole('empleador'));
+            tabCliente.addEventListener('click', () => setRole('cliente'));
+
+            function checkStrength(pwd) {
+                if (!pwd) { strengthMeter.style.display = 'none'; return; }
+                strengthMeter.style.display = 'flex';
+                let score = 0;
+                if (pwd.length >= 6) score++;
+                if (pwd.length >= 10) score++;
+                if (/[A-Z]/.test(pwd)) score++;
+                if (/[0-9]/.test(pwd)) score++;
+                if (/[^A-Za-z0-9]/.test(pwd)) score++;
+                let percent = 0, text = '', color = '';
+                if (score <= 1) { percent = 25; text = 'Débil'; color = '#dc2626'; }
+                else if (score <= 3) { percent = 50; text = 'Media'; color = '#f59e0b'; }
+                else if (score <= 4) { percent = 75; text = 'Fuerte'; color = '#10b981'; }
+                else { percent = 100; text = 'Muy fuerte'; color = '#059669'; }
+                strengthFill.style.width = percent + '%';
+                strengthFill.style.backgroundColor = color;
+                strengthText.textContent = text;
+                strengthText.style.color = color;
+            }
+
+            passwordInput.addEventListener('input', function () {
+                checkStrength(this.value);
+                validateConfirm();
+            });
+
+            function validateConfirm() {
+                const pwd = passwordInput.value;
+                const confirm = confirmInput.value;
+                if (confirm && pwd !== confirm) {
+                    confirmError.classList.add('show');
+                    return false;
+                }
+                else {
+                    confirmError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            confirmInput.addEventListener('input', validateConfirm);
+
+            form.addEventListener('submit', function (e) {
+                if (!validateStep1() || !validateStep2()) {
+                    e.preventDefault();
+                    alert('Revisa los datos en los pasos anteriores.');
+                    return;
+                }
+                if (!termsCheck.checked) {
+                    e.preventDefault();
+                    termError.style.display = 'flex';
+                    return;
+                }
+                termError.style.display = 'none';
+            });
+
+            showStep(1);
+            if (passwordInput.value === '') strengthMeter.style.display = 'none';
+        })();
+    </script>
+</body>
+
+</html>

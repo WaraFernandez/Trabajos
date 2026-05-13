@@ -1,0 +1,346 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA - Crear publicación</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/principal.css' %}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .publicar-container {
+            max-width: 650px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .publicar-card {
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .publicar-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .publicar-header img {
+            width: 5rem;
+            height: 5rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #0A66C2;
+        }
+
+        .publicar-header h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1D1D1D;
+        }
+
+        .publicar-header p {
+            font-size: 1.2rem;
+            color: #75777E;
+        }
+
+        .publicar-body {
+            padding: 2rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 1.2rem;
+            font-size: 1.5rem;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            transition: all 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #0A66C2;
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+        }
+
+        .opciones-archivo {
+            margin: 1.5rem 0;
+            padding: 1rem 0;
+            border-top: 1px solid #E5E7EB;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .btn-subir-foto {
+            width: 100%;
+            background: #F4F4F6;
+            border: 2px dashed #D1D5DB;
+            padding: 2rem;
+            border-radius: 1rem;
+            font-size: 1.3rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: #6B7280;
+        }
+
+        .btn-subir-foto i {
+            font-size: 2.5rem;
+            color: #10B981;
+        }
+
+        .btn-subir-foto:hover {
+            background: #E5E7EB;
+            border-color: #10B981;
+        }
+
+        #preview-imagen {
+            margin-top: 1rem;
+            display: none;
+            position: relative;
+        }
+
+        #preview-imagen img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 1rem;
+            border: 1px solid #E5E7EB;
+        }
+
+        .btn-eliminar-foto {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(220, 38, 38, 0.9);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-eliminar-foto:hover {
+            background: rgba(185, 28, 28, 1);
+            transform: scale(1.1);
+        }
+
+        .botones-accion {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-publicar {
+            flex: 2;
+            background: #0A66C2;
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 3rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .btn-publicar:hover {
+            background: #004182;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(10, 102, 194, 0.3);
+        }
+
+        .btn-cancelar {
+            flex: 1;
+            background: #F3F4F6;
+            color: #6B7280;
+            border: 1.5px solid #E5E7EB;
+            padding: 1.2rem;
+            border-radius: 3rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            text-decoration: none;
+        }
+
+        .btn-cancelar:hover {
+            background: #E5E7EB;
+            color: #374151;
+            transform: translateY(-2px);
+        }
+
+        .error-msg {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            font-size: 1.3rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .publicar-container {
+                margin: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .publicar-header h3 {
+                font-size: 1.3rem;
+            }
+            
+            .publicar-header img {
+                width: 4rem;
+                height: 4rem;
+            }
+            
+            .publicar-body {
+                padding: 1.5rem;
+            }
+
+            .botones-accion {
+                flex-direction: column;
+            }
+
+            .btn-publicar, .btn-cancelar {
+                padding: 1rem;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="chamba-dashboard">
+
+    {% include 'includes/navbar.html' %}
+
+    <div class="publicar-container">
+        <div class="publicar-card">
+            <div class="publicar-header">
+                {% if user.perfil.foto_perfil %}
+                <img src="{{ user.perfil.foto_perfil.url }}" alt="Foto perfil">
+                {% else %}
+                <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ user.first_name|default:user.username }}"
+                    alt="Avatar">
+                {% endif %}
+                <div>
+                    <h3>{{ user.get_full_name|default:user.username }}</h3>
+                    <p><i class="fa-regular fa-circle-dot" style="font-size: 1rem;"></i> Crear publicación</p>
+                </div>
+            </div>
+
+            <div class="publicar-body">
+                <form method="post" enctype="multipart/form-data" id="publicarForm">
+                    {% csrf_token %}
+                    <textarea name="contenido" id="contenido" rows="4"
+                        placeholder="¿Qué estás pensando? Comparte algo con la comunidad..."></textarea>
+
+                    <div class="opciones-archivo">
+                        <button type="button" class="btn-subir-foto"
+                            onclick="document.getElementById('imagenInput').click()">
+                            <i class="fa-solid fa-image"></i>
+                            <span>Subir imagen</span>
+                        </button>
+                    </div>
+
+                    <input type="file" name="imagen" id="imagenInput" accept="image/*" style="display: none;"
+                        onchange="previewImagen(event)">
+
+                    <div id="preview-imagen">
+                        <img id="imagenPreview" src="" alt="Vista previa">
+                        <button type="button" class="btn-eliminar-foto" onclick="eliminarFoto()">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="botones-accion">
+                        <button type="submit" class="btn-publicar">
+                            <i class="fa-regular fa-paper-plane"></i> Publicar
+                        </button>
+                        <a href="{% url 'dashboard' %}" class="btn-cancelar">
+                            <i class="fa-solid fa-xmark"></i> Cancelar
+                        </a>
+                    </div>
+
+                    <div id="errorMsg" class="error-msg">
+                        <i class="fa-solid fa-circle-exclamation"></i> Por favor escribe algo antes de publicar
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function previewImagen(event) {
+            const preview = document.getElementById('preview-imagen');
+            const img = document.getElementById('imagenPreview');
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    img.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function eliminarFoto() {
+            document.getElementById('imagenInput').value = '';
+            document.getElementById('preview-imagen').style.display = 'none';
+            document.getElementById('imagenPreview').src = '';
+        }
+
+        document.getElementById('publicarForm').addEventListener('submit', function (e) {
+            const contenido = document.getElementById('contenido').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (!contenido) {
+                e.preventDefault();
+                errorMsg.style.display = 'block';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 3000);
+            }
+        });
+    </script>
+
+</body>
+
+</html>

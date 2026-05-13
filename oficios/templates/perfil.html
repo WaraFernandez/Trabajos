@@ -1,0 +1,1588 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - CHAMBA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/principal.css' %}">
+    <style>
+        /* ================================================
+           CHAMBA - PERFIL (ESTILOS COMPLETOS MEJORADOS)
+           ================================================ */
+
+        /* Variables de color */
+        :root {
+            --azul: #0A66C2;
+            --azul-oscuro: #004182;
+            --azul-claro: #E8F0FE;
+            --verde: #10B981;
+            --rojo: #EF4444;
+            --gris: #6B7280;
+            --gris-claro: #F3F4F6;
+            --blanco: #FFFFFF;
+            --negro: #1F2937;
+            --borde: #E5E7EB;
+            --sombra: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --sombra-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --sombra-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Contenedor principal */
+        .perfil-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: var(--blanco);
+            border-radius: 1.5rem;
+            box-shadow: var(--sombra-lg);
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== HEADER ========== */
+        .perfil-header {
+            background: linear-gradient(135deg, #0A66C2 0%, #0052a3 50%, #003d7a 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .perfil-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.08);
+            transform: rotate(25deg);
+            pointer-events: none;
+        }
+
+        .perfil-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+        }
+
+        .perfil-foto {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.95);
+            object-fit: cover;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            position: relative;
+            z-index: 2;
+        }
+
+        .perfil-foto:hover {
+            transform: scale(1.05);
+            border-color: white;
+        }
+
+        .edit-foto-btn {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            color: #0A66C2;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-foto-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .perfil-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0.8rem 0 0.3rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .perfil-header p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.92);
+            margin: 0.3rem 0;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .rating {
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.2rem;
+            border-radius: 2rem;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ========== BOTONES DE ACCIÓN ========== */
+        .perfil-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-editar {
+            background: white;
+            color: #0A66C2;
+            border: 1px solid #e2e8f0;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-editar:hover {
+            background: #f8fafc;
+            border-color: #0A66C2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ========== DOS COLUMNAS ========== */
+        .perfil-two-columns {
+            display: flex;
+            gap: 2rem;
+            padding: 1.5rem;
+        }
+
+        .col-portafolio {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .col-publicaciones {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* ========== TÍTULOS DE SECCIÓN ========== */
+        .seccion-title {
+            color: #0A66C2;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border-bottom: 3px solid #0A66C2;
+            padding-bottom: 0.5rem;
+            display: inline-flex;
+        }
+
+        /* ========== PORTAFOLIO ========== */
+        .portafolio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .portafolio-item {
+            position: relative;
+            background: var(--gris-claro);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--borde);
+            transition: all 0.3s ease;
+        }
+
+        .portafolio-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--sombra-md);
+        }
+
+        .portafolio-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .portafolio-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .portafolio-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .portafolio-item:hover .portafolio-overlay {
+            opacity: 1;
+        }
+
+        .edit-foto-btn, .delete-foto-btn {
+            background: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .edit-foto-btn {
+            color: #0A66C2;
+        }
+
+        .edit-foto-btn:hover {
+            background: #0A66C2;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .delete-foto-btn {
+            color: #EF4444;
+        }
+
+        .delete-foto-btn:hover {
+            background: #EF4444;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .portafolio-titulo {
+            font-size: 0.8rem;
+            padding: 0.3rem;
+            text-align: center;
+            font-weight: 600;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .portafolio-desc {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem 0.5rem;
+            text-align: center;
+            color: #6B7280;
+        }
+
+        .subir-portafolio-form {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--gris-claro);
+            border-radius: 1rem;
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .subir-portafolio-form input[type="text"] {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 0.8rem;
+            border: 1px solid var(--borde);
+            font-size: 1.2rem;
+            transition: border-color 0.2s;
+        }
+
+        .subir-portafolio-form input[type="text"]:focus {
+            outline: none;
+            border-color: #0A66C2;
+        }
+
+        .btn-subir-foto {
+            background: #0A66C2;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            border: none;
+            font-size: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-subir-foto:hover {
+            background: #004182;
+            transform: translateY(-2px);
+        }
+
+        /* ========== DATOS DE CONTACTO ========== */
+        .info-row {
+            display: flex;
+            margin-bottom: 0.8rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--borde);
+            font-size: 1.3rem;
+            align-items: center;
+        }
+
+        .info-label {
+            width: 100px;
+            font-weight: 600;
+            color: var(--gris);
+        }
+
+        .info-value {
+            flex: 1;
+            color: var(--negro);
+        }
+
+        .edit-icon {
+            color: #0A66C2;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .edit-icon:hover {
+            color: #004182;
+        }
+
+        /* ========== EXPERIENCIA ========== */
+        .experiencia-badge {
+            background: linear-gradient(135deg, #E8F0FE 0%, #DBEAFE 100%);
+            padding: 0.8rem;
+            border-radius: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* ========== DISPONIBILIDAD ========== */
+        .disponible {
+            background: #10B981;
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .no-disponible {
+            background: #EF4444;
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* ========== PUBLICACIONES ========== */
+        .publicacion-card {
+            background: white;
+            border: 1px solid var(--borde);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .publicacion-card:hover {
+            box-shadow: var(--sombra);
+        }
+
+        .publicacion-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .publicacion-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .publicacion-user {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--negro);
+        }
+
+        .publicacion-fecha {
+            font-size: 0.85rem;
+            color: var(--gris);
+        }
+
+        .publicacion-tipo {
+            display: inline-block;
+            font-size: 0.85rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tipo-oferta {
+            background: #E8F0FE;
+            color: #0A66C2;
+        }
+
+        .tipo-servicio {
+            background: #ECFDF5;
+            color: #10B981;
+        }
+
+        .tipo-estado {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+
+        .publicacion-contenido {
+            font-size: 1.2rem;
+            color: var(--negro);
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+
+        .publicacion-imagen {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 0.8rem;
+            margin: 0.5rem 0;
+        }
+
+        .publicacion-botones {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.8rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--borde);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-like,
+        .btn-comentar {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--gris);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.2s;
+        }
+
+        .btn-like:hover,
+        .btn-comentar:hover {
+            color: #0A66C2;
+        }
+
+        .btn-like i.fa-solid {
+            color: #EF4444;
+        }
+
+        .acciones-publicacion {
+            display: flex;
+            gap: 0.8rem;
+            margin-left: auto;
+        }
+
+        .acciones-publicacion button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-editar-pub {
+            color: #0A66C2;
+        }
+
+        .btn-editar-pub:hover {
+            background: #E8F0FE;
+        }
+
+        .btn-eliminar-pub {
+            color: #EF4444;
+        }
+
+        .btn-eliminar-pub:hover {
+            background: #FEE2E2;
+        }
+
+        /* ========== CALIFICACIONES ========== */
+        .calificacion-card {
+            background: #F8FAFC;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-bottom: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .calificacion-card:hover {
+            background: #F1F5F9;
+            transform: translateX(5px);
+        }
+
+        /* ========== MODALES ========== */
+        .modal-edit {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-edit-content {
+            background: white;
+            border-radius: 1.5rem;
+            max-width: 550px;
+            width: 90%;
+            padding: 1.5rem;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-edit-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #0A66C2;
+        }
+
+        .modal-edit-content input,
+        .modal-edit-content textarea,
+        .modal-edit-content select {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--borde);
+            border-radius: 0.8rem;
+            font-size: 1.2rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .modal-edit-content input:focus,
+        .modal-edit-content textarea:focus,
+        .modal-edit-content select:focus {
+            outline: none;
+            border-color: #0A66C2;
+        }
+
+        .modal-edit-content button {
+            background: #0A66C2;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modal-edit-content button:hover {
+            background: #004182;
+            transform: translateY(-2px);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        /* Modal de comentarios */
+        .modal-comentarios {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-comentarios-content {
+            background: white;
+            border-radius: 1rem;
+            width: 95%;
+            max-width: 500px;
+            max-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .comentario-item {
+            margin-bottom: 0.8rem;
+            padding: 0.8rem;
+            background: #F9FAFB;
+            border-radius: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .comentario-item:hover {
+            background: #F3F4F6;
+        }
+
+        .comentario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .comentario-acciones button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 900px) {
+            .perfil-two-columns {
+                flex-direction: column;
+            }
+            .portafolio-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .perfil-container {
+                margin: 1rem;
+                border-radius: 1rem;
+            }
+            .perfil-header {
+                padding: 2rem 1rem;
+            }
+            .perfil-header h1 {
+                font-size: 1.6rem;
+            }
+            .perfil-header p {
+                font-size: 0.9rem;
+            }
+            .perfil-foto {
+                width: 100px;
+                height: 100px;
+            }
+            .edit-foto-btn {
+                padding: 0.3rem 0.8rem;
+                font-size: 0.75rem;
+            }
+            .btn-editar {
+                padding: 0.5rem 1rem;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .portafolio-grid {
+                grid-template-columns: 1fr;
+            }
+            .perfil-header h1 {
+                font-size: 1.3rem;
+            }
+            .perfil-foto {
+                width: 80px;
+                height: 80px;
+            }
+            .info-row {
+                font-size: 1.1rem;
+                flex-wrap: wrap;
+            }
+            .info-label {
+                width: 100%;
+                margin-bottom: 0.3rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="chamba-dashboard">
+
+    {% include 'includes/navbar.html' %}
+
+    <div class="perfil-container">
+
+        <!-- ========== CABECERA ========== -->
+        <div class="perfil-header">
+            <form id="fotoForm" method="post" enctype="multipart/form-data" action="{% url 'cambiar_foto' %}">
+                {% csrf_token %}
+                <label for="fotoInput" style="cursor: pointer;">
+                    {% if user.perfil.foto_perfil %}
+                    <img src="{{ user.perfil.foto_perfil.url }}" class="perfil-foto" id="perfilFoto">
+                    {% else %}
+                    <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ user.first_name|default:user.username }}"
+                        class="perfil-foto">
+                    {% endif %}
+                </label>
+                <input type="file" name="foto" id="fotoInput" accept="image/*" style="display: none;">
+            </form>
+            <button class="edit-foto-btn" onclick="document.getElementById('fotoInput').click()">
+                <i class="fas fa-camera"></i> Cambiar foto
+            </button>
+            <h1>{{ user.get_full_name|default:user.username }}</h1>
+            <p>
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="ubicacionText">{{ user.perfil.ubicacion|default:"No especificada" }}</span>
+                <i class="fas fa-pen edit-icon" onclick="abrirModalEditar('ubicacion', 'ubicacionText')"></i>
+            </p>
+            <div class="rating">
+                ⭐ {{ user.perfil.promedio_calificacion|default:"0" }} ({{ user.perfil.total_calificaciones|default:"0" }} reseñas)
+            </div>
+        </div>
+
+        <!-- ========== ACCIONES ========== -->
+        <div class="perfil-actions">
+            <button class="btn-editar" onclick="abrirModalGeneral()">
+                <i class="fas fa-user-edit"></i> Editar perfil
+            </button>
+            {% if user.perfil.tipo == 'trabajador' %}
+            <a href="{% url 'ofrecer_servicio' %}" class="btn-editar">
+                <i class="fas fa-plus-circle"></i> Nuevo servicio
+            </a>
+            {% else %}
+            <a href="{% url 'publicar_oferta' %}" class="btn-editar">
+                <i class="fas fa-plus-circle"></i> Nueva oferta
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- ========== DOS COLUMNAS ========== -->
+        <div class="perfil-two-columns">
+
+            <!-- ========== COLUMNA IZQUIERDA ========== -->
+            <div class="col-portafolio">
+
+                <!-- PORTAFOLIO -->
+                <div class="seccion-title">
+                    <i class="fas fa-images"></i> Portafolio de trabajos
+                </div>
+
+                <form method="post" action="{% url 'subir_portafolio' %}" enctype="multipart/form-data" class="subir-portafolio-form">
+                    {% csrf_token %}
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                        <label class="btn-subir-foto" style="cursor: pointer;">
+                            <i class="fas fa-folder-open"></i> Seleccionar foto
+                            <input type="file" name="imagen" accept="image/*" style="display: none;" onchange="this.form.submit()">
+                        </label>
+                        <input type="text" name="titulo" placeholder="Título (opcional)" style="flex: 1;">
+                        <input type="text" name="descripcion" placeholder="Descripción (opcional)" style="flex: 1;">
+                        <button type="submit" class="btn-subir-foto" style="background: #10B981;">
+                            <i class="fas fa-upload"></i> Subir
+                        </button>
+                    </div>
+                </form>
+
+                <div class="portafolio-grid" id="portafolioGrid">
+                    {% for foto in portafolio_fotos %}
+                    <div class="portafolio-item" data-id="{{ foto.id }}">
+                        <img src="{{ foto.imagen.url }}" alt="{{ foto.titulo }}">
+                        <div class="portafolio-overlay">
+                            <button class="edit-foto-btn" onclick="abrirModalEditarPortafolio({{ foto.id }}, '{{ foto.titulo|escapejs }}', '{{ foto.descripcion|escapejs }}', '{{ foto.imagen.url }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-foto-btn" onclick="eliminarFoto({{ foto.id }})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        {% if foto.titulo %}
+                        <div class="portafolio-titulo" id="portafolio-titulo-{{ foto.id }}">{{ foto.titulo }}</div>
+                        {% endif %}
+                        {% if foto.descripcion %}
+                        <div class="portafolio-desc" id="portafolio-desc-{{ foto.id }}">{{ foto.descripcion }}</div>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <p style="text-align: center; padding: 2rem; color: #9CA3AF;">
+                        <i class="fas fa-folder-open" style="font-size: 2rem;"></i><br>
+                        No hay fotos en tu portafolio
+                    </p>
+                    {% endfor %}
+                </div>
+
+                <!-- DATOS DE CONTACTO -->
+                <div class="seccion-title" style="margin-top: 1.5rem;">
+                    <i class="fas fa-address-card"></i> Datos de contacto
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-phone"></i> Teléfono:</div>
+                    <div class="info-value" id="telefonoText">{{ user.perfil.telefono|default:"No especificado" }}</div>
+                    <i class="fas fa-pen edit-icon" onclick="abrirModalEditar('telefono', 'telefonoText')"></i>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-envelope"></i> Email:</div>
+                    <div class="info-value">{{ user.email }}</div>
+                </div>
+
+                <!-- AÑOS DE EXPERIENCIA -->
+                <div class="seccion-title" style="margin-top: 1rem;">
+                    <i class="fas fa-chart-line"></i> Experiencia profesional
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label"><i class="fas fa-calendar-alt"></i> Años de exp:</div>
+                    <div class="info-value" id="experienciaText">
+                        {% if user.perfil.tipo == 'trabajador' %}
+                            {% if user.perfil.anios_experiencia == 1 %}
+                                1 año
+                            {% elif user.perfil.anios_experiencia > 1 %}
+                                {{ user.perfil.anios_experiencia }} años
+                            {% else %}
+                                Sin experiencia registrada
+                            {% endif %}
+                        {% else %}
+                            {% if user.perfil.anios_experiencia == 1 %}
+                                1 año en el rubro
+                            {% elif user.perfil.anios_experiencia > 1 %}
+                                {{ user.perfil.anios_experiencia }} años en el rubro
+                            {% else %}
+                                Sin experiencia registrada
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <i class="fas fa-pen edit-icon" onclick="abrirModalEditarExperiencia()"></i>
+                </div>
+
+                <!-- Badge de nivel según experiencia -->
+                {% if user.perfil.tipo == 'trabajador' %}
+                <div class="experiencia-badge">
+                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                        <i class="fas fa-trophy" style="font-size: 1.5rem; color: #F59E0B;"></i>
+                        <div>
+                            {% if user.perfil.anios_experiencia >= 10 %}
+                            <strong style="color: #0A66C2;">🏆 Experto Senior</strong>
+                            <div style="font-size: 0.8rem; color: #6B7280;">Más de 10 años de experiencia</div>
+                            {% elif user.perfil.anios_experiencia >= 5 %}
+                            <strong style="color: #0A66C2;">⭐ Profesional Avanzado</strong>
+                            <div style="font-size: 0.8rem; color: #6B7280;">Entre 5 y 9 años de experiencia</div>
+                            {% elif user.perfil.anios_experiencia >= 2 %}
+                            <strong style="color: #0A66C2;">📈 En crecimiento</strong>
+                            <div style="font-size: 0.8rem; color: #6B7280;">Entre 2 y 4 años de experiencia</div>
+                            {% elif user.perfil.anios_experiencia >= 1 %}
+                            <strong style="color: #0A66C2;">🌱 Iniciando</strong>
+                            <div style="font-size: 0.8rem; color: #6B7280;">1 año de experiencia</div>
+                            {% else %}
+                            <strong style="color: #6B7280;">📝 Sin experiencia registrada</strong>
+                            <div style="font-size: 0.8rem;">Completa tu perfil para destacar</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- DISPONIBILIDAD -->
+                <div class="seccion-title" style="margin-top: 1rem;">
+                    <i class="fas fa-clock"></i> Disponibilidad
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <span class="{% if user.perfil.disponible %}disponible{% else %}no-disponible{% endif %}" id="disponibilidadSpan">
+                        {% if user.perfil.disponible %}
+                        <i class="fas fa-check-circle"></i> Disponible
+                        {% else %}
+                        <i class="fas fa-times-circle"></i> No disponible
+                        {% endif %}
+                    </span>
+                    <button class="btn-editar" style="padding: 0.3rem 1rem; font-size: 1rem;" onclick="toggleDisponibilidad()">
+                        <i class="fas fa-sync-alt"></i> Cambiar estado
+                    </button>
+                </div>
+            </div>
+
+            <!-- ========== COLUMNA DERECHA: PUBLICACIONES ========== -->
+            <div class="col-publicaciones">
+                <div class="seccion-title">
+                    <i class="fas fa-newspaper"></i> Mis publicaciones
+                </div>
+
+                <div id="publicacionesLista">
+                    {% if mis_publicaciones %}
+                        {% for pub in mis_publicaciones %}
+                        <div class="publicacion-card" id="publicacion-{{ pub.id }}">
+                            <div class="publicacion-header">
+                                {% if pub.usuario.perfil.foto_perfil %}
+                                <img src="{{ pub.usuario.perfil.foto_perfil.url }}" class="publicacion-avatar">
+                                {% else %}
+                                <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ pub.usuario.username }}" class="publicacion-avatar">
+                                {% endif %}
+                                <div>
+                                    <div class="publicacion-user">{{ pub.usuario.get_full_name|default:pub.usuario.username }}</div>
+                                    <div class="publicacion-fecha">
+                                        <i class="far fa-clock"></i> {{ pub.fecha_creacion|timesince }} atrás
+                                    </div>
+                                </div>
+                                <div class="acciones-publicacion">
+                                    <button class="btn-editar-pub" onclick="abrirModalEditarPublicacion({{ pub.id }})" title="Editar publicación">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-eliminar-pub" onclick="eliminarPublicacion({{ pub.id }})" title="Eliminar publicación">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <span class="publicacion-tipo tipo-{{ pub.tipo }}">
+                                {% if pub.tipo == "oferta" %}
+                                <i class="fas fa-briefcase"></i> Oferta laboral
+                                {% elif pub.tipo == "servicio" %}
+                                <i class="fas fa-tools"></i> Servicio ofrecido
+                                {% else %}
+                                <i class="fas fa-comment"></i> Estado personal
+                                {% endif %}
+                            </span>
+                            <p class="publicacion-contenido" id="contenido-pub-{{ pub.id }}">{{ pub.contenido|linebreaksbr }}</p>
+                            {% if pub.imagen %}
+                            <div id="imagen-pub-{{ pub.id }}">
+                                <img src="{{ pub.imagen.url }}" class="publicacion-imagen">
+                            </div>
+                            {% endif %}
+                            <div class="publicacion-botones">
+                                <button class="btn-like" onclick="toggleLike({{ pub.id }})">
+                                    <i id="like-icon-{{ pub.id }}" class="fa-{% if user in pub.likes.all %}solid{% else %}regular{% endif %} fa-heart"></i>
+                                    <span id="like-count-{{ pub.id }}">{{ pub.likes.count }}</span>
+                                </button>
+                                <button class="btn-comentar" onclick="abrirModalComentarios({{ pub.id }})">
+                                    <i class="fa-regular fa-comment"></i>
+                                    <span id="com-count-{{ pub.id }}">{{ pub.comentarios.count }}</span>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div style="text-align: center; padding: 3rem; color: #9CA3AF;">
+                        <i class="fa-solid fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <p>No has publicado nada aún</p>
+                        
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== CALIFICACIONES RECIBIDAS ========== -->
+        <div style="padding: 0 1.5rem 1.5rem;">
+            <div class="seccion-title">
+                <i class="fas fa-star"></i> Calificaciones recibidas
+            </div>
+            
+            {% if calificaciones %}
+                {% for calificacion in calificaciones %}
+                <div class="calificacion-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <strong><i class="fas fa-user"></i> {{ calificacion.autor|default:"Usuario" }}</strong>
+                        <span style="color: #F59E0B;">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= calificacion.puntuacion|default:0 %}⭐{% else %}☆{% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    <p style="margin-top: 0.5rem; color: #475569;">{{ calificacion.comentario|default:"Sin comentario" }}</p>
+                    <small style="color: #94A3B8;"><i class="far fa-calendar-alt"></i> {{ calificacion.fecha|default:"Recientemente" }}</small>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div style="text-align: center; padding: 2rem; color: #94A3B8;">
+                <i class="fas fa-star" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                <p>No hay calificaciones aún</p>
+                <small>Completa trabajos para recibir calificaciones</small>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ========== MODALES ========== -->
+
+    <!-- MODAL PARA EDITAR PUBLICACIÓN -->
+    <div id="modalEditarPublicacion" class="modal-edit">
+        <div class="modal-edit-content">
+            <h3><i class="fas fa-edit"></i> Editar publicación</h3>
+            <form id="formEditarPublicacion" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" id="editPubId">
+                <textarea id="editPubContenido" rows="5" placeholder="¿Qué estás pensando?" required></textarea>
+                <div id="editPubImagenActual" style="margin-bottom: 0.5rem;"></div>
+                <label class="btn-subir-foto" style="display: inline-block; margin-bottom: 0.5rem; cursor: pointer;">
+                    <i class="fas fa-image"></i> Cambiar imagen
+                    <input type="file" id="editPubImagen" accept="image/*" style="display: none;">
+                </label>
+                <div>
+                    <label style="cursor: pointer;">
+                        <input type="checkbox" id="editPubEliminarImagen"> Eliminar imagen actual
+                    </label>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" onclick="cerrarModalEditarPublicacion()">Cancelar</button>
+                    <button type="button" onclick="guardarEdicionPublicacion()">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PARA EDITAR PORTAFOLIO -->
+    <div id="modalEditarPortafolio" class="modal-edit">
+        <div class="modal-edit-content">
+            <h3><i class="fas fa-edit"></i> Editar foto del portafolio</h3>
+            <form id="formEditarPortafolio" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" id="editFotoId">
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <img id="editFotoPreview" src="" style="max-width: 100%; max-height: 200px; border-radius: 0.8rem;">
+                </div>
+                <label>Título</label>
+                <input type="text" id="editFotoTitulo" placeholder="Título">
+                <label>Descripción</label>
+                <textarea id="editFotoDescripcion" rows="3" placeholder="Descripción del trabajo"></textarea>
+                <label>Cambiar imagen (opcional)</label>
+                <input type="file" id="editFotoImagen" accept="image/*">
+                <div class="modal-buttons">
+                    <button type="button" onclick="cerrarModalEditarPortafolio()">Cancelar</button>
+                    <button type="button" onclick="guardarEdicionPortafolio()">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PARA EDITAR EXPERIENCIA -->
+    <div id="modalExperiencia" class="modal-edit">
+        <div class="modal-edit-content">
+            <h3><i class="fas fa-chart-line"></i> Editar años de experiencia</h3>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">¿Cuántos años de experiencia tienes?</label>
+                <input type="number" id="experienciaInput" min="0" max="50" step="1" value="{{ user.perfil.anios_experiencia|default:0 }}" style="text-align: center; font-size: 1.5rem; width: 120px; margin: 0 auto; display: block;">
+                <div class="experiencia-nivel" style="margin-top: 0.5rem; font-size: 0.85rem; color: #6B7280;">
+                    <span id="nivelTexto">
+                        {% if user.perfil.anios_experiencia >= 10 %}
+                        🏆 Nivel: Experto Senior
+                        {% elif user.perfil.anios_experiencia >= 5 %}
+                        ⭐ Nivel: Avanzado
+                        {% elif user.perfil.anios_experiencia >= 2 %}
+                        📈 Nivel: Intermedio
+                        {% elif user.perfil.anios_experiencia >= 1 %}
+                        🌱 Nivel: Principiante
+                        {% else %}
+                        📝 Nivel: Sin experiencia
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" onclick="cerrarModalExperiencia()">Cancelar</button>
+                <button type="button" onclick="guardarExperiencia()">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL COMENTARIOS (con editar/eliminar) -->
+    <div id="modalComentarios" class="modal-comentarios">
+        <div class="modal-comentarios-content">
+            <div style="padding: 0.8rem 1rem; border-bottom: 1px solid var(--borde); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 1.3rem;"><i class="fas fa-comments"></i> Comentarios</h3>
+                <button onclick="cerrarModalComentarios()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+            </div>
+            <div id="listaComentarios" style="flex: 1; overflow-y: auto; padding: 0.8rem; max-height: 250px;"></div>
+            <div style="padding: 0.8rem; border-top: 1px solid var(--borde); display: flex; gap: 0.5rem;">
+                <input type="text" id="inputComentario" placeholder="Escribe un comentario..." style="flex: 1; padding: 0.5rem; border: 1px solid var(--borde); border-radius: 2rem;">
+                <button onclick="enviarComentario()" style="background: var(--azul); color: white; border: none; padding: 0.5rem 1rem; border-radius: 2rem; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR PERFIL GENERAL -->
+    <div id="modalGeneral" class="modal-edit">
+        <div class="modal-edit-content">
+            <h3><i class="fas fa-user-edit"></i> Editar perfil</h3>
+            <form method="post" action="{% url 'editar_perfil' %}">
+                {% csrf_token %}
+                <input type="text" name="nombre" value="{{ user.get_full_name|default:user.username }}" placeholder="Nombre completo">
+                <input type="text" name="telefono" value="{{ user.perfil.telefono|default:'' }}" placeholder="Teléfono">
+                <input type="text" name="ubicacion" value="{{ user.perfil.ubicacion|default:'' }}" placeholder="Ubicación">
+                {% if user.perfil.tipo == 'trabajador' %}
+                <input type="text" name="oficios" value="{{ user.perfil.oficios|default:'' }}" placeholder="Oficios (ej: Electricista, Plomero)">
+                <textarea rows="3" name="descripcion_personal" placeholder="Describe tu experiencia y habilidades...">{{ user.perfil.descripcion_personal|default:'' }}</textarea>
+                {% else %}
+                <input type="text" name="nombre_empresa" value="{{ user.perfil.nombre_empresa|default:'' }}" placeholder="Nombre de la empresa">
+                <input type="text" name="rubro" value="{{ user.perfil.rubro|default:'' }}" placeholder="Rubro de la empresa">
+                <textarea rows="3" name="descripcion_personal" placeholder="Describe tu empresa...">{{ user.perfil.descripcion_personal|default:'' }}</textarea>
+                {% endif %}
+                <div class="modal-buttons">
+                    <button type="button" onclick="cerrarModalGeneral()">Cancelar</button>
+                    <button type="submit">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR CAMPO SIMPLE -->
+    <div id="modalSimple" class="modal-edit">
+        <div class="modal-edit-content">
+            <h3 id="modalSimpleTitulo">Editar</h3>
+            <input type="text" id="modalSimpleInput">
+            <div class="modal-buttons">
+                <button onclick="cerrarModalSimple()">Cancelar</button>
+                <button onclick="guardarCampoSimple()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+        let currentField = null;
+        let currentElementId = null;
+        let currentPublicacionId = null;
+
+        // ========== EDICIÓN DE PUBLICACIÓN ==========
+        let editPubId = null;
+
+        function abrirModalEditarPublicacion(pubId) {
+            editPubId = pubId;
+            const contenidoElement = document.getElementById(`contenido-pub-${pubId}`);
+            let contenido = contenidoElement.innerText;
+            document.getElementById('editPubContenido').value = contenido;
+            const imagenDiv = document.getElementById(`imagen-pub-${pubId}`);
+            const previewDiv = document.getElementById('editPubImagenActual');
+            if (imagenDiv) {
+                previewDiv.innerHTML = `<img src="${imagenDiv.querySelector('img').src}" style="max-width:100%; max-height:150px; border-radius:0.5rem;">`;
+            } else {
+                previewDiv.innerHTML = '<p style="color:#999;">No hay imagen actual</p>';
+            }
+            document.getElementById('editPubEliminarImagen').checked = false;
+            document.getElementById('modalEditarPublicacion').style.display = 'flex';
+        }
+
+        function cerrarModalEditarPublicacion() {
+            document.getElementById('modalEditarPublicacion').style.display = 'none';
+            editPubId = null;
+        }
+
+        function guardarEdicionPublicacion() {
+            const nuevoContenido = document.getElementById('editPubContenido').value.trim();
+            if (!nuevoContenido) {
+                alert('El contenido no puede estar vacío');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('contenido', nuevoContenido);
+            const imagenFile = document.getElementById('editPubImagen').files[0];
+            if (imagenFile) {
+                formData.append('imagen', imagenFile);
+            }
+            if (document.getElementById('editPubEliminarImagen').checked) {
+                formData.append('eliminar_imagen', 'true');
+            }
+            fetch(`/publicacion/editar/${editPubId}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                body: formData
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    // Actualizar contenido en la tarjeta
+                    document.getElementById(`contenido-pub-${editPubId}`).innerHTML = nuevoContenido.replace(/\n/g, '<br>');
+                    // Recargar para reflejar cambios de imagen (opcional)
+                    location.reload();
+                } else {
+                    alert('Error al guardar cambios');
+                }
+            });
+        }
+
+        // ========== ELIMINAR PUBLICACIÓN ==========
+        function eliminarPublicacion(pubId) {
+            if (confirm('¿Estás seguro de eliminar esta publicación? Esta acción no se puede deshacer.')) {
+                fetch(`/publicacion/eliminar/${pubId}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                }).then(r => r.json()).then(data => {
+                    if (data.success) {
+                        const card = document.getElementById(`publicacion-${pubId}`);
+                        card.remove();
+                    } else {
+                        alert('Error al eliminar');
+                    }
+                });
+            }
+        }
+
+        // ========== EDICIÓN DE PORTAFOLIO ==========
+        let editFotoId = null;
+
+        function abrirModalEditarPortafolio(id, titulo, descripcion, imagenUrl) {
+            editFotoId = id;
+            document.getElementById('editFotoId').value = id;
+            document.getElementById('editFotoTitulo').value = titulo;
+            document.getElementById('editFotoDescripcion').value = descripcion;
+            document.getElementById('editFotoPreview').src = imagenUrl;
+            document.getElementById('editFotoImagen').value = '';
+            document.getElementById('modalEditarPortafolio').style.display = 'flex';
+        }
+
+        function cerrarModalEditarPortafolio() {
+            document.getElementById('modalEditarPortafolio').style.display = 'none';
+            editFotoId = null;
+        }
+
+        function guardarEdicionPortafolio() {
+            const id = editFotoId;
+            const titulo = document.getElementById('editFotoTitulo').value;
+            const descripcion = document.getElementById('editFotoDescripcion').value;
+            const imagenFile = document.getElementById('editFotoImagen').files[0];
+
+            const formData = new FormData();
+            formData.append('titulo', titulo);
+            formData.append('descripcion', descripcion);
+            if (imagenFile) {
+                formData.append('imagen', imagenFile);
+            }
+
+            fetch(`/perfil/editar-portafolio/${id}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const item = document.querySelector(`.portafolio-item[data-id="${id}"]`);
+                    if (item) {
+                        if (data.nueva_imagen) {
+                            item.querySelector('img').src = data.nueva_imagen;
+                        }
+                        let tituloDiv = item.querySelector('.portafolio-titulo');
+                        if (titulo && titulo.trim() !== '') {
+                            if (!tituloDiv) {
+                                tituloDiv = document.createElement('div');
+                                tituloDiv.className = 'portafolio-titulo';
+                                item.appendChild(tituloDiv);
+                            }
+                            tituloDiv.textContent = titulo;
+                        } else if (tituloDiv) {
+                            tituloDiv.remove();
+                        }
+                        let descDiv = item.querySelector('.portafolio-desc');
+                        if (descripcion && descripcion.trim() !== '') {
+                            if (!descDiv) {
+                                descDiv = document.createElement('div');
+                                descDiv.className = 'portafolio-desc';
+                                item.appendChild(descDiv);
+                            }
+                            descDiv.textContent = descripcion;
+                        } else if (descDiv) {
+                            descDiv.remove();
+                        }
+                    }
+                    cerrarModalEditarPortafolio();
+                } else {
+                    alert('Error al guardar cambios');
+                }
+            });
+        }
+
+        // ========== ELIMINAR FOTO DE PORTAFOLIO ==========
+        function eliminarFoto(fotoId) {
+            if (confirm('¿Eliminar esta foto del portafolio?')) {
+                fetch(`/perfil/eliminar-portafolio/${fotoId}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                }).then(() => location.reload());
+            }
+        }
+
+        // ========== EDITAR CAMPO SIMPLE (ubicación, teléfono) ==========
+        function abrirModalEditar(field, elementId) {
+            currentField = field;
+            currentElementId = elementId;
+            const currentValue = document.getElementById(elementId).innerText;
+            document.getElementById('modalSimpleTitulo').innerHTML = `Editar ${field.replace('_', ' ')}`;
+            document.getElementById('modalSimpleInput').value = currentValue;
+            document.getElementById('modalSimple').style.display = 'flex';
+        }
+
+        function cerrarModalSimple() {
+            document.getElementById('modalSimple').style.display = 'none';
+            currentField = null;
+            currentElementId = null;
+        }
+
+        function guardarCampoSimple() {
+            const newValue = document.getElementById('modalSimpleInput').value;
+            fetch('/perfil/editar-campo/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `campo=${currentField}&valor=${encodeURIComponent(newValue)}`
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    document.getElementById(currentElementId).innerText = newValue;
+                    cerrarModalSimple();
+                }
+            });
+        }
+
+        // ========== EDITAR EXPERIENCIA ==========
+        function abrirModalEditarExperiencia() {
+            const experienciaSpan = document.getElementById('experienciaText');
+            let textoExperiencia = experienciaSpan.innerText;
+            let años = 0;
+            if (textoExperiencia.includes('año')) {
+                const match = textoExperiencia.match(/(\d+)/);
+                if (match) años = parseInt(match[0]);
+            }
+            currentField = 'anios_experiencia';
+            currentElementId = 'experienciaText';
+            document.getElementById('experienciaInput').value = años;
+            document.getElementById('modalExperiencia').style.display = 'flex';
+        }
+
+        function cerrarModalExperiencia() {
+            document.getElementById('modalExperiencia').style.display = 'none';
+        }
+
+        function guardarExperiencia() {
+            const nuevosAños = document.getElementById('experienciaInput').value;
+            fetch('/perfil/editar-campo/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `campo=anios_experiencia&valor=${encodeURIComponent(nuevosAños)}`
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    const texto = nuevosAños == 1 ? `${nuevosAños} año` : `${nuevosAños} años`;
+                    document.getElementById('experienciaText').innerHTML = texto;
+                    cerrarModalExperiencia();
+                    setTimeout(() => location.reload(), 500);
+                }
+            });
+        }
+
+        // ========== MODAL GENERAL DE EDICIÓN DE PERFIL ==========
+        function abrirModalGeneral() {
+            document.getElementById('modalGeneral').style.display = 'flex';
+        }
+
+        function cerrarModalGeneral() {
+            document.getElementById('modalGeneral').style.display = 'none';
+        }
+
+        // ========== TOGGLE DISPONIBILIDAD ==========
+        function toggleDisponibilidad() {
+            fetch('/perfil/toggle-disponibilidad/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    const span = document.getElementById('disponibilidadSpan');
+                    span.innerHTML = data.disponible ? '<i class="fas fa-check-circle"></i> Disponible' : '<i class="fas fa-times-circle"></i> No disponible';
+                    span.className = data.disponible ? 'disponible' : 'no-disponible';
+                }
+            });
+        }
+
+        // ========== LIKE ==========
+        function toggleLike(pubId) {
+            fetch(`/like/${pubId}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            }).then(r => r.json()).then(data => {
+                const icon = document.getElementById(`like-icon-${pubId}`);
+                const count = document.getElementById(`like-count-${pubId}`);
+                icon.className = data.liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+                count.textContent = data.total_likes;
+            });
+        }
+
+        // ========== COMENTARIOS CON CRUD ==========
+        function abrirModalComentarios(pubId) {
+            currentPublicacionId = pubId;
+            document.getElementById('modalComentarios').style.display = 'flex';
+            cargarComentarios(pubId);
+        }
+
+        function cerrarModalComentarios() {
+            document.getElementById('modalComentarios').style.display = 'none';
+            currentPublicacionId = null;
+        }
+
+        function cargarComentarios(pubId) {
+            fetch(`/comentarios/${pubId}/`).then(r => r.json()).then(data => {
+                let html = '';
+                data.comentarios.forEach(c => {
+                    // Se espera que la vista devuelva 'usuario_id' para comparar. Si no, ajusta.
+                    const esPropio = (c.usuario_id === {{ user.id }});
+                    html += `
+                        <div class="comentario-item" data-com-id="${c.id}">
+                            <div class="comentario-header">
+                                <strong>${c.usuario}</strong>
+                                <small style="color:#999;">${c.fecha}</small>
+                                ${esPropio ? `
+                                <div class="comentario-acciones">
+                                    <button onclick="editarComentario(${c.id}, '${c.texto.replace(/'/g, "\\'")}', this.parentElement.parentElement.parentElement)" title="Editar"><i class="fas fa-edit"></i></button>
+                                    <button onclick="eliminarComentario(${c.id}, this.parentElement.parentElement.parentElement)" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <p class="comentario-texto" style="margin-top:0.3rem;">${c.texto}</p>
+                        </div>
+                    `;
+                });
+                if (!html) html = '<p style="text-align:center;">No hay comentarios aún</p>';
+                document.getElementById('listaComentarios').innerHTML = html;
+            });
+        }
+
+        function enviarComentario() {
+            const texto = document.getElementById('inputComentario').value.trim();
+            if (!texto || !currentPublicacionId) return;
+            fetch(`/comentar/${currentPublicacionId}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `texto=${encodeURIComponent(texto)}`
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    document.getElementById('inputComentario').value = '';
+                    cargarComentarios(currentPublicacionId);
+                    const count = document.getElementById(`com-count-${currentPublicacionId}`);
+                    count.textContent = parseInt(count.textContent) + 1;
+                }
+            });
+        }
+
+        function editarComentario(comentarioId, textoActual, element) {
+            const nuevoTexto = prompt('Editar comentario:', textoActual);
+            if (nuevoTexto && nuevoTexto.trim()) {
+                fetch(`/comentario/editar/${comentarioId}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `texto=${encodeURIComponent(nuevoTexto)}`
+                }).then(r => r.json()).then(data => {
+                    if (data.success) {
+                        element.querySelector('.comentario-texto').innerText = nuevoTexto;
+                    }
+                });
+            }
+        }
+
+        function eliminarComentario(comentarioId, element) {
+            if (confirm('¿Eliminar comentario?')) {
+                fetch(`/comentario/eliminar/${comentarioId}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                }).then(r => r.json()).then(data => {
+                    if (data.success) {
+                        element.remove();
+                        const countSpan = document.getElementById(`com-count-${currentPublicacionId}`);
+                        if (countSpan) countSpan.textContent = parseInt(countSpan.textContent) - 1;
+                    }
+                });
+            }
+        }
+
+        // Exponer funciones globalmente
+        window.editarComentario = editarComentario;
+        window.eliminarComentario = eliminarComentario;
+
+        // Cerrar modales al hacer clic fuera
+        document.getElementById('modalGeneral')?.addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalGeneral(); });
+        document.getElementById('modalSimple')?.addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalSimple(); });
+        document.getElementById('modalComentarios')?.addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalComentarios(); });
+        document.getElementById('modalExperiencia')?.addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalExperiencia(); });
+        document.getElementById('modalEditarPublicacion')?.addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalEditarPublicacion(); });
+        document.getElementById('modalEditarPortafolio')?.addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalEditarPortafolio(); });
+
+        // Subir foto de perfil automáticamente
+        document.getElementById('fotoInput')?.addEventListener('change', function () {
+            document.getElementById('fotoForm').submit();
+        });
+    </script>
+</body>
+
+</html>
