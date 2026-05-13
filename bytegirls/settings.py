@@ -136,8 +136,8 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "yonconortorez@gmail.com"
-EMAIL_HOST_PASSWORD = "zaba opda vuod fzve"  # Tu contraseña de aplicación
-DEFAULT_FROM_EMAIL = "CHAMBA <yonconortorez@gmail.com>"
+EMAIL_HOST_USER = "mishelldiaz400@gmail.com"
+EMAIL_HOST_PASSWORD = "ogfj wvfd bifb hyym"  # Tu contraseña de aplicación
+DEFAULT_FROM_EMAIL = "CHAMBA <mishelldiaz400@gmail.com>"
 # Configuración de seguridad para mapas
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
