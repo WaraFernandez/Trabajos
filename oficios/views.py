@@ -20,6 +20,8 @@ from .models import (
     Servicio,
     PortafolioFoto,
     Calificacion,
+    Reporte,
+    HistorialAdmin,
 )
 
 
@@ -100,6 +102,11 @@ def dashboard_admin(request):
         'total_ofertas': total_ofertas,
         'total_servicios': total_servicios,
         'total_comentarios': total_comentarios,
+        'usuarios_bloqueados': User.objects.filter(is_active=False).count(),
+        'reportes_pendientes': Reporte.objects.filter(estado='pendiente').count(),
+        'publicaciones_eliminadas': HistorialAdmin.objects.filter(accion__icontains='Publicación eliminada').count(),
+        'ultimos_reportes': Reporte.objects.select_related('reportante', 'usuario_reportado').order_by('-fecha')[:5],
+        'ultimas_acciones': HistorialAdmin.objects.select_related('administrador').order_by('-fecha')[:5],
         'ultimos_usuarios': ultimos_usuarios,
         'ultimas_publicaciones': ultimas_publicaciones,
         'usuarios_por_mes': usuarios_por_mes,
@@ -1129,3 +1136,234 @@ def cambiar_estado_usuario(request, user_id):
     usuario.is_active = not usuario.is_active
     usuario.save()
     return JsonResponse({'success': True, 'is_active': usuario.is_active})
+
+# ========== MÓDULO ADMINISTRACIÓN Y MODERACIÓN ==========
+
+@login_required
+def usuarios_admin(request):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    usuarios = User.objects.select_related('perfil').prefetch_related('reportes_recibidos').order_by('-date_joined')
+
+    context = {
+        'usuarios': usuarios,
+        'total_usuarios': usuarios.count(),
+        'usuarios_activos': usuarios.filter(is_active=True).count(),
+        'usuarios_bloqueados': usuarios.filter(is_active=False).count(),
+    }
+
+    return render(request, "usuarios_admin.html", context)
+
+
+@login_required
+def reportes_admin(request):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    reportes = Reporte.objects.select_related(
+        'reportante',
+        'usuario_reportado',
+        'publicacion',
+        'comentario'
+    ).order_by('-fecha')
+
+    context = {
+        'reportes': reportes,
+        'pendientes': reportes.filter(estado='pendiente').count(),
+        'revisados': reportes.filter(estado='revisado').count(),
+        'resueltos': reportes.filter(estado='resuelto').count(),
+    }
+
+    return render(request, "reportes_admin.html", context)
+
+
+@login_required
+def comentarios_admin(request):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+    comentarios_pendientes = Comentario.objects.filter(revisado=False).count()
+    comentarios = Comentario.objects.select_related(
+        'usuario',
+        'publicacion'
+    ).order_by('-fecha')
+
+    context = {
+        'comentarios': comentarios,
+        'comentarios_pendientes': comentarios_pendientes,
+        'total_comentarios': comentarios.count(),
+    }
+
+    return render(request, "comentarios_admin.html", context)
+
+
+@login_required
+def publicaciones_admin(request):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    publicaciones = Publicacion.objects.select_related(
+        'usuario'
+    ).order_by('-fecha_creacion')
+
+    context = {
+        'publicaciones': publicaciones,
+        'total_publicaciones': publicaciones.count(),
+    }
+
+    return render(request, "publicaciones_admin.html", context)
+
+
+@login_required
+def historial_admin(request):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    historial = HistorialAdmin.objects.select_related(
+        'administrador'
+    ).order_by('-fecha')
+
+    context = {
+        'historial': historial
+    }
+
+    return render(request, "historial_admin.html", context)
+
+@login_required
+def bloquear_usuario(request, user_id):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    usuario = get_object_or_404(User, id=user_id)
+
+    if usuario == request.user:
+        messages.error(request, "No puedes bloquear tu propia cuenta administradora.")
+        return redirect('usuarios_admin')
+
+    usuario.is_active = False
+    usuario.save()
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Usuario bloqueado",
+        elemento_afectado=usuario.username,
+        resultado="Bloqueado"
+    )
+
+    messages.success(request, "Usuario bloqueado correctamente.")
+    return redirect('usuarios_admin')
+
+
+@login_required
+def reactivar_usuario(request, user_id):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    usuario = get_object_or_404(User, id=user_id)
+
+    usuario.is_active = True
+    usuario.save()
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Usuario reactivado",
+        elemento_afectado=usuario.username,
+        resultado="Reactivado"
+    )
+
+    messages.success(request, "Usuario reactivado correctamente.")
+    return redirect('usuarios_admin')
+
+@login_required
+def admin_eliminar_comentario(request, comentario_id):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    comentario = get_object_or_404(Comentario, id=comentario_id)
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Comentario eliminado",
+        elemento_afectado=f"Comentario de {comentario.usuario.username}",
+        resultado="Eliminado"
+    )
+
+    comentario.delete()
+
+    return redirect('comentarios_admin')
+
+
+@login_required
+def admin_marcar_comentario_revisado(request, comentario_id):
+
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    comentario = get_object_or_404(Comentario, id=comentario_id)
+
+    comentario.revisado = True
+    comentario.save()
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Comentario revisado",
+        elemento_afectado=f"Comentario de {comentario.usuario.username}",
+        resultado="Marcado como revisado"
+    )
+
+    return redirect('comentarios_admin')
+
+@login_required
+def admin_eliminar_publicacion(request, publicacion_id):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Publicación eliminada",
+        elemento_afectado=f"Publicación de {publicacion.usuario.username}",
+        resultado="Eliminado"
+    )
+
+    publicacion.delete()
+
+    return redirect('publicaciones_admin')
+
+@login_required
+def admin_marcar_reporte_revisado(request, reporte_id):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    reporte = get_object_or_404(Reporte, id=reporte_id)
+    reporte.estado = "revisado"
+    reporte.save()
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Reporte revisado",
+        elemento_afectado=f"Reporte de {reporte.reportante.username}",
+        resultado="Revisado"
+    )
+
+    return redirect('reportes_admin')
+
+
+@login_required
+def admin_resolver_reporte(request, reporte_id):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    reporte = get_object_or_404(Reporte, id=reporte_id)
+    reporte.estado = "resuelto"
+    reporte.save()
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Reporte resuelto",
+        elemento_afectado=f"Reporte de {reporte.reportante.username}",
+        resultado="Resuelto"
+    )
+
+    return redirect('reportes_admin')

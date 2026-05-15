@@ -1,0 +1,424 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA - Gestión de Reportes</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal !important;
+            font-style: normal !important;
+            font-size: 24px !important;
+            line-height: 1 !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+            display: inline-block !important;
+            white-space: nowrap !important;
+            direction: ltr !important;
+            -webkit-font-feature-settings: 'liga' !important;
+            font-feature-settings: 'liga' !important;
+            -webkit-font-smoothing: antialiased !important;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1d5ca5",
+                        background: "#faf8fd",
+                        surface: "#ffffff",
+                        soft: "#f5f3f7",
+                        line: "#d7d7df",
+                        text: "#1b1b1f",
+                        muted: "#6b7280",
+                        blueSoft: "#d5e3ff",
+                        redSoft: "#ffdad6",
+                        greenSoft: "#dcfce7",
+                        yellowSoft: "#f2e65f"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-text h-screen overflow-hidden flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 h-screen bg-soft border-r border-line fixed left-0 top-0 z-40">
+        <div class="px-6 pt-6 pb-4">
+            <img src="{% static 'img/logochamba.png' %}" alt="Logo CHAMBA" class="w-36 h-auto object-contain block">
+            <p class="text-sm text-muted font-medium mt-1 mb-4">Panel de Control</p>
+        </div>
+
+        <nav class="px-4 space-y-2 mt-2">
+            <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/usuarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">group</span>
+                <span>Usuarios</span>
+            </a>
+
+            <a href="/reportes-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blueSoft text-primary font-semibold border-r-4 border-primary">
+                <span class="material-symbols-outlined">report</span>
+                <span>Reportes</span>
+            </a>
+
+            <a href="/comentarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">forum</span>
+                <span>Comentarios</span>
+            </a>
+
+            <a href="/publicaciones-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">article</span>
+                <span>Publicaciones</span>
+            </a>
+
+            <a href="/historial-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">history</span>
+                <span>Historial</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="ml-64 flex-1 flex flex-col h-screen">
+
+        <!-- TOPBAR -->
+        <header class="h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm relative">
+            <div class="w-40"></div>
+
+            <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold">
+                PANEL DE CONTROL
+            </h1>
+
+            <div class="flex items-center gap-4">
+                <button class="p-2 rounded-full hover:bg-soft">
+                    <span class="material-symbols-outlined text-gray-600">notifications</span>
+                </button>
+
+                <div class="h-8 w-px bg-line"></div>
+
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-blueSoft flex items-center justify-center font-bold text-primary">
+                        A
+                    </div>
+                    <span class="text-sm font-bold">Administrador</span>
+                </div>
+
+                <a href="/logout/" class="flex items-center gap-2 bg-soft hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-semibold text-gray-700">
+                    <span class="material-symbols-outlined text-lg">logout</span>
+                    Cerrar sesión
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENIDO -->
+        <main class="flex-1 overflow-y-auto p-6 bg-soft">
+
+            <section class="mb-6">
+                <h2 class="text-3xl font-bold mb-1">Gestión de Reportes</h2>
+                <p class="text-gray-600">Visualiza denuncias realizadas por usuarios y valida el contenido reportado.</p>
+            </section>
+
+            {% if messages %}
+                <div class="mb-5 space-y-2">
+                    {% for message in messages %}
+                        <div class="bg-white border border-line rounded-lg px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- FILTROS -->
+            <section class="mb-6 flex gap-2 border-b border-line pb-2">
+                <button id="btn-pendiente"
+                        onclick="filtrarReportes('pendiente')"
+                        class="filtro-btn px-5 py-2 rounded-t-lg bg-primary text-white font-semibold">
+                    Pendientes
+                </button>
+
+                <button id="btn-revisado"
+                        onclick="filtrarReportes('revisado')"
+                        class="filtro-btn px-5 py-2 rounded-t-lg text-gray-600 hover:bg-white font-semibold">
+                    Revisados
+                </button>
+
+                <button id="btn-resuelto"
+                        onclick="filtrarReportes('resuelto')"
+                        class="filtro-btn px-5 py-2 rounded-t-lg text-gray-600 hover:bg-white font-semibold">
+                    Resueltos
+                </button>
+
+                <button id="btn-todos"
+                        onclick="filtrarReportes('todos')"
+                        class="filtro-btn px-5 py-2 rounded-t-lg text-gray-600 hover:bg-white font-semibold">
+                    Todos
+                </button>
+            </section>
+
+            <!-- TABLA -->
+            <section class="bg-white rounded-xl shadow-sm border border-line overflow-hidden mb-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-soft text-gray-600 text-sm uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4">Usuario reportante</th>
+                                <th class="px-6 py-4">Tipo reporte</th>
+                                <th class="px-6 py-4">Contenido denunciado</th>
+                                <th class="px-6 py-4">Fecha</th>
+                                <th class="px-6 py-4">Estado</th>
+                                <th class="px-6 py-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-line text-sm">
+                            {% for reporte in reportes %}
+                            <tr class="fila-reporte hover:bg-soft transition" data-estado="{{ reporte.estado }}">
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                                            {{ reporte.reportante.username|slice:":2"|upper }}
+                                        </div>
+                                        <span class="font-bold">
+                                            {{ reporte.reportante.username }}
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-5 text-gray-600">
+                                    {{ reporte.get_tipo_display }}
+                                </td>
+
+                                <td class="px-6 py-5 text-gray-600">
+                                    {{ reporte.motivo|truncatechars:80 }}
+                                </td>
+
+                                <td class="px-6 py-5 text-gray-600">
+                                    {{ reporte.fecha|date:"d/m/Y" }}
+                                </td>
+
+                                <td class="px-6 py-5">
+                                    {% if reporte.estado == "pendiente" %}
+                                        <span class="px-3 py-1 rounded-full bg-yellowSoft text-yellow-900 text-xs font-bold">
+                                            Pendiente
+                                        </span>
+                                    {% elif reporte.estado == "revisado" %}
+                                        <span class="px-3 py-1 rounded-full bg-blueSoft text-primary text-xs font-bold">
+                                            Revisado
+                                        </span>
+                                    {% else %}
+                                        <span class="px-3 py-1 rounded-full bg-greenSoft text-green-800 text-xs font-bold">
+                                            Resuelto
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="px-6 py-5">
+                                    <div class="flex justify-end gap-2">
+                                        <button type="button"
+                                                data-tipo="{{ reporte.get_tipo_display }}"
+                                                data-motivo="{{ reporte.motivo }}"
+                                                data-usuario="{% if reporte.usuario_reportado %}{{ reporte.usuario_reportado.username }}{% else %}No asignado{% endif %}"
+                                                data-fecha="{{ reporte.fecha|date:'d/m/Y - H:i' }}"
+                                                data-estado="{{ reporte.estado }}"
+                                                onclick="openReviewPanelFromButton(this)"
+                                                class="bg-primary text-white px-3 py-2 rounded-lg text-xs font-bold">
+                                            Ver detalle
+                                        </button>
+
+                                        {% if reporte.estado == "pendiente" %}
+                                            <a href="{% url 'admin_marcar_reporte_revisado' reporte.id %}"
+                                               class="bg-blueSoft text-primary px-3 py-2 rounded-lg text-xs font-bold">
+                                                Revisar
+                                            </a>
+                                        {% endif %}
+
+                                        {% if reporte.estado != "resuelto" %}
+                                            <a href="{% url 'admin_resolver_reporte' reporte.id %}"
+                                               class="bg-greenSoft text-green-800 px-3 py-2 rounded-lg text-xs font-bold">
+                                                Resolver
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                    No existen reportes registrados.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- RESUMEN -->
+            <section class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div class="bg-primary text-white p-6 rounded-xl shadow-sm">
+                    <p class="text-xs font-bold uppercase opacity-90">Tasa de resolución</p>
+                    <h3 class="text-4xl font-bold mt-2">
+                        {% if reportes %}
+                            {{ resueltos }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </h3>
+                    <p class="text-xs mt-1 opacity-90">reportes resueltos</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-line shadow-sm">
+                    <p class="text-xs font-bold uppercase text-gray-500">Pendientes</p>
+                    <p class="text-2xl font-bold">{{ pendientes }}</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-line shadow-sm">
+                    <p class="text-xs font-bold uppercase text-gray-500">Revisados</p>
+                    <p class="text-2xl font-bold">{{ revisados }}</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-line shadow-sm">
+                    <p class="text-xs font-bold uppercase text-gray-500">Resueltos</p>
+                    <p class="text-2xl font-bold">{{ resueltos }}</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- PANEL LATERAL EMERGENTE -->
+    <aside id="reviewPanel" class="fixed right-0 top-16 h-[calc(100vh-64px)] w-[430px] bg-white border-l border-line shadow-xl z-50 overflow-y-auto transform translate-x-full transition-transform duration-300">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Detalle del Reporte</h2>
+                <button type="button" onclick="closeReviewPanel()" class="w-10 h-10 rounded-full hover:bg-soft flex items-center justify-center">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Tipo de reporte</p>
+                    <p id="panelReporteTipo" class="font-semibold mt-1">--</p>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Estado del reporte</p>
+                    <span id="panelReporteEstado" class="inline-block mt-2 px-3 py-1 rounded-full bg-yellowSoft text-yellow-900 text-xs font-bold">
+                        Pendiente
+                    </span>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Motivo completo</p>
+                    <div id="panelReporteMotivo" class="mt-2 p-4 rounded-lg bg-soft border border-line text-gray-700">
+                        Motivo del reporte
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Usuario denunciado</p>
+                    <div class="mt-2 p-4 border border-line rounded-lg">
+                        <p id="panelReporteUsuario" class="font-bold">No asignado</p>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Evidencia</p>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="h-24 bg-soft border border-line rounded-lg flex items-center justify-center text-gray-500">
+                            <span class="material-symbols-outlined">image</span>
+                        </div>
+                        <div class="h-24 bg-soft border border-line rounded-lg flex items-center justify-center text-gray-500">
+                            <span class="material-symbols-outlined">description</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Fecha</p>
+                    <p id="panelReporteFecha" class="font-semibold mt-1">--/--/----</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <script>
+        function filtrarReportes(estado) {
+            const filas = document.querySelectorAll('.fila-reporte');
+            const botones = document.querySelectorAll('.filtro-btn');
+
+            filas.forEach(fila => {
+                const estadoFila = fila.dataset.estado;
+                fila.style.display = (estado === 'todos' || estadoFila === estado) ? '' : 'none';
+            });
+
+            botones.forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('text-gray-600');
+            });
+
+            const botonActivo = document.getElementById('btn-' + estado);
+
+            if (botonActivo) {
+                botonActivo.classList.add('bg-primary', 'text-white');
+                botonActivo.classList.remove('text-gray-600');
+            }
+        }
+
+        function openReviewPanelFromButton(button) {
+            openReviewPanel(
+                button.dataset.tipo,
+                button.dataset.motivo,
+                button.dataset.usuario,
+                button.dataset.fecha,
+                button.dataset.estado
+            );
+        }
+
+        function openReviewPanel(tipo, motivo, usuario, fecha, estado) {
+            document.getElementById('panelReporteTipo').innerText = tipo || '--';
+            document.getElementById('panelReporteMotivo').innerText = motivo || 'Sin motivo registrado';
+            document.getElementById('panelReporteUsuario').innerText = usuario || 'No asignado';
+            document.getElementById('panelReporteFecha').innerText = fecha || '--/--/----';
+
+            const estadoTag = document.getElementById('panelReporteEstado');
+            estadoTag.innerText = estado || 'pendiente';
+            estadoTag.className = 'inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold';
+
+            if (estado === 'pendiente') {
+                estadoTag.classList.add('bg-yellowSoft', 'text-yellow-900');
+            } else if (estado === 'revisado') {
+                estadoTag.classList.add('bg-blueSoft', 'text-primary');
+            } else {
+                estadoTag.classList.add('bg-greenSoft', 'text-green-800');
+            }
+
+            document.getElementById('reviewPanel').classList.remove('translate-x-full');
+        }
+
+        function closeReviewPanel() {
+            document.getElementById('reviewPanel').classList.add('translate-x-full');
+        }
+    </script>
+
+</body>
+</html>

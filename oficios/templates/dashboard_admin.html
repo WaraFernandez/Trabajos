@@ -1,57 +1,261 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>admin</title>
+    <title>CHAMBA - Panel Administrativo</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal !important;
+            font-style: normal !important;
+            font-size: 24px !important;
+            line-height: 1 !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+            display: inline-block !important;
+            white-space: nowrap !important;
+            word-wrap: normal !important;
+            direction: ltr !important;
+            -webkit-font-feature-settings: 'liga' !important;
+            -webkit-font-smoothing: antialiased !important;
+            font-feature-settings: 'liga' !important;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1d5ca5",
+                        background: "#faf8fd",
+                        surface: "#ffffff",
+                        soft: "#f5f3f7",
+                        line: "#d7d7df",
+                        text: "#1b1b1f",
+                        muted: "#6b7280",
+                        blueSoft: "#d5e3ff",
+                        yellowSoft: "#f2e65f",
+                        redSoft: "#ffdad6",
+                        greenSoft: "#dcfce7"
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
-    ADMIN
+
+<body class="bg-background text-text h-screen overflow-hidden flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 h-screen bg-soft border-r border-line fixed left-0 top-0 z-40">
+        <div class="px-6 pt-6 pb-4">
+            <img src="{% static 'img/logochamba.png' %}" 
+                alt="Logo CHAMBA"
+                class="w-36 object-contain"
+            <p class="text-sm text-muted font-medium mt-1 mb-4"></p>
+        </div>
+
+        <nav class="px-4 space-y-2 mt-2">
+            <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blueSoft text-primary font-semibold border-r-4 border-primary">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/usuarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">group</span>
+                <span>Usuarios</span>
+            </a>
+
+            <a href="/reportes-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">report</span>
+                <span>Reportes</span>
+            </a>
+
+            <a href="/comentarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">forum</span>
+                <span>Comentarios</span>
+            </a>
+
+            <a href="/publicaciones-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">article</span>
+                <span>Publicaciones</span>
+            </a>
+
+            <a href="/historial-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">history</span>
+                <span>Historial</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="ml-64 flex-1 flex flex-col h-screen">
+
+        <!-- TOPBAR -->
+       <header class="h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm relative">
+            <div class="w-40"></div>
+
+            <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold">
+                PANEL DE CONTROL
+            </h1>
+
+            <div class="flex items-center gap-4">
+                <button class="p-2 rounded-full hover:bg-soft">
+                    <span class="material-symbols-outlined text-gray-600">notifications</span>
+                </button>
+
+                <div class="h-8 w-px bg-line"></div>
+
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-blueSoft flex items-center justify-center font-bold text-primary">
+                        A
+                    </div>
+                    <span class="text-sm font-bold">Administrador</span>
+                </div>
+
+                <a href="/logout/" class="flex items-center gap-2 bg-soft hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-semibold text-gray-700">
+                    <span class="material-symbols-outlined text-lg">logout</span>
+                    Cerrar sesión
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENIDO -->
+        <main class="flex-1 overflow-y-auto p-6 bg-soft">
+
+            <!-- TARJETAS -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-line flex items-center justify-between">
+                    <div>
+                        <p class="text-sm uppercase tracking-wider font-semibold text-gray-600">Usuarios registrados</p>
+                        <h3 class="text-4xl font-bold mt-2">{{ total_usuarios }}</h3>
+                    </div>
+                    <div class="w-16 h-16 rounded-xl bg-primary flex items-center justify-center text-white">
+                        <span class="material-symbols-outlined text-4xl">group</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-line flex items-center justify-between">
+                    <div>
+                        <p class="text-sm uppercase tracking-wider font-semibold text-gray-600">Usuarios bloqueados</p>
+                        <h3 class="text-4xl font-bold mt-2">{{ usuarios_bloqueados }}</h3>
+                    </div>
+                    <div class="w-16 h-16 rounded-xl bg-blueSoft flex items-center justify-center text-gray-700">
+                        <span class="material-symbols-outlined text-4xl">block</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-line flex items-center justify-between">
+                    <div>
+                        <p class="text-sm uppercase tracking-wider font-semibold text-gray-600">Reportes pendientes</p>
+                        <h3 class="text-4xl font-bold mt-2">{{ reportes_pendientes }}</h3>
+                    </div>
+                    <div class="w-16 h-16 rounded-xl bg-yellowSoft flex items-center justify-center text-yellow-900">
+                        <span class="material-symbols-outlined text-4xl">warning</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-line flex items-center justify-between">
+                    <div>
+                        <p class="text-sm uppercase tracking-wider font-semibold text-gray-600">Publicaciones eliminadas</p>
+                        <h3 class="text-4xl font-bold mt-2">{{ publicaciones_eliminadas }}</h3>
+                    </div>
+                    <div class="w-16 h-16 rounded-xl bg-redSoft flex items-center justify-center text-red-700">
+                        <span class="material-symbols-outlined text-4xl">delete</span>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- TABLA ÚLTIMOS REPORTES -->
+            <section class="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
+                <div class="px-6 py-5 border-b border-line flex items-center justify-between">
+                    <h2 class="text-2xl font-bold">Últimos reportes</h2>
+                    <a href="/reportes-admin/" class="text-primary text-sm font-semibold hover:underline">
+                        Ver todo
+                    </a>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-soft text-gray-600 text-sm uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4">Tipo</th>
+                                <th class="px-6 py-4">Usuario</th>
+                                <th class="px-6 py-4">Motivo</th>
+                                <th class="px-6 py-4">Fecha</th>
+                                <th class="px-6 py-4">Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-line text-sm">
+                            {% for reporte in ultimos_reportes %}
+                            <tr class="hover:bg-soft transition">
+                                <td class="px-6 py-4">
+                                    {% if reporte.tipo == "comentario" %}
+                                        <span class="material-symbols-outlined text-primary">forum</span>
+                                    {% elif reporte.tipo == "publicacion" %}
+                                        <span class="material-symbols-outlined text-primary">article</span>
+                                    {% else %}
+                                        <span class="material-symbols-outlined text-primary">account_circle</span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="px-6 py-4 font-bold">
+                                    {{ reporte.reportante.username }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ reporte.motivo|truncatechars:60 }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ reporte.fecha|date:"d/m/Y" }}
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    {% if reporte.estado == "pendiente" %}
+                                        <span class="px-3 py-1 rounded-full bg-yellowSoft text-yellow-900 text-xs font-bold">
+                                            Pendiente
+                                        </span>
+                                    {% elif reporte.estado == "revisado" %}
+                                        <span class="px-3 py-1 rounded-full bg-blueSoft text-primary text-xs font-bold">
+                                            Revisado
+                                        </span>
+                                    {% else %}
+                                        <span class="px-3 py-1 rounded-full bg-greenSoft text-green-800 text-xs font-bold">
+                                            Resuelto
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                    No existen reportes recientes.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
 </body>
-ADMIN
 </html>

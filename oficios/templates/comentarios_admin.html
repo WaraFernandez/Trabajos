@@ -1,0 +1,299 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA - Moderación de Comentarios</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal !important;
+            font-style: normal !important;
+            font-size: 24px !important;
+            line-height: 1 !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+            display: inline-block !important;
+            white-space: nowrap !important;
+            direction: ltr !important;
+            -webkit-font-feature-settings: 'liga' !important;
+            font-feature-settings: 'liga' !important;
+            -webkit-font-smoothing: antialiased !important;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1d5ca5",
+                        background: "#faf8fd",
+                        surface: "#ffffff",
+                        soft: "#f5f3f7",
+                        line: "#d7d7df",
+                        text: "#1b1b1f",
+                        muted: "#6b7280",
+                        blueSoft: "#d5e3ff",
+                        redSoft: "#ffdad6",
+                        greenSoft: "#dcfce7",
+                        yellowSoft: "#f2e65f"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-text h-screen overflow-hidden flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 h-screen bg-soft border-r border-line fixed left-0 top-0 z-40">
+        <div class="px-6 pt-6 pb-4">
+            <img src="{% static 'img/logochamba.png' %}" alt="Logo CHAMBA" class="w-36 h-auto object-contain block">
+            <p class="text-sm text-muted font-medium mt-1 mb-4">Panel de Control</p>
+        </div>
+
+        <nav class="px-4 space-y-2 mt-2">
+            <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/usuarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">group</span>
+                <span>Usuarios</span>
+            </a>
+
+            <a href="/reportes-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">report</span>
+                <span>Reportes</span>
+            </a>
+
+            <a href="/comentarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blueSoft text-primary font-semibold border-r-4 border-primary">
+                <span class="material-symbols-outlined">forum</span>
+                <span>Comentarios</span>
+            </a>
+
+            <a href="/publicaciones-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">article</span>
+                <span>Publicaciones</span>
+            </a>
+
+            <a href="/historial-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">history</span>
+                <span>Historial</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="ml-64 flex-1 flex flex-col h-screen">
+
+    <!-- TOPBAR -->
+       <header class="h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm relative">
+            <div class="w-40"></div>
+
+            <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold">
+                PANEL DE CONTROL
+            </h1>
+
+            <div class="flex items-center gap-4">
+                <button class="p-2 rounded-full hover:bg-soft">
+                    <span class="material-symbols-outlined text-gray-600">notifications</span>
+                </button>
+
+                <div class="h-8 w-px bg-line"></div>
+
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-blueSoft flex items-center justify-center font-bold text-primary">
+                        A
+                    </div>
+                    <span class="text-sm font-bold">Administrador</span>
+                </div>
+
+                <a href="/logout/" class="flex items-center gap-2 bg-soft hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-semibold text-gray-700">
+                    <span class="material-symbols-outlined text-lg">logout</span>
+                    Cerrar sesión
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENIDO -->
+        <main class="flex-1 overflow-y-auto p-6 bg-soft">
+
+            <section class="mb-6 flex items-center justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold mb-1">Moderación de Comentarios</h2>
+                    <p class="text-gray-600">Revisa y gestiona comentarios reportados por la comunidad.</p>
+                </div>
+
+                <div class="bg-white border border-line px-4 py-3 rounded-lg flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">warning</span>
+                    <span class="text-sm font-semibold text-gray-700">{{ comentarios_pendientes }} pendientes</span>
+                </div>
+            </section>
+
+            <!-- LISTA DE COMENTARIOS -->
+            <section class="space-y-4">
+                {% for comentario in comentarios %}
+                <article class="bg-white border border-line rounded-xl p-5 shadow-sm">
+                    <div class="flex gap-4">
+
+                        <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                            {{ comentario.usuario.username|slice:":2"|upper }}
+                        </div>
+
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start gap-4">
+                                <div>
+                                    <h3 class="font-bold text-lg">
+                                        {{ comentario.usuario.get_full_name|default:comentario.usuario.username }}
+                                    </h3>
+                                    <p class="text-xs text-gray-500">
+                                        {{ comentario.fecha|date:"d/m/Y - H:i" }}
+                                    </p>
+                                </div>
+
+                                {% if comentario.revisado %}
+                                    <span class="px-3 py-1 rounded-full bg-greenSoft text-green-800 text-xs font-bold">
+                                        Revisado
+                                    </span>
+                                {% else %}
+                                    <span class="px-3 py-1 rounded-full bg-yellowSoft text-yellow-900 text-xs font-bold">
+                                        Pendiente
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="mt-4 bg-soft border border-line rounded-lg p-4">
+                                <p class="italic text-gray-800">
+                                    “{{ comentario.texto }}”
+                                </p>
+
+                                <p class="mt-3 text-sm text-red-700 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">report</span>
+                                    Motivo del reporte: Revisión administrativa
+                                </p>
+                            </div>
+
+                            <div class="flex justify-end gap-3 mt-4">
+                                <a href="{% url 'admin_marcar_comentario_revisado' comentario.id %}"
+                                class="px-4 py-2 rounded-lg border border-primary text-primary font-semibold hover:bg-blueSoft flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">check_circle</span>
+                                    Marcar como revisado
+                                </a>
+
+                                <button type="button"
+                                        data-delete-url="{% url 'admin_eliminar_comentario' comentario.id %}"
+                                        onclick="openDeleteCommentModal(this.dataset.deleteUrl)"
+                                        class="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                    Eliminar comentario
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                {% empty %}
+                <div class="bg-white border border-line rounded-xl p-8 text-center text-gray-500">
+                    No existen comentarios registrados.
+                </div>
+                {% endfor %}
+            </section>
+
+            <div class="mt-8 flex justify-center">
+                <button class="bg-white border border-line text-gray-600 font-semibold px-6 py-3 rounded-full hover:bg-gray-100 flex items-center gap-2">
+                    Cargar más reportes
+                    <span class="material-symbols-outlined">expand_more</span>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL ELIMINAR COMENTARIO -->
+    <div id="deleteCommentModal" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-md rounded-xl shadow-xl border border-line overflow-hidden">
+            <div class="p-6">
+                <div class="w-14 h-14 rounded-full bg-redSoft text-red-700 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-3xl">delete</span>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-2">Eliminar comentario</h2>
+                <p class="text-gray-600">
+                    ¿Desea eliminar este comentario? Esta acción retirará el comentario de la plataforma.
+                </p>
+            </div>
+
+            <div class="p-5 bg-soft border-t border-line flex justify-end gap-3">
+                <button type="button"
+                        onclick="closeDeleteCommentModal()"
+                        class="px-5 py-2 rounded-lg border border-line bg-white font-semibold">
+                    Cancelar
+                </button>
+
+                <a id="confirmDeleteCommentBtn"
+                href="#"
+                class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold">
+                    Confirmar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MARCAR COMO REVISADO -->
+    <div id="reviewedModal" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-md rounded-xl shadow-xl border border-line overflow-hidden">
+            <div class="p-6">
+                <div class="w-14 h-14 rounded-full bg-blueSoft text-primary flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-3xl">check_circle</span>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-2">Marcar como revisado</h2>
+                <p class="text-gray-600">
+                    ¿Desea marcar este comentario como revisado?
+                </p>
+            </div>
+
+            <div class="p-5 bg-soft border-t border-line flex justify-end gap-3">
+                <button onclick="closeReviewedModal()" class="px-5 py-2 rounded-lg border border-line bg-white font-semibold">
+                    Cancelar
+                </button>
+                <button onclick="closeReviewedModal()" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteCommentModal(deleteUrl) {
+            document.getElementById('confirmDeleteCommentBtn').setAttribute('href', deleteUrl);
+            document.getElementById('deleteCommentModal').classList.remove('hidden');
+        }
+
+        function closeDeleteCommentModal() {
+            document.getElementById('deleteCommentModal').classList.add('hidden');
+            document.getElementById('confirmDeleteCommentBtn').setAttribute('href', '#');
+        }
+
+        function openReviewedModal() {
+            document.getElementById('reviewedModal').classList.remove('hidden');
+        }
+
+        function closeReviewedModal() {
+            document.getElementById('reviewedModal').classList.add('hidden');
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,310 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA - Moderación de Publicaciones</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal !important;
+            font-style: normal !important;
+            font-size: 24px !important;
+            line-height: 1 !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+            display: inline-block !important;
+            white-space: nowrap !important;
+            direction: ltr !important;
+            -webkit-font-feature-settings: 'liga' !important;
+            font-feature-settings: 'liga' !important;
+            -webkit-font-smoothing: antialiased !important;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1d5ca5",
+                        background: "#faf8fd",
+                        surface: "#ffffff",
+                        soft: "#f5f3f7",
+                        line: "#d7d7df",
+                        text: "#1b1b1f",
+                        muted: "#6b7280",
+                        blueSoft: "#d5e3ff",
+                        redSoft: "#ffdad6",
+                        greenSoft: "#dcfce7",
+                        yellowSoft: "#f2e65f"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-text h-screen overflow-hidden flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 h-screen bg-soft border-r border-line fixed left-0 top-0 z-40">
+        <div class="px-6 pt-6 pb-4">
+            <img src="{% static 'img/logochamba.png' %}" alt="Logo CHAMBA" class="w-36 h-auto object-contain block">
+            <p class="text-sm text-muted font-medium mt-1 mb-4">Panel de Control</p>
+        </div>
+
+        <nav class="px-4 space-y-2 mt-2">
+            <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/usuarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">group</span>
+                <span>Usuarios</span>
+            </a>
+
+            <a href="/reportes-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">report</span>
+                <span>Reportes</span>
+            </a>
+
+            <a href="/comentarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">forum</span>
+                <span>Comentarios</span>
+            </a>
+
+            <a href="/publicaciones-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blueSoft text-primary font-semibold border-r-4 border-primary">
+                <span class="material-symbols-outlined">article</span>
+                <span>Publicaciones</span>
+            </a>
+
+            <a href="/historial-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">history</span>
+                <span>Historial</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="ml-64 flex-1 flex flex-col h-screen">
+
+        <!-- TOPBAR -->
+       <header class="h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm relative">
+            <div class="w-40"></div>
+
+            <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold">
+                PANEL DE CONTROL
+            </h1>
+
+            <div class="flex items-center gap-4">
+                <button class="p-2 rounded-full hover:bg-soft">
+                    <span class="material-symbols-outlined text-gray-600">notifications</span>
+                </button>
+
+                <div class="h-8 w-px bg-line"></div>
+
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-blueSoft flex items-center justify-center font-bold text-primary">
+                        A
+                    </div>
+                    <span class="text-sm font-bold">Administrador</span>
+                </div>
+
+                <a href="/logout/" class="flex items-center gap-2 bg-soft hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-semibold text-gray-700">
+                    <span class="material-symbols-outlined text-lg">logout</span>
+                    Cerrar sesión
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENIDO -->
+        <main class="flex-1 overflow-y-auto p-6 bg-soft">
+
+            <section class="mb-6">
+                <h2 class="text-3xl font-bold mb-1">Moderación de Publicaciones</h2>
+                <p class="text-gray-600">Supervisa publicaciones reportadas y elimina contenido inapropiado.</p>
+            </section>
+
+            <!-- GRID PUBLICACIONES -->
+            <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {% for publicacion in publicaciones %}
+                <article class="bg-white rounded-xl shadow-sm border border-line overflow-hidden flex flex-col">
+
+                    <div class="h-48 bg-blueSoft flex items-center justify-center relative">
+                        {% if publicacion.imagen %}
+                            <img src="{{ publicacion.imagen.url }}" alt="Imagen publicación" class="w-full h-full object-cover">
+                        {% else %}
+                            <span class="material-symbols-outlined text-primary text-6xl">article</span>
+                        {% endif %}
+
+                        <span class="absolute top-4 right-4 bg-redSoft text-red-700 px-3 py-1 rounded-lg text-xs font-bold">
+                            Registrada
+                        </span>
+                    </div>
+
+                    <div class="p-5 flex-1 flex flex-col">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                                {{ publicacion.usuario.username|slice:":2"|upper }}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">
+                                    {{ publicacion.usuario.get_full_name|default:publicacion.usuario.username }}
+                                </h4>
+                                <p class="text-xs text-gray-500">
+                                    {{ publicacion.fecha_creacion|date:"d/m/Y" }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <h3 class="font-bold text-lg mb-3">
+                            Publicación de usuario
+                        </h3>
+
+                        <div class="bg-soft border border-line rounded-lg p-3 mb-4">
+                            <p class="text-xs uppercase text-yellow-900 font-bold mb-1">
+                                Contenido
+                            </p>
+                            <p class="text-sm text-gray-600">
+                                {{ publicacion.contenido|truncatechars:150 }}
+                            </p>
+                        </div>
+
+                        <div class="mt-auto flex justify-end gap-2">
+                            <button type="button"
+                                    data-usuario="{{ publicacion.usuario.username }}"
+                                    data-fecha="{{ publicacion.fecha_creacion|date:'d/m/Y' }}"
+                                    data-contenido="{{ publicacion.contenido|escapejs }}"
+                                    onclick="openPostPanelFromButton(this)"
+                                    class="px-4 py-2 bg-soft text-gray-700 rounded-lg font-semibold hover:bg-gray-200">
+                                Ver publicación
+                            </button>
+
+                            <button type="button"
+                                    data-delete-url="{% url 'admin_eliminar_publicacion' publicacion.id %}"
+                                    onclick="openDeletePostModal(this.dataset.deleteUrl)"
+                                    class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                {% empty %}
+                <div class="bg-white border border-line rounded-xl p-8 text-center text-gray-500 col-span-full">
+                    No existen publicaciones registradas.
+                </div>
+                {% endfor %}
+
+            </section>
+        </main>
+    </div>
+
+    <!-- PANEL LATERAL VER PUBLICACIÓN -->
+    <aside id="postPanel" class="fixed right-0 top-16 h-[calc(100vh-64px)] w-[430px] bg-white border-l border-line shadow-xl z-50 overflow-y-auto transform translate-x-full transition-transform duration-300">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Detalle de Publicación</h2>
+                <button onclick="closePostPanel()" class="w-10 h-10 rounded-full hover:bg-soft flex items-center justify-center">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="h-40 bg-blueSoft rounded-xl flex items-center justify-center mb-5">
+                <span class="material-symbols-outlined text-primary text-6xl">construction</span>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Título</p>
+                    <p class="font-bold">Oferta Laboral: Albañilería Avanzada</p>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Usuario creador</p>
+                    <p class="font-bold">Carlos Méndez</p>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Motivo del reporte</p>
+                    <div class="mt-2 p-4 rounded-lg bg-soft border border-line text-gray-700">
+                        Información engañosa sobre salario y ubicación del proyecto.
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Estado</p>
+                    <span class="inline-block mt-2 px-3 py-1 rounded-full bg-redSoft text-red-700 text-xs font-bold">
+                        Reportado
+                    </span>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Fecha</p>
+                    <p class="font-semibold mt-1">24/10/2026</p>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button onclick="openDeletePostModal()" class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700">
+                    Eliminar publicación
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MODAL ELIMINAR PUBLICACIÓN -->
+    <div id="deletePostModal" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-md rounded-xl shadow-xl border border-line overflow-hidden">
+            <div class="p-6">
+                <div class="w-14 h-14 rounded-full bg-redSoft text-red-700 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-3xl">warning</span>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-2">Confirmar acción</h2>
+                <p class="text-gray-600">
+                    La publicación será eliminada permanentemente. Esta acción no se puede deshacer.
+                </p>
+            </div>
+
+            <div class="p-5 bg-soft border-t border-line flex justify-end gap-3">
+                <button onclick="closeDeletePostModal()" class="px-5 py-2 rounded-lg border border-line bg-white font-semibold">
+                    Cancelar
+                </button>
+                <button onclick="closeDeletePostModal()" class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPostPanel() {
+            document.getElementById('postPanel').classList.remove('translate-x-full');
+        }
+
+        function closePostPanel() {
+            document.getElementById('postPanel').classList.add('translate-x-full');
+        }
+
+        function openDeletePostModal() {
+            document.getElementById('deletePostModal').classList.remove('hidden');
+        }
+
+        function closeDeletePostModal() {
+            document.getElementById('deletePostModal').classList.add('hidden');
+        }
+    </script>
+
+</body>
+</html>
