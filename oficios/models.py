@@ -67,6 +67,7 @@ class Publicacion(models.Model):
         User, on_delete=models.CASCADE, related_name="publicaciones"
     )
     contenido = models.TextField()
+    revisada = models.BooleanField(default=False)
     tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, default="estado")
     imagen = models.ImageField(upload_to="publicaciones/", blank=True, null=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)

@@ -120,6 +120,8 @@ urlpatterns = [
 
     path("bloquear-usuario/<int:user_id>/", views.bloquear_usuario, name="bloquear_usuario"),
     path("reactivar-usuario/<int:user_id>/", views.reactivar_usuario, name="reactivar_usuario"),
+    path("admin-advertir-usuario/<int:user_id>/", views.admin_advertir_usuario, name="admin_advertir_usuario"),
+    path("admin-notificar-usuario/<int:user_id>/", views.admin_notificar_usuario, name="admin_notificar_usuario"),
 
     path("admin-eliminar-comentario/<int:comentario_id>/", views.admin_eliminar_comentario, name="admin_eliminar_comentario"),
     path("admin-revisar-comentario/<int:comentario_id>/", views.admin_marcar_comentario_revisado, name="admin_marcar_comentario_revisado"),
@@ -128,4 +130,5 @@ urlpatterns = [
 
     path("admin-reporte-revisado/<int:reporte_id>/", views.admin_marcar_reporte_revisado, name="admin_marcar_reporte_revisado"),
     path("admin-reporte-resuelto/<int:reporte_id>/", views.admin_resolver_reporte, name="admin_resolver_reporte"),
+    path("publicacion-revisar/<int:publicacion_id>/",views.marcar_publicacion_revisada,name="marcar_publicacion_revisada"),
 ]

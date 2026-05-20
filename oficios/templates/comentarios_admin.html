@@ -53,16 +53,12 @@
     </script>
 </head>
 
-<body class="bg-background text-text h-screen overflow-hidden flex">
+<body class="bg-background text-text min-h-screen overflow-x-hidden">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 h-screen bg-soft border-r border-line fixed left-0 top-0 z-40">
-        <div class="px-6 pt-6 pb-4">
-            <img src="{% static 'img/logochamba.png' %}" alt="Logo CHAMBA" class="w-36 h-auto object-contain block">
-            <p class="text-sm text-muted font-medium mt-1 mb-4">Panel de Control</p>
-        </div>
+    <aside class="fixed left-0 top-16 w-64 h-[calc(100vh-64px)] bg-soft border-r border-line z-40 overflow-y-auto">
 
-        <nav class="px-4 space-y-2 mt-2">
+        <nav class="px-4 py-4 space-y-2">
             <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dashboard</span>
@@ -96,18 +92,22 @@
     </aside>
 
     <!-- CONTENEDOR PRINCIPAL -->
-    <div class="ml-64 flex-1 flex flex-col h-screen">
+    <div class="ml-64 flex-1 flex flex-col min-h-screen pt-16">
 
     <!-- TOPBAR -->
-       <header class="h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm relative">
-            <div class="w-40"></div>
+        <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm z-50">
+            <div class="flex items-center gap-5">
+                <img src="{% static 'img/logochamba.png' %}"
+                    alt="Logo CHAMBA"
+                    class="w-32 h-auto object-contain">
 
-            <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold">
-                PANEL DE CONTROL
-            </h1>
+                <h1 class="text-2xl font-bold whitespace-nowrap">
+                    PANEL DE CONTROL
+                </h1>
+            </div>
 
             <div class="flex items-center gap-4">
-                <button class="p-2 rounded-full hover:bg-soft">
+                <button onclick="alert('Módulo de notificaciones en desarrollo')" class="p-2 rounded-full hover:bg-soft">
                     <span class="material-symbols-outlined text-gray-600">notifications</span>
                 </button>
 
@@ -128,7 +128,7 @@
         </header>
 
         <!-- CONTENIDO -->
-        <main class="flex-1 overflow-y-auto p-6 bg-soft">
+        <main class="flex-1 p-6 bg-soft overflow-x-hidden">
 
             <section class="mb-6 flex items-center justify-between">
                 <div>
@@ -142,10 +142,28 @@
                 </div>
             </section>
 
+            <section class="mb-5 flex gap-2">
+                <button onclick="filtrarComentarios('todos')" id="btn-com-todos"
+                        class="filtro-comentario bg-primary text-white px-5 py-2 rounded-lg font-semibold">
+                    Todos
+                </button>
+
+                <button onclick="filtrarComentarios('pendiente')" id="btn-com-pendiente"
+                        class="filtro-comentario bg-white text-gray-700 px-5 py-2 rounded-lg font-semibold border border-line">
+                    Pendientes
+                </button>
+
+                <button onclick="filtrarComentarios('revisado')" id="btn-com-revisado"
+                        class="filtro-comentario bg-white text-gray-700 px-5 py-2 rounded-lg font-semibold border border-line">
+                    Revisados
+                </button>
+            </section>
+
             <!-- LISTA DE COMENTARIOS -->
             <section class="space-y-4">
                 {% for comentario in comentarios %}
-                <article class="bg-white border border-line rounded-xl p-5 shadow-sm">
+                <article class="comentario-card bg-white border border-line rounded-xl p-5 shadow-sm"
+                        data-estado="{% if comentario.revisado %}revisado{% else %}pendiente{% endif %}">
                     <div class="flex gap-4">
 
                         <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
@@ -186,11 +204,25 @@
                             </div>
 
                             <div class="flex justify-end gap-3 mt-4">
+                                <button type="button"
+                                        data-usuario="{{ comentario.usuario.username }}"
+                                        data-texto="{{ comentario.texto|escapejs }}"
+                                        data-fecha="{{ comentario.fecha|date:'d/m/Y - H:i' }}"
+                                        onclick="openCommentDetailFromButton(this)"
+                                        class="px-4 py-2 rounded-lg bg-soft text-gray-700 font-semibold hover:bg-gray-200">
+                                    Ver detalle
+                                </button>
+                                {% if comentario.revisado %}
+                                <button disabled
+                                        class="px-6 py-3 rounded-xl border-2 border-gray-300 bg-gray-100 text-gray-400 font-bold cursor-not-allowed">
+                                    Ya revisado
+                                </button>
+                                {% else %}
                                 <a href="{% url 'admin_marcar_comentario_revisado' comentario.id %}"
-                                class="px-4 py-2 rounded-lg border border-primary text-primary font-semibold hover:bg-blueSoft flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-lg">check_circle</span>
+                                class="px-6 py-3 rounded-xl border-2 border-primary text-primary font-bold hover:bg-blueSoft transition">
                                     Marcar como revisado
                                 </a>
+                                {% endif %}
 
                                 <button type="button"
                                         data-delete-url="{% url 'admin_eliminar_comentario' comentario.id %}"
@@ -212,8 +244,11 @@
             </section>
 
             <div class="mt-8 flex justify-center">
-                <button class="bg-white border border-line text-gray-600 font-semibold px-6 py-3 rounded-full hover:bg-gray-100 flex items-center gap-2">
-                    Cargar más reportes
+                <button id="btnCargarMas"
+                        type="button"
+                        onclick="cargarMasComentarios()"
+                        class="bg-white border border-line text-gray-600 font-semibold px-6 py-3 rounded-full hover:bg-gray-100 flex items-center gap-2">
+                    Cargar más comentarios
                     <span class="material-symbols-outlined">expand_more</span>
                 </button>
             </div>
@@ -275,7 +310,98 @@
         </div>
     </div>
 
+    <div id="commentDetailModal" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-xl border border-line overflow-hidden">
+            <div class="p-6 border-b border-line flex justify-between items-center">
+                <h2 class="text-2xl font-bold">Detalle del comentario</h2>
+                <button onclick="closeCommentDetail()" class="w-10 h-10 rounded-full hover:bg-soft">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-gray-500">Usuario</p>
+                <p id="detailCommentUser" class="font-bold"></p>
+
+                <p class="text-sm text-gray-500">Fecha</p>
+                <p id="detailCommentDate" class="font-semibold"></p>
+
+                <p class="text-sm text-gray-500">Comentario</p>
+                <div id="detailCommentText" class="p-4 rounded-lg bg-soft border border-line text-gray-700"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let cantidadVisible = 3;
+        let filtroComentarioActual = "todos";
+
+        function aplicarVisibilidadComentarios() {
+            const cards = Array.from(document.querySelectorAll('.comentario-card'));
+            const visiblesPorFiltro = cards.filter(card => {
+                const estado = card.dataset.estado;
+                return filtroComentarioActual === "todos" || estado === filtroComentarioActual;
+            });
+
+            cards.forEach(card => {
+                card.style.display = "none";
+            });
+
+            visiblesPorFiltro.slice(0, cantidadVisible).forEach(card => {
+                card.style.display = "";
+            });
+
+            const btn = document.getElementById('btnCargarMas');
+
+            if (btn) {
+                btn.style.display = visiblesPorFiltro.length > cantidadVisible ? "flex" : "none";
+            }
+        }
+
+        function cargarMasComentarios() {
+            cantidadVisible += 3;
+            aplicarVisibilidadComentarios();
+        }
+
+        function filtrarComentarios(estado) {
+            filtroComentarioActual = estado;
+            cantidadVisible = 3;
+
+            const botones = document.querySelectorAll('.filtro-comentario');
+
+            botones.forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-700', 'border', 'border-line');
+            });
+
+            const activo = document.getElementById('btn-com-' + estado);
+            if (activo) {
+                activo.classList.add('bg-primary', 'text-white');
+                activo.classList.remove('bg-white', 'text-gray-700', 'border', 'border-line');
+            }
+
+            aplicarVisibilidadComentarios();
+        }
+
+        function openCommentDetailFromButton(button) {
+            openCommentDetail(
+                button.dataset.usuario,
+                button.dataset.texto,
+                button.dataset.fecha
+            );
+        }
+
+        function openCommentDetail(usuario, texto, fecha) {
+            document.getElementById('detailCommentUser').innerText = usuario || 'Usuario';
+            document.getElementById('detailCommentText').innerText = texto || 'Sin comentario';
+            document.getElementById('detailCommentDate').innerText = fecha || '--/--/----';
+            document.getElementById('commentDetailModal').classList.remove('hidden');
+        }
+
+        function closeCommentDetail() {
+            document.getElementById('commentDetailModal').classList.add('hidden');
+        }
+
         function openDeleteCommentModal(deleteUrl) {
             document.getElementById('confirmDeleteCommentBtn').setAttribute('href', deleteUrl);
             document.getElementById('deleteCommentModal').classList.remove('hidden');
@@ -286,13 +412,7 @@
             document.getElementById('confirmDeleteCommentBtn').setAttribute('href', '#');
         }
 
-        function openReviewedModal() {
-            document.getElementById('reviewedModal').classList.remove('hidden');
-        }
-
-        function closeReviewedModal() {
-            document.getElementById('reviewedModal').classList.add('hidden');
-        }
+        document.addEventListener('DOMContentLoaded', aplicarVisibilidadComentarios);
     </script>
 
 </body>

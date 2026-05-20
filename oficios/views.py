@@ -1186,7 +1186,7 @@ def comentarios_admin(request):
     comentarios = Comentario.objects.select_related(
         'usuario',
         'publicacion'
-    ).order_by('-fecha')
+    ).order_by('revisado', '-fecha')
 
     context = {
         'comentarios': comentarios,
@@ -1210,7 +1210,7 @@ def publicaciones_admin(request):
         'publicaciones': publicaciones,
         'total_publicaciones': publicaciones.count(),
     }
-
+    
     return render(request, "publicaciones_admin.html", context)
 
 
@@ -1315,15 +1315,19 @@ def admin_marcar_comentario_revisado(request, comentario_id):
 
 @login_required
 def admin_eliminar_publicacion(request, publicacion_id):
-    if not request.user.is_superuser and not request.user.is_staff:
+
+    if not request.user.is_staff and not request.user.is_superuser:
         return redirect('dashboard')
 
     publicacion = get_object_or_404(Publicacion, id=publicacion_id)
 
+    nombre_usuario = publicacion.usuario.username
+    contenido = publicacion.contenido[:40]
+
     HistorialAdmin.objects.create(
         administrador=request.user,
         accion="Publicación eliminada",
-        elemento_afectado=f"Publicación de {publicacion.usuario.username}",
+        elemento_afectado=f"{nombre_usuario} - {contenido}",
         resultado="Eliminado"
     )
 
@@ -1367,3 +1371,57 @@ def admin_resolver_reporte(request, reporte_id):
     )
 
     return redirect('reportes_admin')
+
+@login_required
+def admin_advertir_usuario(request, user_id):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    usuario = get_object_or_404(User, id=user_id)
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Usuario advertido",
+        elemento_afectado=usuario.username,
+        resultado="Advertencia registrada"
+    )
+
+    messages.success(request, "Advertencia registrada correctamente.")
+    return redirect('usuarios_admin')
+
+
+@login_required
+def admin_notificar_usuario(request, user_id):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    usuario = get_object_or_404(User, id=user_id)
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Usuario notificado",
+        elemento_afectado=usuario.username,
+        resultado="Notificación administrativa registrada"
+    )
+
+    messages.success(request, "Notificación administrativa registrada correctamente.")
+    return redirect('usuarios_admin')
+
+@login_required
+def marcar_publicacion_revisada(request, publicacion_id):
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('dashboard')
+
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+
+    publicacion.revisada = True
+    publicacion.save()
+
+    HistorialAdmin.objects.create(
+        administrador=request.user,
+        accion="Publicación revisada",
+        elemento_afectado=f"Publicación #{publicacion.id}",
+        resultado="Revisada"
+    )
+
+    return redirect('publicaciones_admin')

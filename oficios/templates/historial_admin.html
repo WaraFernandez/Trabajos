@@ -53,16 +53,11 @@
     </script>
 </head>
 
-<body class="bg-background text-text h-screen overflow-hidden flex">
+<body class="bg-background text-text min-h-screen overflow-x-hidden">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 h-screen bg-soft border-r border-line fixed left-0 top-0 z-40">
-        <div class="px-6 pt-6 pb-4">
-            <img src="{% static 'img/logochamba.png' %}" alt="Logo CHAMBA" class="w-36 h-auto object-contain block">
-            <p class="text-sm text-muted font-medium mt-1 mb-4">Panel de Control</p>
-        </div>
-
-        <nav class="px-4 space-y-2 mt-2">
+    <aside class="fixed left-0 top-16 w-64 h-[calc(100vh-64px)] bg-soft border-r border-line z-40 overflow-y-auto">
+        <nav class="px-4 py-4 space-y-2">
             <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dashboard</span>
@@ -96,18 +91,22 @@
     </aside>
 
     <!-- CONTENEDOR PRINCIPAL -->
-    <div class="ml-64 flex-1 flex flex-col h-screen">
+    <div class="ml-64 flex-1 flex flex-col min-h-screen pt-16">
 
         <!-- TOPBAR -->
-       <header class="h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm relative">
-            <div class="w-40"></div>
+      <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm z-50">
+            <div class="flex items-center gap-5">
+                <img src="{% static 'img/logochamba.png' %}"
+                    alt="Logo CHAMBA"
+                    class="w-32 h-auto object-contain">
 
-            <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold">
-                PANEL DE CONTROL
-            </h1>
+                <h1 class="text-2xl font-bold whitespace-nowrap">
+                    PANEL DE CONTROL
+                </h1>
+            </div>
 
             <div class="flex items-center gap-4">
-                <button class="p-2 rounded-full hover:bg-soft">
+                <button onclick="alert('Módulo de notificaciones en desarrollo')" class="p-2 rounded-full hover:bg-soft">
                     <span class="material-symbols-outlined text-gray-600">notifications</span>
                 </button>
 
@@ -128,7 +127,7 @@
         </header>
 
         <!-- CONTENIDO -->
-        <main class="flex-1 overflow-y-auto p-6 bg-soft">
+        <main class="flex-1 p-6 bg-soft overflow-x-hidden">
 
             <section class="mb-6">
                 <h2 class="text-3xl font-bold mb-1">Historial Administrativo</h2>
@@ -145,19 +144,23 @@
                             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
                                 calendar_month
                             </span>
-                            <input type="text"
-                                   placeholder="Rango de fecha"
-                                   class="w-full pl-12 pr-4 py-3 bg-soft border border-line rounded-lg text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+                            <input id="filtroFecha"
+                                type="date"
+                                onchange="filtrarHistorial()"
+                                class="w-full pl-12 pr-4 py-3 bg-soft border border-line rounded-lg text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary">
                         </div>
                     </div>
 
                     <div>
                         <label class="text-sm font-semibold text-gray-700">Tipo de acción</label>
-                        <select id="filtroAccion" onchange="filtrarHistorial()" class="mt-2 w-full px-4 py-3 bg-soft border border-line rounded-lg text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+                        <select id="filtroAccion"
+                                onchange="filtrarHistorial()"
+                                class="mt-2 w-full px-4 py-3 bg-soft border border-line rounded-lg text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary">
                             <option value="todos">Todas las acciones</option>
-                            <option value="usuario">Usuario bloqueado</option>
-                            <option value="comentario">Comentario eliminado</option>
-                            <option value="publicacion">Publicación eliminada</option>
+                            <option value="usuario">Usuario</option>
+                            <option value="comentario">Comentario</option>
+                            <option value="publicación">Publicación</option>
+                            <option value="reporte">Reporte</option>
                         </select>
                     </div>
 
@@ -181,7 +184,8 @@
 
                         <tbody class="divide-y divide-line text-sm">
                             {% for item in historial %}
-                            <tr class="fila-historial hover:bg-soft transition">
+                            <tr class="fila-historial hover:bg-soft transition"
+                                data-fecha="{{ item.fecha|date:'Y-m-d' }}">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold">
@@ -233,17 +237,18 @@
 
     <script>
         function filtrarHistorial() {
-            const texto = document.getElementById('filtroAccion').value.toLowerCase();
+            const filtroAccion = document.getElementById('filtroAccion').value.toLowerCase();
+            const filtroFecha = document.getElementById('filtroFecha').value;
             const filas = document.querySelectorAll('.fila-historial');
 
             filas.forEach(fila => {
-                const contenido = fila.innerText.toLowerCase();
+                const accion = fila.children[1].innerText.toLowerCase();
+                const fecha = fila.dataset.fecha;
 
-                if (texto === "todos") {
-                    fila.style.display = "";
-                } else {
-                    fila.style.display = contenido.includes(texto) ? "" : "none";
-                }
+                const coincideAccion = filtroAccion === "todos" || accion.includes(filtroAccion);
+                const coincideFecha = filtroFecha === "" || fecha === filtroFecha;
+
+                fila.style.display = (coincideAccion && coincideFecha) ? "" : "none";
             });
         }
     </script>

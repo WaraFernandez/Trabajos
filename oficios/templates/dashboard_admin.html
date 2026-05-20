@@ -56,18 +56,11 @@
     </script>
 </head>
 
-<body class="bg-background text-text h-screen overflow-hidden flex">
+<body class="bg-background text-text min-h-screen overflow-x-hidden">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 h-screen bg-soft border-r border-line fixed left-0 top-0 z-40">
-        <div class="px-6 pt-6 pb-4">
-            <img src="{% static 'img/logochamba.png' %}" 
-                alt="Logo CHAMBA"
-                class="w-36 object-contain"
-            <p class="text-sm text-muted font-medium mt-1 mb-4"></p>
-        </div>
-
-        <nav class="px-4 space-y-2 mt-2">
+    <aside class="fixed left-0 top-16 w-64 h-[calc(100vh-64px)] bg-soft border-r border-line z-40 overflow-y-auto">
+        <nav class="px-4 py-4 space-y-2">
             <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blueSoft text-primary font-semibold border-r-4 border-primary">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dashboard</span>
@@ -101,18 +94,22 @@
     </aside>
 
     <!-- CONTENEDOR PRINCIPAL -->
-    <div class="ml-64 flex-1 flex flex-col h-screen">
+    <div class="ml-64 flex-1 flex flex-col min-h-screen pt-16">
 
         <!-- TOPBAR -->
-       <header class="h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm relative">
-            <div class="w-40"></div>
+       <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm z-50">
+            <div class="flex items-center gap-5">
+                <img src="{% static 'img/logochamba.png' %}"
+                    alt="Logo CHAMBA"
+                    class="w-32 h-auto object-contain">
 
-            <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold">
-                PANEL DE CONTROL
-            </h1>
+                <h1 class="text-2xl font-bold whitespace-nowrap">
+                    PANEL DE CONTROL
+                </h1>
+            </div>
 
             <div class="flex items-center gap-4">
-                <button class="p-2 rounded-full hover:bg-soft">
+                <button onclick="alert('Módulo de notificaciones en desarrollo')" class="p-2 rounded-full hover:bg-soft">
                     <span class="material-symbols-outlined text-gray-600">notifications</span>
                 </button>
 
@@ -133,7 +130,7 @@
         </header>
 
         <!-- CONTENIDO -->
-        <main class="flex-1 overflow-y-auto p-6 bg-soft">
+        <main class="flex-1 p-6 bg-soft overflow-x-hidden">
 
             <!-- TARJETAS -->
             <section class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
@@ -183,7 +180,7 @@
             <!-- TABLA ÚLTIMOS REPORTES -->
             <section class="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
                 <div class="px-6 py-5 border-b border-line flex items-center justify-between">
-                    <h2 class="text-2xl font-bold">Últimos reportes</h2>
+                    <h2 class="text-2xl font-bold">Últimos reportes recibidos</h2>
                     <a href="/reportes-admin/" class="text-primary text-sm font-semibold hover:underline">
                         Ver todo
                     </a>
@@ -194,7 +191,7 @@
                         <thead class="bg-soft text-gray-600 text-sm uppercase tracking-wider">
                             <tr>
                                 <th class="px-6 py-4">Tipo</th>
-                                <th class="px-6 py-4">Usuario</th>
+                                <th class="px-6 py-4">Usuario reportante</th>
                                 <th class="px-6 py-4">Motivo</th>
                                 <th class="px-6 py-4">Fecha</th>
                                 <th class="px-6 py-4">Estado</th>

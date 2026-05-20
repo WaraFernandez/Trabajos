@@ -12,18 +12,11 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; }
-
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
-            font-weight: normal !important;
-            font-style: normal !important;
             font-size: 24px !important;
             line-height: 1 !important;
-            letter-spacing: normal !important;
-            text-transform: none !important;
             display: inline-block !important;
-            white-space: nowrap !important;
-            direction: ltr !important;
             -webkit-font-feature-settings: 'liga' !important;
             font-feature-settings: 'liga' !important;
             -webkit-font-smoothing: antialiased !important;
@@ -37,15 +30,11 @@
                     colors: {
                         primary: "#1d5ca5",
                         background: "#faf8fd",
-                        surface: "#ffffff",
                         soft: "#f5f3f7",
                         line: "#d7d7df",
                         text: "#1b1b1f",
-                        muted: "#6b7280",
                         blueSoft: "#d5e3ff",
-                        redSoft: "#ffdad6",
-                        greenSoft: "#dcfce7",
-                        yellowSoft: "#f2e65f"
+                        redSoft: "#ffdad6"
                     }
                 }
             }
@@ -53,16 +42,11 @@
     </script>
 </head>
 
-<body class="bg-background text-text h-screen overflow-hidden flex">
+<body class="bg-background text-text min-h-screen overflow-x-hidden">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 h-screen bg-soft border-r border-line fixed left-0 top-0 z-40">
-        <div class="px-6 pt-6 pb-4">
-            <img src="{% static 'img/logochamba.png' %}" alt="Logo CHAMBA" class="w-36 h-auto object-contain block">
-            <p class="text-sm text-muted font-medium mt-1 mb-4">Panel de Control</p>
-        </div>
-
-        <nav class="px-4 space-y-2 mt-2">
+    <aside class="fixed left-0 top-16 w-64 h-[calc(100vh-64px)] bg-soft border-r border-line z-40 overflow-y-auto">
+        <nav class="px-4 py-4 space-y-2">
             <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dashboard</span>
@@ -95,19 +79,21 @@
         </nav>
     </aside>
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <div class="ml-64 flex-1 flex flex-col h-screen">
-
+    <div class="ml-64 flex-1 flex flex-col min-h-screen pt-16">
         <!-- TOPBAR -->
-       <header class="h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm relative">
-            <div class="w-40"></div>
+        <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm z-50">
+            <div class="flex items-center gap-5">
+                <img src="{% static 'img/logochamba.png' %}"
+                    alt="Logo CHAMBA"
+                    class="w-32 h-auto object-contain">
 
-            <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold">
-                PANEL DE CONTROL
-            </h1>
+                <h1 class="text-2xl font-bold whitespace-nowrap">
+                    PANEL DE CONTROL
+                </h1>
+            </div>
 
             <div class="flex items-center gap-4">
-                <button class="p-2 rounded-full hover:bg-soft">
+                <button onclick="alert('Módulo de notificaciones en desarrollo')" class="p-2 rounded-full hover:bg-soft">
                     <span class="material-symbols-outlined text-gray-600">notifications</span>
                 </button>
 
@@ -127,15 +113,13 @@
             </div>
         </header>
 
-        <!-- CONTENIDO -->
-        <main class="flex-1 overflow-y-auto p-6 bg-soft">
+        <main class="flex-1 p-6 bg-soft overflow-x-hidden">
 
             <section class="mb-6">
                 <h2 class="text-3xl font-bold mb-1">Moderación de Publicaciones</h2>
-                <p class="text-gray-600">Supervisa publicaciones reportadas y elimina contenido inapropiado.</p>
+                <p class="text-gray-600">Supervisa publicaciones registradas y elimina contenido inapropiado.</p>
             </section>
 
-            <!-- GRID PUBLICACIONES -->
             <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {% for publicacion in publicaciones %}
                 <article class="bg-white rounded-xl shadow-sm border border-line overflow-hidden flex flex-col">
@@ -147,9 +131,15 @@
                             <span class="material-symbols-outlined text-primary text-6xl">article</span>
                         {% endif %}
 
-                        <span class="absolute top-4 right-4 bg-redSoft text-red-700 px-3 py-1 rounded-lg text-xs font-bold">
-                            Registrada
+                        {% if publicacion.revisada %}
+                        <span class="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-bold">
+                            Revisada
                         </span>
+                        {% else %}
+                        <span class="absolute top-4 right-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-lg text-xs font-bold">
+                            Pendiente
+                        </span>
+                        {% endif %}
                     </div>
 
                     <div class="p-5 flex-1 flex flex-col">
@@ -180,20 +170,22 @@
                             </p>
                         </div>
 
-                        <div class="mt-auto flex justify-end gap-2">
-                            <button type="button"
-                                    data-usuario="{{ publicacion.usuario.username }}"
-                                    data-fecha="{{ publicacion.fecha_creacion|date:'d/m/Y' }}"
-                                    data-contenido="{{ publicacion.contenido|escapejs }}"
-                                    onclick="openPostPanelFromButton(this)"
-                                    class="px-4 py-2 bg-soft text-gray-700 rounded-lg font-semibold hover:bg-gray-200">
-                                Ver publicación
-                            </button>
-
+                        <div class="mt-auto flex justify-between items-center gap-2">
+                            {% if publicacion.revisada %}
+                                <button disabled
+                                        class="px-5 py-2 rounded-lg bg-gray-100 text-gray-400 font-bold cursor-not-allowed">
+                                    Revisada
+                                </button>
+                            {% else %}
+                                <a href="{% url 'marcar_publicacion_revisada' publicacion.id %}"
+                                class="px-5 py-2 rounded-lg bg-blueSoft text-primary font-bold hover:opacity-90">
+                                    Marcar revisada
+                                </a>
+                            {% endif %}
                             <button type="button"
                                     data-delete-url="{% url 'admin_eliminar_publicacion' publicacion.id %}"
                                     onclick="openDeletePostModal(this.dataset.deleteUrl)"
-                                    class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">
+                                    class="px-5 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">
                                 Eliminar
                             </button>
                         </div>
@@ -205,65 +197,10 @@
                     No existen publicaciones registradas.
                 </div>
                 {% endfor %}
-
             </section>
         </main>
     </div>
 
-    <!-- PANEL LATERAL VER PUBLICACIÓN -->
-    <aside id="postPanel" class="fixed right-0 top-16 h-[calc(100vh-64px)] w-[430px] bg-white border-l border-line shadow-xl z-50 overflow-y-auto transform translate-x-full transition-transform duration-300">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Detalle de Publicación</h2>
-                <button onclick="closePostPanel()" class="w-10 h-10 rounded-full hover:bg-soft flex items-center justify-center">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-
-            <div class="h-40 bg-blueSoft rounded-xl flex items-center justify-center mb-5">
-                <span class="material-symbols-outlined text-primary text-6xl">construction</span>
-            </div>
-
-            <div class="space-y-5">
-                <div>
-                    <p class="text-xs text-gray-500 uppercase font-bold">Título</p>
-                    <p class="font-bold">Oferta Laboral: Albañilería Avanzada</p>
-                </div>
-
-                <div>
-                    <p class="text-xs text-gray-500 uppercase font-bold">Usuario creador</p>
-                    <p class="font-bold">Carlos Méndez</p>
-                </div>
-
-                <div>
-                    <p class="text-xs text-gray-500 uppercase font-bold">Motivo del reporte</p>
-                    <div class="mt-2 p-4 rounded-lg bg-soft border border-line text-gray-700">
-                        Información engañosa sobre salario y ubicación del proyecto.
-                    </div>
-                </div>
-
-                <div>
-                    <p class="text-xs text-gray-500 uppercase font-bold">Estado</p>
-                    <span class="inline-block mt-2 px-3 py-1 rounded-full bg-redSoft text-red-700 text-xs font-bold">
-                        Reportado
-                    </span>
-                </div>
-
-                <div>
-                    <p class="text-xs text-gray-500 uppercase font-bold">Fecha</p>
-                    <p class="font-semibold mt-1">24/10/2026</p>
-                </div>
-            </div>
-
-            <div class="mt-8">
-                <button onclick="openDeletePostModal()" class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700">
-                    Eliminar publicación
-                </button>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MODAL ELIMINAR PUBLICACIÓN -->
     <div id="deletePostModal" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-md rounded-xl shadow-xl border border-line overflow-hidden">
             <div class="p-6">
@@ -278,33 +215,29 @@
             </div>
 
             <div class="p-5 bg-soft border-t border-line flex justify-end gap-3">
-                <button onclick="closeDeletePostModal()" class="px-5 py-2 rounded-lg border border-line bg-white font-semibold">
+                <button type="button" onclick="closeDeletePostModal()" class="px-5 py-2 rounded-lg border border-line bg-white font-semibold">
                     Cancelar
                 </button>
-                <button onclick="closeDeletePostModal()" class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold">
+
+                <a id="confirmDeletePostBtn"
+                   href="#"
+                   class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700">
                     Eliminar
-                </button>
+                </a>
             </div>
         </div>
     </div>
 
     <script>
-        function openPostPanel() {
-            document.getElementById('postPanel').classList.remove('translate-x-full');
-        }
-
-        function closePostPanel() {
-            document.getElementById('postPanel').classList.add('translate-x-full');
-        }
-
-        function openDeletePostModal() {
+        function openDeletePostModal(deleteUrl) {
+            document.getElementById('confirmDeletePostBtn').setAttribute('href', deleteUrl);
             document.getElementById('deletePostModal').classList.remove('hidden');
         }
 
         function closeDeletePostModal() {
             document.getElementById('deletePostModal').classList.add('hidden');
+            document.getElementById('confirmDeletePostBtn').setAttribute('href', '#');
         }
     </script>
-
 </body>
 </html>

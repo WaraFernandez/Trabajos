@@ -53,16 +53,11 @@
     </script>
 </head>
 
-<body class="bg-background text-text h-screen overflow-hidden flex">
+<body class="bg-background text-text min-h-screen overflow-x-hidden">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 h-screen bg-soft border-r border-line fixed left-0 top-0 z-40">
-        <div class="px-6 pt-6 pb-4">
-            <img src="{% static 'img/logochamba.png' %}" alt="Logo CHAMBA" class="w-36 h-auto object-contain block">
-            <p class="text-sm text-muted font-medium mt-1 mb-4">Panel de Control</p>
-        </div>
-
-        <nav class="px-4 space-y-2 mt-2">
+    <aside class="fixed left-0 top-16 w-64 h-[calc(100vh-64px)] bg-soft border-r border-line z-40 overflow-y-auto">
+        <nav class="px-4 py-4 space-y-2">
             <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dashboard</span>
@@ -96,18 +91,22 @@
     </aside>
 
     <!-- CONTENEDOR PRINCIPAL -->
-    <div class="ml-64 flex-1 flex flex-col h-screen">
+    <div class="ml-64 flex-1 flex flex-col min-h-screen pt-16">
 
        <!-- TOPBAR -->
-       <header class="h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm relative">
-            <div class="w-40"></div>
+       <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm z-50">
+            <div class="flex items-center gap-5">
+                <img src="{% static 'img/logochamba.png' %}"
+                    alt="Logo CHAMBA"
+                    class="w-32 h-auto object-contain">
 
-            <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold">
-                PANEL DE CONTROL
-            </h1>
+                <h1 class="text-2xl font-bold whitespace-nowrap">
+                    PANEL DE CONTROL
+                </h1>
+            </div>
 
             <div class="flex items-center gap-4">
-                <button class="p-2 rounded-full hover:bg-soft">
+                <button onclick="alert('Módulo de notificaciones en desarrollo')" class="p-2 rounded-full hover:bg-soft">
                     <span class="material-symbols-outlined text-gray-600">notifications</span>
                 </button>
 
@@ -128,10 +127,9 @@
         </header>
 
         <!-- CONTENIDO -->
-        <main class="flex-1 overflow-y-auto p-6 bg-soft">
-
+        <main class="flex-1 p-6 bg-soft overflow-x-hidden">
             <section class="mb-6">
-                <h2 class="text-3xl font-bold mb-1">Gestión de Usuarios</h2>
+                <h2 class="text-3xl font-bold mb-1">Gestión de cuentas de Usuarios</h2>
                 <p class="text-gray-600">Administra las cuentas registradas, revisa reportes y aplica acciones de moderación.</p>
             </section>
 
@@ -252,7 +250,10 @@
 
                                         <button type="button"
                                                 data-usuario="{{ usuario.username }}"
-                                                data-reportes="{% for reporte in usuario.reportes_recibidos.all %}• {{ reporte.motivo }} - {{ reporte.estado }}&#10;{% empty %}Sin reportes registrados{% endfor %}"
+                                                data-advertir-url="{% url 'admin_advertir_usuario' usuario.id %}"
+                                                data-notificar-url="{% url 'admin_notificar_usuario' usuario.id %}"
+                                                data-bloquear-url="{% url 'bloquear_usuario' usuario.id %}"
+                                                data-reportes-html="{% for reporte in usuario.reportes_recibidos.all %}<div class='p-4 bg-white border border-line rounded-lg mb-3'><div class='flex justify-between gap-4'><div><p class='text-xs font-bold uppercase text-primary'>{{ reporte.tipo|escapejs }}</p><p class='mt-1 text-gray-700'>{{ reporte.motivo|escapejs }}</p><p class='mt-2 text-xs text-gray-500'>Fecha: {{ reporte.fecha|date:'d/m/Y' }}</p></div><span class='h-fit px-3 py-1 rounded-full text-xs font-bold {% if reporte.estado == 'pendiente' %}bg-yellowSoft text-yellow-900{% elif reporte.estado == 'revisado' %}bg-blueSoft text-primary{% else %}bg-greenSoft text-green-800{% endif %}'>{{ reporte.estado|title }}</span></div></div>{% empty %}<div class='p-4 bg-white border border-line rounded-lg text-gray-500'>Sin reportes registrados</div>{% endfor %}"
                                                 onclick="openReportModalFromButton(this)"
                                                 class="p-2 rounded-lg hover:bg-yellowSoft text-yellow-900"
                                                 title="Ver reportes">
@@ -380,7 +381,7 @@
     <div id="reportModal" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-3xl max-h-[85vh] rounded-xl shadow-xl border border-line overflow-hidden flex flex-col">
             <header class="p-6 border-b border-line flex justify-between items-center bg-white">
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 lg:gap-4 flex-wrap justify-end">
                     <div class="w-12 h-12 rounded-full bg-blueSoft text-primary flex items-center justify-center">
                         <span class="material-symbols-outlined">person_search</span>
                     </div>
@@ -395,24 +396,31 @@
                 </button>
             </header>
 
-            <div class="flex-1 overflow-y-auto p-6 space-y-4">
-                <div class="p-4 bg-white border border-line rounded-lg">
-                    <div class="flex justify-between gap-4">
-                        <div>
-                            <span class="text-xs font-bold uppercase text-primary">Sin reportes reales conectados</span>
-                            <p id="modalReportContent" class="mt-1 text-gray-700 whitespace-pre-line">
-                                Sin reportes registrados
-                            </p>
-                        </div>
-                        <span class="h-fit px-3 py-1 rounded-full bg-blueSoft text-primary text-xs font-bold">Informativo</span>
-                    </div>
+            <div id="modalReportContent" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <div class="p-4 bg-white border border-line rounded-lg text-gray-500">
+                    Sin reportes registrados
                 </div>
             </div>
 
-            <footer class="p-5 border-t border-line bg-soft flex justify-end">
-                <button type="button" onclick="closeReportModal()" class="px-6 py-3 border border-line bg-white rounded-lg font-semibold hover:bg-gray-100">
+            <footer class="p-5 border-t border-line bg-soft flex justify-end gap-3 flex-wrap">
+                <a id="btnAdvertirUsuario"
+                href="#"
+                class="px-5 py-3 rounded-lg bg-yellowSoft text-yellow-900 font-semibold hover:opacity-90">
+                    Advertir usuario
+                </a>
+
+                <a id="btnNotificarUsuario"
+                href="#"
+                class="px-5 py-3 rounded-lg bg-blueSoft text-primary font-semibold hover:opacity-90">
+                    Notificar revisión
+                </a>
+
+                <button type="button"
+                        onclick="closeReportModal()"
+                        class="px-6 py-3 border border-line bg-white rounded-lg font-semibold hover:bg-gray-100">
                     Cerrar historial
                 </button>
+
             </footer>
         </div>
     </div>
@@ -489,11 +497,13 @@
 
         function openReportModalFromButton(button) {
             const usuario = button.dataset.usuario || 'usuario';
-            const reportes = button.dataset.reportes || 'Sin reportes registrados';
+            const reportesHtml = button.dataset.reportesHtml || "<div class='p-4 bg-white border border-line rounded-lg text-gray-500'>Sin reportes registrados</div>";
 
             document.getElementById('modalReportTitle').innerText = 'Reportes de ' + usuario;
-            document.getElementById('modalReportContent').innerText = reportes;
+            document.getElementById('modalReportContent').innerHTML = reportesHtml;
 
+            document.getElementById('btnAdvertirUsuario').href = button.dataset.advertirUrl;
+            document.getElementById('btnNotificarUsuario').href = button.dataset.notificarUrl;
             document.getElementById('reportModal').classList.remove('hidden');
         }
     </script>
