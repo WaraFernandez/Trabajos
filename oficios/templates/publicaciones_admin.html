@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA - Moderación de Publicaciones</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
+            font-size: 24px !important;
+            line-height: 1 !important;
+            display: inline-block !important;
+            -webkit-font-feature-settings: 'liga' !important;
+            font-feature-settings: 'liga' !important;
+            -webkit-font-smoothing: antialiased !important;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1d5ca5",
+                        background: "#faf8fd",
+                        soft: "#f5f3f7",
+                        line: "#d7d7df",
+                        text: "#1b1b1f",
+                        blueSoft: "#d5e3ff",
+                        redSoft: "#ffdad6"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-text min-h-screen overflow-x-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="fixed left-0 top-16 w-64 h-[calc(100vh-64px)] bg-soft border-r border-line z-40 overflow-y-auto">
+        <nav class="px-4 py-4 space-y-2">
+            <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/usuarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">group</span>
+                <span>Usuarios</span>
+            </a>
+
+            <a href="/reportes-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">report</span>
+                <span>Reportes</span>
+            </a>
+
+            <a href="/comentarios-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">forum</span>
+                <span>Comentarios</span>
+            </a>
+
+            <a href="/publicaciones-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blueSoft text-primary font-semibold border-r-4 border-primary">
+                <span class="material-symbols-outlined">article</span>
+                <span>Publicaciones</span>
+            </a>
+
+            <a href="/historial-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+                <span class="material-symbols-outlined">history</span>
+                <span>Historial</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="ml-64 flex-1 flex flex-col min-h-screen pt-16">
+        <!-- TOPBAR -->
+        <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm z-50">
+            <div class="flex items-center gap-5">
+                <img src="{% static 'img/logochamba.png' %}"
+                    alt="Logo CHAMBA"
+                    class="w-32 h-auto object-contain">
+
+                <h1 class="text-2xl font-bold whitespace-nowrap">
+                    PANEL DE CONTROL
+                </h1>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="alert('Módulo de notificaciones en desarrollo')" class="p-2 rounded-full hover:bg-soft">
+                    <span class="material-symbols-outlined text-gray-600">notifications</span>
+                </button>
+
+                <div class="h-8 w-px bg-line"></div>
+
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-blueSoft flex items-center justify-center font-bold text-primary">
+                        A
+                    </div>
+                    <span class="text-sm font-bold">Administrador</span>
+                </div>
+
+                <a href="/logout/" class="flex items-center gap-2 bg-soft hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-semibold text-gray-700">
+                    <span class="material-symbols-outlined text-lg">logout</span>
+                    Cerrar sesión
+                </a>
+            </div>
+        </header>
+
+        <main class="flex-1 p-6 bg-soft overflow-x-hidden">
+
+            <section class="mb-6">
+                <h2 class="text-3xl font-bold mb-1">Moderación de Publicaciones</h2>
+                <p class="text-gray-600">Supervisa publicaciones registradas y elimina contenido inapropiado.</p>
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {% for publicacion in publicaciones %}
+                <article class="bg-white rounded-xl shadow-sm border border-line overflow-hidden flex flex-col">
+
+                    <div class="h-48 bg-blueSoft flex items-center justify-center relative">
+                        {% if publicacion.imagen %}
+                            <img src="{{ publicacion.imagen.url }}" alt="Imagen publicación" class="w-full h-full object-cover">
+                        {% else %}
+                            <span class="material-symbols-outlined text-primary text-6xl">article</span>
+                        {% endif %}
+
+                        {% if publicacion.revisada %}
+                        <span class="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-bold">
+                            Revisada
+                        </span>
+                        {% else %}
+                        <span class="absolute top-4 right-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-lg text-xs font-bold">
+                            Pendiente
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="p-5 flex-1 flex flex-col">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                                {{ publicacion.usuario.username|slice:":2"|upper }}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">
+                                    {{ publicacion.usuario.get_full_name|default:publicacion.usuario.username }}
+                                </h4>
+                                <p class="text-xs text-gray-500">
+                                    {{ publicacion.fecha_creacion|date:"d/m/Y" }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <h3 class="font-bold text-lg mb-3">
+                            Publicación de usuario
+                        </h3>
+
+                        <div class="bg-soft border border-line rounded-lg p-3 mb-4">
+                            <p class="text-xs uppercase text-yellow-900 font-bold mb-1">
+                                Contenido
+                            </p>
+                            <p class="text-sm text-gray-600">
+                                {{ publicacion.contenido|truncatechars:150 }}
+                            </p>
+                        </div>
+
+                        <div class="mt-auto flex justify-between items-center gap-2">
+                            {% if publicacion.revisada %}
+                                <button disabled
+                                        class="px-5 py-2 rounded-lg bg-gray-100 text-gray-400 font-bold cursor-not-allowed">
+                                    Revisada
+                                </button>
+                            {% else %}
+                                <a href="{% url 'marcar_publicacion_revisada' publicacion.id %}"
+                                class="px-5 py-2 rounded-lg bg-blueSoft text-primary font-bold hover:opacity-90">
+                                    Marcar revisada
+                                </a>
+                            {% endif %}
+                            <button type="button"
+                                    data-delete-url="{% url 'admin_eliminar_publicacion' publicacion.id %}"
+                                    onclick="openDeletePostModal(this.dataset.deleteUrl)"
+                                    class="px-5 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                {% empty %}
+                <div class="bg-white border border-line rounded-xl p-8 text-center text-gray-500 col-span-full">
+                    No existen publicaciones registradas.
+                </div>
+                {% endfor %}
+            </section>
+        </main>
+    </div>
+
+    <div id="deletePostModal" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-md rounded-xl shadow-xl border border-line overflow-hidden">
+            <div class="p-6">
+                <div class="w-14 h-14 rounded-full bg-redSoft text-red-700 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-3xl">warning</span>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-2">Confirmar acción</h2>
+                <p class="text-gray-600">
+                    La publicación será eliminada permanentemente. Esta acción no se puede deshacer.
+                </p>
+            </div>
+
+            <div class="p-5 bg-soft border-t border-line flex justify-end gap-3">
+                <button type="button" onclick="closeDeletePostModal()" class="px-5 py-2 rounded-lg border border-line bg-white font-semibold">
+                    Cancelar
+                </button>
+
+                <a id="confirmDeletePostBtn"
+                   href="#"
+                   class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700">
+                    Eliminar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDeletePostModal(deleteUrl) {
+            document.getElementById('confirmDeletePostBtn').setAttribute('href', deleteUrl);
+            document.getElementById('deletePostModal').classList.remove('hidden');
+        }
+
+        function closeDeletePostModal() {
+            document.getElementById('deletePostModal').classList.add('hidden');
+            document.getElementById('confirmDeletePostBtn').setAttribute('href', '#');
+        }
+    </script>
+</body>
+</html>

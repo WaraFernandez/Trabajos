@@ -4,16 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHAMBA - Panel Administrativo</title>
+    <title>CHAMBA - Historial Administrativo</title>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; }
 
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
@@ -25,11 +23,10 @@
             text-transform: none !important;
             display: inline-block !important;
             white-space: nowrap !important;
-            word-wrap: normal !important;
             direction: ltr !important;
             -webkit-font-feature-settings: 'liga' !important;
-            -webkit-font-smoothing: antialiased !important;
             font-feature-settings: 'liga' !important;
+            -webkit-font-smoothing: antialiased !important;
         }
     </style>
 
@@ -46,9 +43,9 @@
                         text: "#1b1b1f",
                         muted: "#6b7280",
                         blueSoft: "#d5e3ff",
-                        yellowSoft: "#f2e65f",
                         redSoft: "#ffdad6",
-                        greenSoft: "#dcfce7"
+                        greenSoft: "#dcfce7",
+                        yellowSoft: "#f2e65f"
                     }
                 }
             }
@@ -61,7 +58,7 @@
     <!-- SIDEBAR -->
     <aside class="fixed left-0 top-16 w-64 h-[calc(100vh-64px)] bg-soft border-r border-line z-40 overflow-y-auto">
         <nav class="px-4 py-4 space-y-2">
-            <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blueSoft text-primary font-semibold border-r-4 border-primary">
+            <a href="/dashboard-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dashboard</span>
             </a>
@@ -86,7 +83,7 @@
                 <span>Publicaciones</span>
             </a>
 
-            <a href="/historial-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-white transition">
+            <a href="/historial-admin/" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blueSoft text-primary font-semibold border-r-4 border-primary">
                 <span class="material-symbols-outlined">history</span>
                 <span>Historial</span>
             </a>
@@ -97,7 +94,7 @@
     <div class="ml-64 flex-1 flex flex-col min-h-screen pt-16">
 
         <!-- TOPBAR -->
-       <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm z-50">
+      <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-line flex items-center justify-between px-6 shadow-sm z-50">
             <div class="flex items-center gap-5">
                 <img src="{% static 'img/logochamba.png' %}"
                     alt="Logo CHAMBA"
@@ -132,117 +129,101 @@
         <!-- CONTENIDO -->
         <main class="flex-1 p-6 bg-soft overflow-x-hidden">
 
-            <!-- TARJETAS -->
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-line flex items-center justify-between">
-                    <div>
-                        <p class="text-sm uppercase tracking-wider font-semibold text-gray-600">Usuarios registrados</p>
-                        <h3 class="text-4xl font-bold mt-2">{{ total_usuarios }}</h3>
-                    </div>
-                    <div class="w-16 h-16 rounded-xl bg-primary flex items-center justify-center text-white">
-                        <span class="material-symbols-outlined text-4xl">group</span>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-line flex items-center justify-between">
-                    <div>
-                        <p class="text-sm uppercase tracking-wider font-semibold text-gray-600">Usuarios bloqueados</p>
-                        <h3 class="text-4xl font-bold mt-2">{{ usuarios_bloqueados }}</h3>
-                    </div>
-                    <div class="w-16 h-16 rounded-xl bg-blueSoft flex items-center justify-center text-gray-700">
-                        <span class="material-symbols-outlined text-4xl">block</span>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-line flex items-center justify-between">
-                    <div>
-                        <p class="text-sm uppercase tracking-wider font-semibold text-gray-600">Reportes pendientes</p>
-                        <h3 class="text-4xl font-bold mt-2">{{ reportes_pendientes }}</h3>
-                    </div>
-                    <div class="w-16 h-16 rounded-xl bg-yellowSoft flex items-center justify-center text-yellow-900">
-                        <span class="material-symbols-outlined text-4xl">warning</span>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-line flex items-center justify-between">
-                    <div>
-                        <p class="text-sm uppercase tracking-wider font-semibold text-gray-600">Publicaciones eliminadas</p>
-                        <h3 class="text-4xl font-bold mt-2">{{ publicaciones_eliminadas }}</h3>
-                    </div>
-                    <div class="w-16 h-16 rounded-xl bg-redSoft flex items-center justify-center text-red-700">
-                        <span class="material-symbols-outlined text-4xl">delete</span>
-                    </div>
-                </div>
-
+            <section class="mb-6">
+                <h2 class="text-3xl font-bold mb-1">Historial Administrativo</h2>
+                <p class="text-gray-600">Registro de acciones realizadas por administradores del sistema.</p>
             </section>
 
-            <!-- TABLA ÚLTIMOS REPORTES -->
-            <section class="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
-                <div class="px-6 py-5 border-b border-line flex items-center justify-between">
-                    <h2 class="text-2xl font-bold">Últimos reportes recibidos</h2>
-                    <a href="/reportes-admin/" class="text-primary text-sm font-semibold hover:underline">
-                        Ver todo
-                    </a>
-                </div>
+            <!-- FILTROS -->
+            <section class="bg-white rounded-xl shadow-sm border border-line p-5 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Fecha</label>
+                        <div class="relative mt-2">
+                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                                calendar_month
+                            </span>
+                            <input id="filtroFecha"
+                                type="date"
+                                onchange="filtrarHistorial()"
+                                class="w-full pl-12 pr-4 py-3 bg-soft border border-line rounded-lg text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Tipo de acción</label>
+                        <select id="filtroAccion"
+                                onchange="filtrarHistorial()"
+                                class="mt-2 w-full px-4 py-3 bg-soft border border-line rounded-lg text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+                            <option value="todos">Todas las acciones</option>
+                            <option value="usuario">Usuario</option>
+                            <option value="comentario">Comentario</option>
+                            <option value="publicación">Publicación</option>
+                            <option value="reporte">Reporte</option>
+                        </select>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- TABLA HISTORIAL -->
+            <section class="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead class="bg-soft text-gray-600 text-sm uppercase tracking-wider">
                             <tr>
-                                <th class="px-6 py-4">Tipo</th>
-                                <th class="px-6 py-4">Usuario reportante</th>
-                                <th class="px-6 py-4">Motivo</th>
+                                <th class="px-6 py-4">Administrador</th>
+                                <th class="px-6 py-4">Acción realizada</th>
+                                <th class="px-6 py-4">Elemento afectado</th>
+                                <th class="px-6 py-4">Resultado</th>
                                 <th class="px-6 py-4">Fecha</th>
-                                <th class="px-6 py-4">Estado</th>
+                                <th class="px-6 py-4 text-right">Hora</th>
                             </tr>
                         </thead>
 
                         <tbody class="divide-y divide-line text-sm">
-                            {% for reporte in ultimos_reportes %}
-                            <tr class="hover:bg-soft transition">
+                            {% for item in historial %}
+                            <tr class="fila-historial hover:bg-soft transition"
+                                data-fecha="{{ item.fecha|date:'Y-m-d' }}">
                                 <td class="px-6 py-4">
-                                    {% if reporte.tipo == "comentario" %}
-                                        <span class="material-symbols-outlined text-primary">forum</span>
-                                    {% elif reporte.tipo == "publicacion" %}
-                                        <span class="material-symbols-outlined text-primary">article</span>
-                                    {% else %}
-                                        <span class="material-symbols-outlined text-primary">account_circle</span>
-                                    {% endif %}
-                                </td>
-
-                                <td class="px-6 py-4 font-bold">
-                                    {{ reporte.reportante.username }}
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                                            {{ item.administrador.username|slice:":1"|upper }}
+                                        </div>
+                                        <span class="font-bold">
+                                            {{ item.administrador.username }}
+                                        </span>
+                                    </div>
                                 </td>
 
                                 <td class="px-6 py-4 text-gray-600">
-                                    {{ reporte.motivo|truncatechars:60 }}
+                                    {{ item.accion }}
                                 </td>
 
-                                <td class="px-6 py-4 text-gray-600">
-                                    {{ reporte.fecha|date:"d/m/Y" }}
+                                <td class="px-6 py-4 font-semibold">
+                                    {{ item.elemento_afectado }}
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    {% if reporte.estado == "pendiente" %}
-                                        <span class="px-3 py-1 rounded-full bg-yellowSoft text-yellow-900 text-xs font-bold">
-                                            Pendiente
-                                        </span>
-                                    {% elif reporte.estado == "revisado" %}
-                                        <span class="px-3 py-1 rounded-full bg-blueSoft text-primary text-xs font-bold">
-                                            Revisado
-                                        </span>
-                                    {% else %}
-                                        <span class="px-3 py-1 rounded-full bg-greenSoft text-green-800 text-xs font-bold">
-                                            Resuelto
-                                        </span>
-                                    {% endif %}
+                                    <span class="px-3 py-1 rounded-full bg-blueSoft text-primary text-xs font-bold">
+                                        {{ item.resultado }}
+                                    </span>
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ item.fecha|date:"d/m/Y" }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-600 text-right">
+                                    {{ item.fecha|date:"H:i" }}
                                 </td>
                             </tr>
+
                             {% empty %}
                             <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                                    No existen reportes recientes.
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                    No existen acciones administrativas registradas.
                                 </td>
                             </tr>
                             {% endfor %}
@@ -253,6 +234,24 @@
 
         </main>
     </div>
+
+    <script>
+        function filtrarHistorial() {
+            const filtroAccion = document.getElementById('filtroAccion').value.toLowerCase();
+            const filtroFecha = document.getElementById('filtroFecha').value;
+            const filas = document.querySelectorAll('.fila-historial');
+
+            filas.forEach(fila => {
+                const accion = fila.children[1].innerText.toLowerCase();
+                const fecha = fila.dataset.fecha;
+
+                const coincideAccion = filtroAccion === "todos" || accion.includes(filtroAccion);
+                const coincideFecha = filtroFecha === "" || fecha === filtroFecha;
+
+                fila.style.display = (coincideAccion && coincideFecha) ? "" : "none";
+            });
+        }
+    </script>
 
 </body>
 </html>

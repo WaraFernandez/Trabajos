@@ -67,6 +67,7 @@ class Publicacion(models.Model):
         User, on_delete=models.CASCADE, related_name="publicaciones"
     )
     contenido = models.TextField()
+    revisada = models.BooleanField(default=False)
     tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, default="estado")
     imagen = models.ImageField(upload_to="publicaciones/", blank=True, null=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
@@ -109,6 +110,7 @@ class Comentario(models.Model):
     )
     texto = models.TextField()
     fecha = models.DateTimeField(auto_now_add=True)
+    revisado = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["fecha"]  # Del más antiguo al más reciente
@@ -235,3 +237,40 @@ class Calificacion(models.Model):
 
     def __str__(self):
         return f"{self.calificador.username} → {self.calificado.username}: {self.puntuacion}⭐"
+
+#modulo admin
+class Reporte(models.Model):
+    TIPO_CHOICES = (
+        ("comentario", "Comentario"),
+        ("publicacion", "Publicación"),
+        ("usuario", "Usuario"),
+    )
+
+    ESTADO_CHOICES = (
+        ("pendiente", "Pendiente"),
+        ("revisado", "Revisado"),
+        ("resuelto", "Resuelto"),
+    )
+
+    reportante = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reportes_realizados")
+    usuario_reportado = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reportes_recibidos", null=True, blank=True)
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, null=True, blank=True)
+    comentario = models.ForeignKey(Comentario, on_delete=models.CASCADE, null=True, blank=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    motivo = models.TextField()
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default="pendiente")
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.estado}"
+
+
+class HistorialAdmin(models.Model):
+    administrador = models.ForeignKey(User, on_delete=models.CASCADE)
+    accion = models.CharField(max_length=200)
+    elemento_afectado = models.CharField(max_length=200)
+    resultado = models.CharField(max_length=100)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.administrador.username} - {self.accion}"
