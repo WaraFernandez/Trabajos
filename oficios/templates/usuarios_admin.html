@@ -240,6 +240,7 @@
                                                 data-nombre="{{ usuario.username }}"
                                                 data-correo="{{ usuario.email|default:'Sin correo' }}"
                                                 data-ubicacion="{% if usuario.perfil %}{{ usuario.perfil.ubicacion|default:'Sin ubicación' }}{% else %}Sin ubicación{% endif %}"
+                                                data-telefono="{% if usuario.perfil %}{{ usuario.perfil.telefono|default:'Sin teléfono' }}{% else %}Sin teléfono{% endif %}"
                                                 data-estado="{% if usuario.is_active %}Activo{% else %}Bloqueado{% endif %}"
                                                 data-fecha="{{ usuario.date_joined|date:'d/m/Y' }}"
                                                 onclick="openUserPanelFromButton(this)"
@@ -360,6 +361,16 @@
 
                 <div class="flex gap-3 items-center">
                     <div class="w-10 h-10 bg-soft rounded-lg flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined">call</span>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Teléfono</p>
+                        <p id="panelTelefono" class="font-bold">Sin teléfono</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 items-center">
+                    <div class="w-10 h-10 bg-soft rounded-lg flex items-center justify-center text-primary">
                         <span class="material-symbols-outlined">verified_user</span>
                     </div>
                     <div>
@@ -448,15 +459,17 @@
                 button.dataset.nombre,
                 button.dataset.correo,
                 button.dataset.ubicacion,
+                button.dataset.telefono,
                 button.dataset.estado,
                 button.dataset.fecha
             );
         }
 
-        function openUserPanel(nombre, correo, ubicacion, estado, fecha) {
+        function openUserPanel(nombre, correo, ubicacion, telefono, estado, fecha) {
             document.getElementById('panelNombre').innerText = nombre || 'Usuario';
             document.getElementById('panelCorreo').innerText = correo || 'Sin correo';
             document.getElementById('panelUbicacion').innerText = ubicacion || 'Sin ubicación';
+            document.getElementById('panelTelefono').innerText = telefono || 'Sin teléfono';
             document.getElementById('panelEstado').innerText = estado || 'Activo';
             document.getElementById('panelFecha').innerText = 'Usuario desde: ' + (fecha || '--/--/----');
 

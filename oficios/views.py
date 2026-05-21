@@ -1161,22 +1161,42 @@ def reportes_admin(request):
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('dashboard')
 
-    reportes = Reporte.objects.select_related(
+    from django.core.paginator import Paginator
+    from .models import Reporte
+
+    estado = request.GET.get('estado', 'pendiente')
+
+    reportes_base = Reporte.objects.select_related(
         'reportante',
         'usuario_reportado',
         'publicacion',
         'comentario'
     ).order_by('-fecha')
 
+    total_reportes = reportes_base.count()
+    pendientes = reportes_base.filter(estado='pendiente').count()
+    revisados = reportes_base.filter(estado='revisado').count()
+    resueltos = reportes_base.filter(estado='resuelto').count()
+
+    if estado in ['pendiente', 'revisado', 'resuelto']:
+        reportes_filtrados = reportes_base.filter(estado=estado)
+    else:
+        reportes_filtrados = reportes_base
+
+    paginator = Paginator(reportes_filtrados, 5)
+    page_number = request.GET.get('page')
+    reportes = paginator.get_page(page_number)
+
     context = {
         'reportes': reportes,
-        'pendientes': reportes.filter(estado='pendiente').count(),
-        'revisados': reportes.filter(estado='revisado').count(),
-        'resueltos': reportes.filter(estado='resuelto').count(),
+        'estado_actual': estado,
+        'total_reportes': total_reportes,
+        'pendientes': pendientes,
+        'revisados': revisados,
+        'resueltos': resueltos,
     }
 
-    return render(request, "reportes_admin.html", context)
-
+    return render(request, 'reportes_admin.html', context)
 
 @login_required
 def comentarios_admin(request):

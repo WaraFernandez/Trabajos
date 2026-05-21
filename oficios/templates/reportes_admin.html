@@ -144,31 +144,140 @@
                 </div>
             {% endif %}
 
+            <!-- RESUMEN -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
+
+                <!-- TOTAL -->
+                <div class="bg-primary text-white p-6 rounded-2xl shadow-sm relative overflow-hidden">
+                    <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full bg-white/10"></div>
+
+                    <div class="flex items-center justify-between relative z-10">
+                        <div>
+                            <p class="text-xs uppercase font-bold opacity-80">
+                                Total de reportes
+                            </p>
+
+                            <h3 class="text-5xl font-extrabold mt-2">
+                                {{ total_reportes }}
+                            </h3>
+
+                            <p class="text-xs mt-2 opacity-80">
+                                Reportes registrados en el sistema
+                            </p>
+                        </div>
+
+                        <div class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white">
+                                report
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PENDIENTES -->
+                <div class="bg-white p-6 rounded-2xl border border-line shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase font-bold text-gray-500">
+                                Pendientes
+                            </p>
+
+                            <h3 class="text-4xl font-extrabold mt-2">
+                                {{ pendientes }}
+                            </h3>
+
+                            <p class="text-xs text-gray-500 mt-1">
+                                Requieren revisión
+                            </p>
+                        </div>
+
+                        <div class="w-14 h-14 rounded-xl bg-yellow-100 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-yellow-700">
+                                schedule
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REVISADOS -->
+                <div class="bg-white p-6 rounded-2xl border border-line shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase font-bold text-gray-500">
+                                Revisados
+                            </p>
+
+                            <h3 class="text-4xl font-extrabold mt-2">
+                                {{ revisados }}
+                            </h3>
+
+                            <p class="text-xs text-gray-500 mt-1">
+                                Validados por administración
+                            </p>
+                        </div>
+
+                        <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">
+                                visibility
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RESUELTOS -->
+                <div class="bg-white p-6 rounded-2xl border border-line shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase font-bold text-gray-500">
+                                Resueltos
+                            </p>
+
+                            <h3 class="text-4xl font-extrabold mt-2">
+                                {{ resueltos }}
+                            </h3>
+
+                            <p class="text-xs text-gray-500 mt-1">
+                                Acción administrativa finalizada
+                            </p>
+                        </div>
+
+                        <div class="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-green-700">
+                                check_circle
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
             <!-- FILTROS -->
-            <section class="mb-6 flex gap-2 border-b border-line pb-2">
-                <button id="btn-pendiente"
-                        onclick="filtrarReportes('pendiente')"
-                        class="filtro-btn px-5 py-2 rounded-t-lg bg-primary text-white font-semibold">
-                    Pendientes
-                </button>
-
-                <button id="btn-revisado"
-                        onclick="filtrarReportes('revisado')"
-                        class="filtro-btn px-5 py-2 rounded-t-lg text-gray-600 hover:bg-white font-semibold">
-                    Revisados
-                </button>
-
-                <button id="btn-resuelto"
-                        onclick="filtrarReportes('resuelto')"
-                        class="filtro-btn px-5 py-2 rounded-t-lg text-gray-600 hover:bg-white font-semibold">
-                    Resueltos
-                </button>
-
-                <button id="btn-todos"
-                        onclick="filtrarReportes('todos')"
-                        class="filtro-btn px-5 py-2 rounded-t-lg text-gray-600 hover:bg-white font-semibold">
+            <section class="mb-6 flex flex-wrap gap-2 border-b border-line pb-2">
+                <a href="?estado=todos"
+                class="px-5 py-2 rounded-t-lg font-semibold transition
+                {% if estado_actual == 'todos' %} bg-primary text-white {% else %} text-gray-600 hover:bg-white {% endif %}">
                     Todos
-                </button>
+                </a>
+                
+                <a href="?estado=pendiente"
+                class="px-5 py-2 rounded-t-lg font-semibold transition
+                {% if estado_actual == 'pendiente' %} bg-primary text-white {% else %} text-gray-600 hover:bg-white {% endif %}">
+                    Pendientes
+                </a>
+
+                <a href="?estado=revisado"
+                class="px-5 py-2 rounded-t-lg font-semibold transition
+                {% if estado_actual == 'revisado' %} bg-primary text-white {% else %} text-gray-600 hover:bg-white {% endif %}">
+                    Revisados
+                </a>
+
+                <a href="?estado=resuelto"
+                class="px-5 py-2 rounded-t-lg font-semibold transition
+                {% if estado_actual == 'resuelto' %} bg-primary text-white {% else %} text-gray-600 hover:bg-white {% endif %}">
+                    Resueltos
+                </a>
+
+                
             </section>
 
             <!-- TABLA -->
@@ -233,7 +342,8 @@
                                         <button type="button"
                                                 data-tipo="{{ reporte.get_tipo_display }}"
                                                 data-motivo="{{ reporte.motivo }}"
-                                                data-usuario="{% if reporte.usuario_reportado %}{{ reporte.usuario_reportado.username }}{% else %}No asignado{% endif %}"
+                                                data-reportante="{{ reporte.reportante.username }}"
+                                                data-denunciado="{% if reporte.usuario_reportado %}{{ reporte.usuario_reportado.username }}{% else %}No asignado{% endif %}"
                                                 data-fecha="{{ reporte.fecha|date:'d/m/Y - H:i' }}"
                                                 data-estado="{{ reporte.estado }}"
                                                 onclick="openReviewPanelFromButton(this)"
@@ -243,14 +353,12 @@
 
                                         {% if reporte.estado == "pendiente" %}
                                             <a href="{% url 'admin_marcar_reporte_revisado' reporte.id %}"
-                                               class="bg-blueSoft text-primary px-3 py-2 rounded-lg text-xs font-bold">
+                                            class="bg-blueSoft text-primary px-3 py-2 rounded-lg text-xs font-bold">
                                                 Revisar
                                             </a>
-                                        {% endif %}
-
-                                        {% if reporte.estado != "resuelto" %}
+                                        {% elif reporte.estado == "revisado" %}
                                             <a href="{% url 'admin_resolver_reporte' reporte.id %}"
-                                               class="bg-greenSoft text-green-800 px-3 py-2 rounded-lg text-xs font-bold">
+                                            class="px-4 py-2 rounded-lg bg-greenSoft text-green-800 font-bold hover:opacity-90">
                                                 Resolver
                                             </a>
                                         {% endif %}
@@ -267,39 +375,59 @@
                             {% endfor %}
                         </tbody>
                     </table>
+
+                    <!-- PAGINACIÓN -->
+                    {% if reportes.paginator.num_pages > 1 %}
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-6 py-4 border-t border-line bg-white">
+
+                        <p class="text-sm text-gray-500">
+                            Mostrando {{ reportes.start_index }}-{{ reportes.end_index }}
+                            de {{ reportes.paginator.count }} reportes
+                        </p>
+
+                        <div class="flex items-center gap-2">
+
+                            {% if reportes.has_previous %}
+                                <a href="?estado={{ estado_actual }}&page={{ reportes.previous_page_number }}"
+                                class="w-10 h-10 rounded-lg border border-line flex items-center justify-center hover:bg-soft">
+                                    ‹
+                                </a>
+                            {% else %}
+                                <span class="w-10 h-10 rounded-lg border border-line flex items-center justify-center text-gray-300">
+                                    ‹
+                                </span>
+                            {% endif %}
+
+                            {% for num in reportes.paginator.page_range %}
+                                {% if reportes.number == num %}
+                                    <span class="w-10 h-10 rounded-lg bg-primary text-white flex items-center justify-center font-bold">
+                                        {{ num }}
+                                    </span>
+                                {% else %}
+                                    <a href="?estado={{ estado_actual }}&page={{ num }}"
+                                    class="w-10 h-10 rounded-lg border border-line flex items-center justify-center hover:bg-soft">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if reportes.has_next %}
+                                <a href="?estado={{ estado_actual }}&page={{ reportes.next_page_number }}"
+                                class="w-10 h-10 rounded-lg border border-line flex items-center justify-center hover:bg-soft">
+                                    ›
+                                </a>
+                            {% else %}
+                                <span class="w-10 h-10 rounded-lg border border-line flex items-center justify-center text-gray-300">
+                                    ›
+                                </span>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    {% endif %}
+
                 </div>
             </section>
-
-            <!-- RESUMEN -->
-            <section class="grid grid-cols-1 md:grid-cols-4 gap-5">
-                <div class="bg-primary text-white p-6 rounded-xl shadow-sm">
-                    <p class="text-xs font-bold uppercase opacity-90">Tasa de resolución</p>
-                    <h3 class="text-4xl font-bold mt-2">
-                        {% if reportes %}
-                            {{ resueltos }}
-                        {% else %}
-                            0
-                        {% endif %}
-                    </h3>
-                    <p class="text-xs mt-1 opacity-90">reportes resueltos</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl border border-line shadow-sm">
-                    <p class="text-xs font-bold uppercase text-gray-500">Pendientes</p>
-                    <p class="text-2xl font-bold">{{ pendientes }}</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl border border-line shadow-sm">
-                    <p class="text-xs font-bold uppercase text-gray-500">Revisados</p>
-                    <p class="text-2xl font-bold">{{ revisados }}</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl border border-line shadow-sm">
-                    <p class="text-xs font-bold uppercase text-gray-500">Resueltos</p>
-                    <p class="text-2xl font-bold">{{ resueltos }}</p>
-                </div>
-            </section>
-
         </main>
     </div>
 
@@ -334,9 +462,14 @@
                 </div>
 
                 <div>
-                    <p class="text-xs text-gray-500 uppercase font-bold">Usuario denunciado</p>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Usuario reportante</p>
                     <div class="mt-2 p-4 border border-line rounded-lg">
-                        <p id="panelReporteUsuario" class="font-bold">No asignado</p>
+                        <p id="panelReporteReportante" class="font-bold">No asignado</p>
+                    </div>
+
+                    <p class="text-xs text-gray-500 uppercase font-bold mt-4">Usuario denunciado</p>
+                    <div class="mt-2 p-4 border border-line rounded-lg">
+                        <p id="panelReporteDenunciado" class="font-bold">No asignado</p>
                     </div>
                 </div>
 
@@ -361,42 +494,22 @@
     </aside>
 
     <script>
-        function filtrarReportes(estado) {
-            const filas = document.querySelectorAll('.fila-reporte');
-            const botones = document.querySelectorAll('.filtro-btn');
-
-            filas.forEach(fila => {
-                const estadoFila = fila.dataset.estado;
-                fila.style.display = (estado === 'todos' || estadoFila === estado) ? '' : 'none';
-            });
-
-            botones.forEach(btn => {
-                btn.classList.remove('bg-primary', 'text-white');
-                btn.classList.add('text-gray-600');
-            });
-
-            const botonActivo = document.getElementById('btn-' + estado);
-
-            if (botonActivo) {
-                botonActivo.classList.add('bg-primary', 'text-white');
-                botonActivo.classList.remove('text-gray-600');
-            }
-        }
-
         function openReviewPanelFromButton(button) {
             openReviewPanel(
                 button.dataset.tipo,
                 button.dataset.motivo,
-                button.dataset.usuario,
+                button.dataset.reportante,
+                button.dataset.denunciado,
                 button.dataset.fecha,
                 button.dataset.estado
             );
         }
 
-        function openReviewPanel(tipo, motivo, usuario, fecha, estado) {
+        function openReviewPanel(tipo, motivo, reportante, denunciado, fecha, estado) {
             document.getElementById('panelReporteTipo').innerText = tipo || '--';
             document.getElementById('panelReporteMotivo').innerText = motivo || 'Sin motivo registrado';
-            document.getElementById('panelReporteUsuario').innerText = usuario || 'No asignado';
+            document.getElementById('panelReporteReportante').innerText = reportante || 'No asignado';
+            document.getElementById('panelReporteDenunciado').innerText = denunciado || 'No asignado';
             document.getElementById('panelReporteFecha').innerText = fecha || '--/--/----';
 
             const estadoTag = document.getElementById('panelReporteEstado');
