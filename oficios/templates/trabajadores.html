@@ -1,0 +1,622 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA - Servicios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/principal.css' %}">
+    <style>
+        .servicio-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+        .servicio-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+            border-left-color: #0A66C2;
+        }
+        .servicio-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid #E5E7EB;
+        }
+        .badge-servicio {
+            background: #E8F0FE;
+            color: #0A66C2;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .chip-oficio, .chip-ubicacion, .chip-precio {
+            background: #F3F4F6;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .chip-precio {
+            background: #E8F0FE;
+            color: #0A66C2;
+        }
+        .section-header {
+            background: #0A66C2;
+            color: white;
+            text-align: center;
+            border: none;
+            padding: 1.5rem;
+            border-radius: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .modal-content {
+            animation: modalSlide 0.3s ease;
+        }
+        @keyframes modalSlide {
+            from { opacity: 0; transform: scale(0.95) translateY(-20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .btn-whatsapp {
+            background: #0A66C2;
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.7rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-whatsapp:hover {
+            background: #004182;
+            transform: translateY(-2px);
+        }
+        .filtros-widget {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .filtros-titulo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0A66C2;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid #E8F0FE;
+            padding-bottom: 0.5rem;
+        }
+        .filtro-grupo {
+            margin-bottom: 1.2rem;
+        }
+        .filtro-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .filtro-input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            background: #F9FAFB;
+            transition: all 0.2s;
+        }
+        .filtro-input:focus {
+            outline: none;
+            border-color: #0A66C2;
+            box-shadow: 0 0 0 2px rgba(10, 102, 194, 0.1);
+        }
+        .btn-filtrar {
+            width: 100%;
+            background: #0A66C2;
+            color: white;
+            border: none;
+            padding: 0.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-filtrar:hover {
+            background: #004182;
+            transform: translateY(-2px);
+        }
+        .btn-limpiar {
+            width: 100%;
+            background: #F3F4F6;
+            color: #4B5563;
+            border: 1px solid #E5E7EB;
+            padding: 0.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-limpiar:hover {
+            background: #E5E7EB;
+        }
+        .portafolio-carrusel {
+            margin: 1rem 0;
+            position: relative;
+        }
+        .carrusel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 1rem;
+            padding: 0.5rem 0;
+            scrollbar-width: thin;
+        }
+        .carrusel-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .carrusel-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .carrusel-container::-webkit-scrollbar-thumb {
+            background: #0A66C2;
+            border-radius: 10px;
+        }
+        .carrusel-item {
+            flex: 0 0 120px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .carrusel-item:hover {
+            transform: scale(1.05);
+        }
+        .carrusel-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #E5E7EB;
+        }
+        .carrusel-item p {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 0.3rem;
+            color: #666;
+        }
+        .carrusel-btn {
+            position: absolute;
+            top: 35%;
+            transform: translateY(-50%);
+            background: rgba(10,102,194,0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .carrusel-btn-left { left: -10px; }
+        .carrusel-btn-right { right: -10px; }
+        .carrusel-btn:hover { background: #0A66C2; }
+        .modal-foto-grande {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .modal-foto-grande img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+        }
+        @media (max-width: 768px) {
+            .chamba-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body class="chamba-dashboard">
+
+    {% include 'includes/navbar.html' %}
+
+    <div class="chamba-layout">
+
+        <aside class="chamba-sidebar">
+            <div class="chamba-card">
+                {% if user.perfil.foto_perfil %}
+                <img src="{{ user.perfil.foto_perfil.url }}" class="chamba-profile-pic">
+                {% else %}
+                <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ user.first_name|default:user.username }}" class="chamba-profile-pic">
+                {% endif %}
+                <div class="chamba-name">{{ user.first_name }} {{ user.last_name }}</div>
+                <div class="chamba-role">
+                    {% if user.perfil.tipo == 'trabajador' %}
+                    <i class="fa-solid fa-bolt"></i> {{ user.perfil.oficios|default:"Trabajador" }}
+                    {% else %}
+                    <i class="fa-solid fa-building"></i> {{ user.perfil.nombre_empresa|default:"Empleador" }}
+                    {% endif %}
+                </div>
+                <div class="chamba-stats">
+                    <div><div class="chamba-stat-num">{{ user.perfil.total_trabajos|default:"0" }}</div><div class="chamba-stat-label">Trabajos</div></div>
+                    <div><div class="chamba-stat-num">{{ user.perfil.promedio_calificacion|default:"0" }} ★</div><div class="chamba-stat-label">Rating</div></div>
+                </div>
+                {% if user.perfil.tipo == 'empleador' %}
+                <a href="{% url 'publicar_oferta' %}" class="chamba-publish" style="width:100%; margin-top:1rem; text-decoration:none; display:inline-block; text-align:center;"><i class="fa-solid fa-plus-circle"></i> Publicar oferta</a>
+                {% else %}
+                <a href="{% url 'ofrecer_servicio' %}" class="chamba-publish" style="width:100%; margin-top:1rem; background:#0A66C2; text-decoration:none; display:inline-block; text-align:center;"><i class="fa-solid fa-plus-circle"></i> Ofrecer servicio</a>
+                {% endif %}
+            </div>
+            <div class="chamba-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                    <span style="font-size: 1.1rem; color: #0A66C2;"><i class="fa-regular fa-lightbulb"></i> Frase del día</span>
+                    <span style="font-size: 1rem; color: #999;"><i class="fa-regular fa-calendar"></i> <span id="fechaActual"></span></span>
+                </div>
+                <p style="font-size: 1.3rem; line-height: 1.5; color: #444; margin: 0.5rem 0;"><span id="fraseMotivacional">Cargando...</span></p>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #aaa;">— CHAMBA —</div>
+            </div>
+        </aside>
+
+        <main class="chamba-feed">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-tools"></i> Servicios ofrecidos</h2>
+                <p>Encuentra profesionales de confianza cerca de ti</p>
+            </div>
+
+            <div id="servicios-container">
+                {% if servicios %}
+                {% for servicio in servicios %}
+                <div class="chamba-card servicio-card" 
+                     data-id="{{ servicio.id }}"
+                     data-titulo="{{ servicio.titulo|lower|escapejs }}" 
+                     data-oficio="{{ servicio.oficio|lower|escapejs }}" 
+                     data-ubicacion="{{ servicio.ubicacion|lower|escapejs }}"
+                     data-descripcion="{{ servicio.descripcion|lower|escapejs }}"
+                     data-trabajador="{{ servicio.trabajador.get_full_name|default:servicio.trabajador.username|escapejs }}">
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1.2rem;">
+                        {% if servicio.trabajador.perfil.foto_perfil %}
+                        <img src="{{ servicio.trabajador.perfil.foto_perfil.url }}" class="servicio-avatar">
+                        {% else %}
+                        <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ servicio.trabajador.username }}" class="servicio-avatar">
+                        {% endif %}
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <strong>{{ servicio.trabajador.get_full_name|default:servicio.trabajador.username }}</strong>
+                                <span class="badge-servicio"><i class="fa-solid fa-check-circle"></i> Verificado</span>
+                            </div>
+                            <span style="color: #9CA3AF; font-size: 0.85rem;">
+                                <i class="fa-regular fa-clock"></i> Publicado {{ servicio.fecha_publicacion|timesince }} atrás
+                            </span>
+                        </div>
+                        <span class="badge-servicio"><i class="fa-solid fa-tools"></i> Servicio</span>
+                    </div>
+                    <div style="padding: 0 1.2rem 0.8rem;">
+                        <h3 style="font-size: 1.4rem; font-weight: 700;">{{ servicio.titulo }}</h3>
+                        <div class="chips-container">
+                            <span class="chip-oficio"><i class="fa-solid fa-bolt"></i> {{ servicio.oficio }}</span>
+                            <span class="chip-ubicacion"><i class="fa-solid fa-location-dot"></i> {{ servicio.ubicacion }}</span>
+                            {% if servicio.precio %}
+                            <span class="chip-precio"><i class="fa-solid fa-tag"></i> Desde {{ servicio.precio }} Bs</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div style="padding: 0.8rem 1.2rem; border-top: 1px solid var(--borde); background: #F9FAFB;">
+                        <span style="color: #0A66C2;"><i class="fa-regular fa-eye"></i> Haz clic para ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="chamba-card" style="text-align:center; padding:3rem; color:#9CA3AF;" id="no-servicios">
+                    <i class="fa-solid fa-tools" style="font-size:3rem; margin-bottom:1rem; display:block;"></i>
+                    <p>No hay servicios ofrecidos aún</p>
+                    {% if user.perfil.tipo == 'trabajador' %}
+                    <a href="{% url 'ofrecer_servicio' %}" class="btn-whatsapp" style="display:inline-block; margin-top:1rem; text-decoration:none;">Ofrecer mi servicio</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- MODAL DETALLES -->
+            <div id="modalDetalle" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); z-index:10000; align-items:center; justify-content:center;">
+                <div class="modal-content" style="background:white; border-radius:1.5rem; width:95%; max-width:600px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.3);">
+                    <div style="padding:1rem 1.5rem; border-bottom:1px solid #E5E7EB; display:flex; justify-content:space-between; align-items:center; background:#F8FAFC;">
+                        <h3 style="font-size:1.2rem; font-weight:700;"><i class="fa-solid fa-tools" style="color:#0A66C2;"></i> Detalle del servicio</h3>
+                        <button onclick="cerrarModal()" style="width:2.5rem; height:2.5rem; border-radius:50%; border:none; background:#E5E7EB; cursor:pointer;">✕</button>
+                    </div>
+                    <div id="modalContenido" style="flex:1; overflow-y:auto; padding:1.5rem;"></div>
+                    <div style="padding:1rem 1.5rem; border-top:1px solid #E5E7EB; display:flex; gap:1rem; background:#F8FAFC;">
+                        <button onclick="cerrarModal()" class="btn-cerrar-modal" style="flex:1; padding:0.7rem; border:1.5px solid #E5E7EB; background:white; border-radius:2rem; cursor:pointer;">Cerrar</button>
+                        <button class="btn-whatsapp" style="flex:1;" onclick="contactar()"><i class="fa-brands fa-whatsapp"></i> Contactar por WhatsApp</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modalFotoGrande" class="modal-foto-grande" onclick="cerrarFotoGrande()">
+                <img id="fotoGrandeImg" src="">
+            </div>
+        </main>
+
+        
+
+        <aside class="chamba-sidebar-right">
+    <div class="filtros-widget">
+        <div class="filtros-titulo">
+            <i class="fa-solid fa-rocket"></i> CHAMBA
+        </div>
+        <div style="text-align: center; padding: 0.5rem 0;">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">
+                <i class="fa-solid fa-handshake" style="color: #0A66C2;"></i>
+            </div>
+            <div style="font-weight: 700; font-size: 1.1rem; color: #0A66C2; margin-bottom: 0.3rem;">
+                ¡Conectamos talento!
+            </div>
+            <div style="font-size: 0.75rem; color: #6B7280; line-height: 1.5;">
+                Encuentra profesionales<br>cerca de ti
+            </div>
+        </div>
+    </div>
+
+    <div class="filtros-widget">
+        <div class="filtros-titulo">
+            <i class="fa-solid fa-star"></i> Confianza CHAMBA
+        </div>
+        <div style="padding: 0.5rem 0;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <i class="fa-solid fa-circle-check" style="color: #0A66C2; font-size: 1.2rem;"></i>
+                <span style="font-size: 0.8rem;">Profesionales verificados</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <i class="fa-solid fa-shield-haltered" style="color: #0A66C2; font-size: 1.2rem;"></i>
+                <span style="font-size: 0.8rem;">Servicio seguro</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <i class="fa-solid fa-clock" style="color: #0A66C2; font-size: 1.2rem;"></i>
+                <span style="font-size: 0.8rem;">Respuesta rápida</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="filtros-widget">
+        <div class="filtros-titulo">
+            <i class="fa-solid fa-chart-simple"></i> Hoy en CHAMBA
+        </div>
+        <div style="text-align: center; padding: 0.5rem 0;">
+            <div style="font-size: 2rem; font-weight: 700; color: #0A66C2;" id="total-servicios">0</div>
+            <div style="font-size: 0.75rem; color: #6B7280;">servicios activos</div>
+        </div>
+        <div style="margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid #E5E7EB;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #6B7280;">
+                <span><i class="fa-regular fa-thumbs-up"></i> +120 confianzas</span>
+                <span><i class="fa-regular fa-comment"></i> +45 reseñas</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="filtros-widget">
+        <div class="filtros-titulo">
+            <i class="fa-regular fa-lightbulb"></i> ¿Sabías que?
+        </div>
+        <div style="padding: 0.5rem 0; font-size: 0.8rem; line-height: 1.6; color: #4B5563;">
+            <i class="fa-solid fa-quote-left" style="color: #0A66C2; margin-right: 0.3rem;"></i>
+            Los profesionales con portafolio de fotos reciben <strong>3 veces más</strong> contactos.
+        </div>
+        <div style="margin-top: 0.8rem; font-size: 0.7rem; color: #0A66C2; text-align: center;">
+            <i class="fa-regular fa-image"></i> ¡Completa tu perfil!
+        </div>
+    </div>
+</aside>
+
+
+    </div>
+
+    <script>
+        let currentId = null;
+        let todosServicios = [];
+        let portafolioFotos = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviciosItems = document.querySelectorAll('#servicios-container .servicio-card');
+            todosServicios = Array.from(serviciosItems);
+            actualizarTotal();
+
+            document.getElementById('btn-filtrar').addEventListener('click', aplicarFiltros);
+            document.getElementById('btn-limpiar').addEventListener('click', limpiarFiltros);
+            document.getElementById('filtro-buscar').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') aplicarFiltros();
+            });
+        });
+
+        function aplicarFiltros() {
+            const buscarTexto = document.getElementById('filtro-buscar').value.toLowerCase().trim();
+            let contador = 0;
+            
+            todosServicios.forEach(servicio => {
+                const titulo = servicio.dataset.titulo || '';
+                const oficio = servicio.dataset.oficio || '';
+                const ubicacion = servicio.dataset.ubicacion || '';
+                const descripcion = servicio.dataset.descripcion || '';
+                let mostrar = true;
+                
+                if (buscarTexto && !titulo.includes(buscarTexto) && !oficio.includes(buscarTexto) && !descripcion.includes(buscarTexto)) {
+                    mostrar = false;
+                }
+                
+                servicio.style.display = mostrar ? 'block' : 'none';
+                if (mostrar) contador++;
+            });
+            actualizarTotal(contador);
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filtro-buscar').value = '';
+            todosServicios.forEach(servicio => servicio.style.display = 'block');
+            actualizarTotal(todosServicios.length);
+        }
+
+        function actualizarTotal(total = null) {
+            const contador = total !== null ? total : todosServicios.filter(s => s.style.display !== 'none').length;
+            const totalElement = document.getElementById('total-servicios');
+            if (totalElement) totalElement.innerText = contador;
+        }
+
+        function verDetalle(id, tipo) {
+            currentId = id;
+            fetch(`/api/${tipo}/${id}/`)
+                .then(r => r.json())
+                .then(data => {
+                    portafolioFotos = data.portafolio_fotos || [];
+                    let portafolioHTML = '';
+                    if (portafolioFotos.length > 0) {
+                        portafolioHTML = `
+                            <div style="margin-top: 1rem;">
+                                <p style="font-weight:600; margin-bottom:0.5rem;"><i class="fa-solid fa-images"></i> Portafolio de trabajos</p>
+                                <div class="portafolio-carrusel" style="position: relative;">
+                                    <button class="carrusel-btn carrusel-btn-left" onclick="desplazarCarrusel(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <div class="carrusel-container" id="carruselContainer">
+                                        ${portafolioFotos.map(foto => `
+                                            <div class="carrusel-item" onclick="event.stopPropagation(); verFotoGrande('${foto.url}')">
+                                                <img src="${foto.url}" alt="${foto.titulo || 'Foto'}">
+                                                ${foto.titulo ? `<p>${foto.titulo}</p>` : ''}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <button class="carrusel-btn carrusel-btn-right" onclick="desplazarCarrusel(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        portafolioHTML = `<div style="margin-top:1rem; padding:0.8rem; background:#F9FAFB; border-radius:0.8rem; text-align:center; color:#999;"><i class="fa-regular fa-images"></i> Sin fotos en portafolio</div>`;
+                    }
+                    
+                    document.getElementById('modalContenido').innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #E5E7EB;">
+                            <img src="${data.foto}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
+                            <div>
+                                <strong style="font-size: 1.3rem;">${data.trabajador}</strong>
+                                <span style="background: #E8F0FE; color: #0A66C2; padding: 0.2rem 0.6rem; border-radius: 1rem; font-size: 0.7rem;"><i class="fa-solid fa-check-circle"></i> Verificado</span>
+                                <div style="color: #9CA3AF; font-size: 0.8rem; margin-top: 0.2rem;"><i class="fa-regular fa-calendar"></i> ${data.fecha}</div>
+                            </div>
+                        </div>
+                        <h4 style="font-size: 1.5rem; font-weight: 700;">${data.titulo}</h4>
+                        <div class="chips-container">
+                            <span class="chip-oficio"><i class="fa-solid fa-bolt"></i> ${data.oficio}</span>
+                            <span class="chip-ubicacion"><i class="fa-solid fa-location-dot"></i> ${data.ubicacion}</span>
+                            ${data.precio ? `<span class="chip-precio"><i class="fa-solid fa-tag"></i> ${data.precio} Bs</span>` : ''}
+                        </div>
+                        <div style="background: #F9FAFB; padding: 1rem; border-radius: 1rem; margin-top: 0.5rem;">
+                            <p style="font-weight:600;"><i class="fa-regular fa-file-lines"></i> DESCRIPCIÓN</p>
+                            <p style="line-height: 1.6;">${data.descripcion}</p>
+                        </div>
+                        ${portafolioHTML}
+                        <div style="margin-top: 1rem; padding: 0.8rem; background: #E8F0FE; border-radius: 0.8rem;">
+                            <i class="fa-brands fa-whatsapp"></i> WhatsApp: ${data.telefono || 'No disponible'}
+                        </div>
+                    `;
+                    document.getElementById('modalDetalle').style.display = 'flex';
+                    setTimeout(() => {
+                        const container = document.getElementById('carruselContainer');
+                        if (container) container.scrollLeft = 0;
+                    }, 100);
+                });
+        }
+
+        function desplazarCarrusel(direccion) {
+            const container = document.getElementById('carruselContainer');
+            if (container) container.scrollLeft += direccion * 200;
+        }
+
+        function verFotoGrande(url) {
+            const modal = document.getElementById('modalFotoGrande');
+            document.getElementById('fotoGrandeImg').src = url;
+            modal.style.display = 'flex';
+        }
+
+        function cerrarFotoGrande() {
+            document.getElementById('modalFotoGrande').style.display = 'none';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalDetalle').style.display = 'none';
+            currentId = null;
+        }
+
+        function contactar() {
+            if (currentId) {
+                fetch(`/api/servicio/${currentId}/`)
+                    .then(r => r.json())
+                    .then(data => {
+                        const telefono = data.telefono;
+                        if (telefono) {
+                            let numeroLimpio = telefono.toString().replace(/\D/g, '');
+                            if (numeroLimpio.length === 8) numeroLimpio = '591' + numeroLimpio;
+                            window.open(`https://wa.me/${numeroLimpio}?text=Hola%2C%20vi%20tu%20servicio%20"${encodeURIComponent(data.titulo)}"%20en%20CHAMBA`, '_blank');
+                        } else {
+                            alert('No hay número de teléfono registrado');
+                        }
+                    });
+            }
+        }
+
+        document.querySelectorAll('.servicio-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const id = this.dataset.id;
+                if (id) verDetalle(id, 'servicio');
+            });
+        });
+
+        document.getElementById('modalDetalle')?.addEventListener('click', function(e) {
+            if (e.target === this) cerrarModal();
+        });
+
+        const frases = ["El éxito es la suma de pequeños esfuerzos.", "La calidad es resultado del esfuerzo.", "Cree en ti mismo."];
+        const hoy = new Date();
+        const fechaSpan = document.getElementById('fechaActual');
+        const fraseSpan = document.getElementById('fraseMotivacional');
+        if (fechaSpan) fechaSpan.textContent = hoy.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+        if (fraseSpan) fraseSpan.textContent = frases[hoy.getDate() % frases.length];
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,479 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ========== VARIABLES ========== */
+:root {
+    --azul: #0A66C2;
+    --azul-dark: #004182;
+    --gris: #75777E;
+    --blanco: #FFFFFF;
+    --negro: #1D1D1D;
+    --gris-bg: #F4F4F4;
+    --borde: #E0E0E0;
+    --amarillo: #FCD34D;
+    --verde: #10B981;
+    --rojo: #EF4444;
+    --sombra: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --sombra-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1.6rem;
+    line-height: 1.6;
+    color: var(--negro-suave);
+    background-color: var(--blanco);
+    background-image: radial-gradient(circle, #d1dae8 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+    overflow-x: hidden;
+}
+
+
+/* ========== NAVBAR ========== */
+.chamba-nav {
+    position: sticky;
+    top: 0;
+    background: var(--blanco);
+    border-bottom: 1px solid var(--borde);
+    z-index: 100;
+}
+
+.chamba-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    height: 6rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.chamba-logo {
+    font-weight: 800;
+    font-size: 1.8rem;
+    color: var(--azul);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chamba-search {
+    flex: 1;
+    max-width: 30rem;
+    position: relative;
+}
+
+.chamba-search input {
+    width: 100%;
+    background: var(--gris-bg);
+    border: 1px solid var(--borde);
+    border-radius: 2rem;
+    padding: 0.7rem 1rem 0.7rem 3rem;
+    font-size: 1.3rem;
+}
+
+.chamba-search i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gris);
+}
+
+.chamba-tabs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chamba-tab {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--gris);
+    cursor: pointer;
+}
+
+.chamba-tab.active {
+    color: var(--azul);
+    border-bottom: 2px solid var(--azul);
+}
+
+.chamba-actions {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+.chamba-icon {
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: 50%;
+    background: var(--gris-bg);
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.chamba-badge {
+    position: absolute;
+    top: -0.2rem;
+    right: -0.2rem;
+    background: var(--rojo);
+    color: white;
+    font-size: 1rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chamba-avatar {
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--azul);
+}
+
+/* Dropdown */
+.chamba-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 1rem;
+    width: 22rem;
+    margin-top: 0.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s;
+}
+
+.chamba-profile:hover .chamba-dropdown {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.chamba-dropdown a {
+    display: block;
+    padding: 0.8rem 1.2rem;
+    font-size: 1.3rem;
+    color: var(--negro);
+    text-decoration: none;
+}
+
+.chamba-dropdown a:hover {
+    background: var(--gris-bg);
+}
+
+/* ========== LAYOUT ========== */
+.chamba-layout {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 26rem 1fr 28rem;
+    gap: 2rem;
+}
+
+/* Sidebar izquierda */
+.chamba-sidebar {
+    position: sticky;
+    top: 7rem;
+}
+
+.chamba-card {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.chamba-profile-pic {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: block;
+    border: 3px solid var(--blanco);
+    box-shadow: var(--sombra);
+}
+
+.chamba-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.chamba-role {
+    font-size: 1.2rem;
+    color: var(--gris);
+    text-align: center;
+}
+
+.chamba-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.chamba-stat-num {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.chamba-stat-label {
+    font-size: 1.1rem;
+    color: var(--gris);
+}
+
+.chamba-nav-menu {
+    list-style: none;
+}
+
+.chamba-nav-menu li {
+    padding: 0.8rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--gris);
+    cursor: pointer;
+}
+
+.chamba-nav-menu li:hover,
+.chamba-nav-menu li.active {
+    color: var(--azul);
+}
+
+/* Feed */
+.chamba-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.chamba-post-box {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+}
+
+.chamba-post-input {
+    display: flex;
+    gap: 1rem;
+}
+
+.chamba-post-input textarea {
+    flex: 1;
+    background: var(--gris-bg);
+    border: 1px solid var(--borde);
+    border-radius: 2rem;
+    padding: 0.8rem 1.2rem;
+    font-size: 1.3rem;
+    resize: none;
+    font-family: 'Inter', sans-serif;
+}
+
+.chamba-post-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.chamba-post-actions button {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: var(--gris);
+}
+
+.chamba-publish {
+    background: var(--azul);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 2rem;
+    cursor: pointer;
+}
+
+/* Sidebar derecha */
+.chamba-widget {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.chamba-widget-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.chamba-suggestion {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.chamba-suggestion img {
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: 50%;
+}
+
+.chamba-suggestion-info {
+    flex: 1;
+}
+
+.chamba-suggestion-name {
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.chamba-suggestion-role {
+    font-size: 1.1rem;
+    color: var(--gris);
+}
+
+.chamba-connect {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    border: 1px solid var(--borde);
+    background: none;
+    cursor: pointer;
+}
+
+.chamba-oficio-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--borde);
+}
+
+.chamba-oficio-name {
+    font-weight: 600;
+}
+
+.chamba-oficio-count {
+    color: var(--gris);
+    font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+    .chamba-layout {
+        grid-template-columns: 26rem 1fr;
+    }
+
+    .chamba-sidebar-right {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .chamba-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .chamba-sidebar {
+        display: none;
+    }
+
+    .chamba-tabs {
+        display: none;
+    }
+}
+
+/* Toasts */
+#chamba-toasts {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+}
+
+.chamba-toast {
+    background: var(--negro);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 0.8rem;
+    font-size: 1.3rem;
+    margin-top: 0.5rem;
+    box-shadow: var(--sombra-md);
+}
+
+/* Navbar links */
+.chamba-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-left: auto;
+}
+
+.chamba-link {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--gris);
+    text-decoration: none;
+    padding: 0.5rem 0;
+}
+
+.chamba-link:hover,
+.chamba-link.active {
+    color: var(--azul);
+    border-bottom: 2px solid var(--azul);
+}
+
+.chamba-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--gris);
+    font-size: 1.4rem;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+
+.chamba-logout:hover {
+    color: var(--rojo);
+}
+
+
+
+
+
+/* ============================= */
+/* ============================= */
+/* ============================= */
+/* ============================= */
+/* ============================= */
+/* ============================= */
+/* ============================= */
+
+
+

@@ -1,0 +1,724 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA — Panel principal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/principal.css' %}">
+    <style>
+        /* ========== ESTILOS MEJORADOS PARA DASHBOARD ========== */
+        
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes modalIn {
+            from {
+                transform: scale(0.9) translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Post box mejorado */
+        .chamba-post-box {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #E5E7EB;
+        }
+        
+        .chamba-post-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border-color: #0A66C2;
+        }
+        
+        /* Tarjetas de publicación */
+        .publicacion-card-dashboard {
+            background: white;
+            border-radius: 1.2rem;
+            margin-bottom: 1.2rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #E5E7EB;
+            animation: fadeInUp 0.4s ease;
+        }
+        
+        .publicacion-card-dashboard:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: #0A66C2;
+        }
+        
+        /* Badges de tipo */
+        .tipo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .tipo-oferta-dash {
+            background: #E8F0FE;
+            color: #0A66C2;
+        }
+        
+        .tipo-servicio-dash {
+            background: #ECFDF5;
+            color: #10B981;
+        }
+        
+        .tipo-estado-dash {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+        
+        /* Botones de acción */
+        .btn-like-dash, .btn-comentar-dash {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6B7280;
+        }
+        
+        .btn-like-dash:hover, .btn-comentar-dash:hover {
+            background: #F3F4F6;
+            color: #0A66C2;
+        }
+        
+        .btn-like-dash i.fa-solid {
+            color: #EF4444;
+        }
+        
+        /* Widget de trabajadores destacados */
+        .trabajador-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .trabajador-item:hover {
+            background: #F9FAFB;
+            transform: translateX(3px);
+        }
+        
+        .trabajador-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #0A66C2;
+        }
+        
+        /* Widget de oficios populares */
+        .oficio-popular {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem;
+            border-radius: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .oficio-popular:hover {
+            background: #F9FAFB;
+        }
+        
+        /* Modal de comentarios */
+        .modal-comentarios-dash {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-comentarios-content {
+            background: white;
+            border-radius: 1.5rem;
+            width: 95%;
+            max-width: 500px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalIn 0.3s ease;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Modal de todos los trabajadores */
+        .modal-trabajadores {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Toast notifications */
+        #chamba-toasts {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 10050;
+        }
+        
+        .chamba-toast {
+            background: #1F2937;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.8rem;
+            font-size: 1.3rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+        
+        .chamba-toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chamba-layout {
+                grid-template-columns: 1fr;
+            }
+            .trabajador-avatar {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body class="chamba-dashboard">
+
+    {% include 'includes/navbar.html' %}
+
+    <div class="chamba-layout">
+
+        <!-- SIDEBAR IZQUIERDA -->
+        <aside class="chamba-sidebar">
+            <div class="chamba-card">
+                {% if user.perfil.foto_perfil %}
+                <img src="{{ user.perfil.foto_perfil.url }}" class="chamba-profile-pic">
+                {% else %}
+                <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ user.first_name|default:user.username }}"
+                    class="chamba-profile-pic">
+                {% endif %}
+
+                <div class="chamba-name">{{ user.first_name }} {{ user.last_name }}</div>
+                <div class="chamba-role">
+                    {% if user.perfil.tipo == 'trabajador' %}
+                    <i class="fa-solid fa-bolt"></i> {{ user.perfil.oficios|default:"Trabajador" }}
+                    {% else %}
+                    <i class="fa-solid fa-building"></i> {{ user.perfil.nombre_empresa|default:"Empleador" }}
+                    {% endif %}
+                </div>
+                <div class="chamba-stats">
+                    <div>
+                        <div class="chamba-stat-num">{{ user.perfil.total_trabajos|default:"0" }}</div>
+                        <div class="chamba-stat-label">Trabajos</div>
+                    </div>
+                    <div>
+                        <div class="chamba-stat-num">{{ user.perfil.promedio_calificacion|default:"0" }} ★</div>
+                        <div class="chamba-stat-label">Rating</div>
+                    </div>
+                </div>
+
+                {% if user.perfil.tipo == 'empleador' %}
+                <a href="{% url 'publicar_oferta' %}" class="chamba-publish" style="width: 100%; margin-top: 1rem; text-decoration: none; display: inline-block; text-align: center;">
+                    <i class="fa-solid fa-plus-circle"></i> Publicar oferta
+                </a>
+                {% else %}
+                <a href="{% url 'ofrecer_servicio' %}" class="chamba-publish" style="width: 100%; margin-top: 1rem; background: #0A66C2; text-decoration: none; display: inline-block; text-align: center;">
+                    <i class="fa-solid fa-plus-circle"></i> Ofrecer servicio
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="chamba-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                    <span style="font-size: 1.1rem; color: #0A66C2;">
+                        <i class="fa-regular fa-lightbulb"></i> Frase del día
+                    </span>
+                    <span style="font-size: 1rem; color: #999;">
+                        <i class="fa-regular fa-calendar"></i> <span id="fechaActual"></span>
+                    </span>
+                </div>
+                <p style="font-size: 1.3rem; line-height: 1.5; color: #444; margin: 0.5rem 0;">
+                    <span id="fraseMotivacional">Cargando...</span>
+                </p>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #aaa;">— CHAMBA —</div>
+            </div>
+        </aside>
+
+        <!-- FEED CENTRAL -->
+        <main class="chamba-feed">
+            <a href="{% url 'publicar_estado' %}" style="text-decoration: none; display: block;">
+                <div class="chamba-post-box">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span style="color: #6B7280; font-size: 1.4rem; font-weight: 500;">
+                            <i class="fa-regular fa-pen-to-square" style="color: #0A66C2; margin-right: 0.5rem;"></i>
+                            ¿Qué estás pensando?
+                        </span>
+                        <span style="display: inline-flex; align-items: center; gap: 1rem; color: #9CA3AF;">
+                            <i class="fa-solid fa-image" style="color: #10B981;"></i>
+                            <span class="chamba-publish" style="display: inline-block; background: #0A66C2; color: white; padding: 0.5rem 1.5rem; border-radius: 2rem; font-weight: 600; font-size: 1.2rem;">
+                                Publicar <i class="fa-solid fa-arrow-right" style="margin-left: 0.3rem;"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </a>
+
+            <div id="feedContainer">
+                {% if publicaciones %}
+                {% for publicacion in publicaciones %}
+                <div class="publicacion-card-dashboard" id="publicacion-{{ publicacion.id }}">
+                    <!-- Encabezado -->
+                    <div style="display: flex; align-items: center; gap: 0.8rem; padding: 1rem 1.2rem 0 1.2rem;">
+                        {% if publicacion.usuario.perfil.foto_perfil %}
+                        <img src="{{ publicacion.usuario.perfil.foto_perfil.url }}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                        <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ publicacion.usuario.username }}" style="width: 48px; height: 48px; border-radius: 50%;">
+                        {% endif %}
+                        <div style="flex:1;">
+                            <strong style="font-size:1.1rem;">{{ publicacion.usuario.get_full_name|default:publicacion.usuario.username }}</strong>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <span style="color:#9CA3AF; font-size:0.75rem;">
+                                    <i class="far fa-clock"></i> {{ publicacion.fecha_creacion|timesince }} atrás
+                                </span>
+                                <span class="tipo-badge tipo-{{ publicacion.tipo }}-dash">
+                                    {% if publicacion.tipo == "oferta" %}
+                                    <i class="fas fa-briefcase"></i> Oferta
+                                    {% elif publicacion.tipo == "servicio" %}
+                                    <i class="fas fa-tools"></i> Servicio
+                                    {% else %}
+                                    <i class="fas fa-comment"></i> Estado
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenido -->
+                    <div style="padding: 0.5rem 1.2rem 0 1.2rem;">
+                        <p style="font-size:1.2rem; color:#374151; line-height:1.5; margin: 0.5rem 0;">{{ publicacion.contenido|linebreaksbr }}</p>
+                    </div>
+
+                    <!-- Imagen -->
+                    {% if publicacion.imagen %}
+                    <div style="padding: 0 1.2rem;">
+                        <img src="{{ publicacion.imagen.url }}" class="publicacion-imagen-dash" style="width:100%; max-height:300px; object-fit:cover; border-radius:0.8rem; cursor:pointer;" onclick="this.style.maxHeight='100%';this.style.cursor='zoom-out';" ondblclick="this.style.maxHeight='300px';this.style.cursor='zoom-in';">
+                    </div>
+                    {% endif %}
+
+                    <!-- Botones -->
+                    <div style="display: flex; gap: 0.5rem; padding: 0.8rem 1.2rem 1rem; border-top: 1px solid #F3F4F6; margin-top: 0.5rem;">
+                        <button class="btn-like-dash" data-pid="{{ publicacion.id }}">
+                            <i class="{% if user in publicacion.likes.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart like-icon-{{ publicacion.id }}" style="{% if user in publicacion.likes.all %}color:#EF4444;{% endif %}"></i>
+                            <span class="like-count-{{ publicacion.id }}">{{ publicacion.likes.count }}</span>
+                        </button>
+                        <button class="btn-comentar-dash" data-pid="{{ publicacion.id }}">
+                            <i class="fa-regular fa-comment"></i>
+                            <span class="com-count-{{ publicacion.id }}">{{ publicacion.comentarios.count }}</span>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="chamba-card" style="text-align:center; color:#9CA3AF; padding:3rem;">
+                    <i class="fa-solid fa-newspaper" style="font-size:3rem; display:block; margin-bottom:1rem;"></i>
+                    <p style="font-size:1.3rem;">No hay publicaciones aún</p>
+                    <p style="font-size:1rem;">¡Sé el primero en compartir algo!</p>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+
+        <!-- SIDEBAR DERECHA -->
+        <aside class="chamba-sidebar-right">
+            <!-- Trabajadores destacados -->
+            <div class="chamba-widget">
+                <div class="chamba-widget-title">
+                    <i class="fa-solid fa-users"></i> Trabajadores destacados
+                </div>
+                <div id="lista-trabajadores-widget">
+                    {% if trabajadores %}
+                        {% for perfil in trabajadores|slice:":5" %}
+                        <div class="trabajador-item" onclick="window.location.href='/perfil-trabajador/{{ perfil.usuario.id }}/'">
+                            <div style="position: relative;">
+                                {% if perfil.foto_perfil %}
+                                <img src="{{ perfil.foto_perfil.url }}" class="trabajador-avatar">
+                                {% else %}
+                                <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ perfil.usuario.username }}" class="trabajador-avatar">
+                                {% endif %}
+                                {% if perfil.disponible %}
+                                <div style="position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #10B981; border-radius: 50%; border: 2px solid white;"></div>
+                                {% endif %}
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; font-size: 0.9rem;">{{ perfil.usuario.get_full_name|default:perfil.usuario.username }}</div>
+                                <div style="font-size: 0.7rem; color: #6B7280;"><i class="fa-solid fa-briefcase"></i> {{ perfil.oficios|default:"Trabajador" }}</div>
+                                <div style="display: flex; align-items: center; gap: 0.3rem; margin-top: 0.2rem;">
+                                    <div style="font-size: 0.65rem; color: #F59E0B;">
+                                        {% if perfil.promedio_calificacion %}
+                                            {% with promedio=perfil.promedio_calificacion|floatformat:0 %}
+                                                {% for i in "12345"|make_list %}
+                                                    {% if forloop.counter <= promedio %}★{% else %}☆{% endif %}
+                                                {% endfor %}
+                                            {% endwith %}
+                                        {% else %}☆☆☆☆☆{% endif %}
+                                    </div>
+                                    <span style="font-size: 0.6rem; color: #9CA3AF;">({{ perfil.total_calificaciones|default:"0" }})</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color: #9CA3AF;"></i>
+                        </div>
+                        {% if not forloop.last %}<div style="border-bottom: 1px solid #F3F4F6; margin: 0.5rem 0;"></div>{% endif %}
+                        {% endfor %}
+                        
+                        {% if trabajadores|length > 5 %}
+                        <div style="margin-top: 0.8rem; text-align: center;">
+                            <button onclick="abrirModalTodosTrabajadores()" style="background: none; border: none; color: #0A66C2; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+                                Ver todos los trabajadores <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                    <div style="text-align: center; padding: 2rem; color: #9CA3AF;">
+                        <i class="fa-solid fa-users" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                        <p>No hay trabajadores registrados</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Oficios más buscados -->
+            <div class="chamba-widget">
+                <div class="chamba-widget-title">
+                    <i class="fa-solid fa-fire"></i> Más buscados
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div class="oficio-popular" style="background: linear-gradient(135deg, #E8F0FE 0%, #FFFFFF 100%);">
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            <span style="background: #0A66C2; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700;">1</span>
+                            <i class="fa-solid fa-bolt" style="color: #0A66C2;"></i>
+                            <span style="font-weight: 600;">Electricidad</span>
+                        </div>
+                        <span style="background: #E8F0FE; padding: 0.2rem 0.8rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 600; color: #0A66C2;">3,400</span>
+                    </div>
+                    <div class="oficio-popular">
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            <span style="background: #004182; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700;">2</span>
+                            <i class="fa-solid fa-wrench" style="color: #0A66C2;"></i>
+                            <span>Plomería</span>
+                        </div>
+                        <span style="background: #F3F4F6; padding: 0.2rem 0.8rem; border-radius: 1rem; font-size: 0.8rem;">2,100</span>
+                    </div>
+                    <div class="oficio-popular">
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            <span style="background: #9CA3AF; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700;">3</span>
+                            <i class="fa-solid fa-hammer" style="color: #0A66C2;"></i>
+                            <span>Carpintería</span>
+                        </div>
+                        <span style="background: #F3F4F6; padding: 0.2rem 0.8rem; border-radius: 1rem; font-size: 0.8rem;">1,850</span>
+                    </div>
+                    <div class="oficio-popular">
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            <span style="background: #9CA3AF; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700;">4</span>
+                            <i class="fa-solid fa-utensils" style="color: #0A66C2;"></i>
+                            <span>Cocina</span>
+                        </div>
+                        <span style="background: #F3F4F6; padding: 0.2rem 0.8rem; border-radius: 1rem; font-size: 0.8rem;">1,200</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- MODAL COMENTARIOS -->
+    <div id="modalComentarios" class="modal-comentarios-dash">
+        <div class="modal-comentarios-content">
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #F3F4F6; display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="font-size: 1.4rem; font-weight: 700; color: #1F2937;">💬 Comentarios</h3>
+                <button onclick="cerrarModalComentarios()" style="width: 32px; height: 32px; border-radius: 50%; border: none; background: #F3F4F6; cursor: pointer;">✕</button>
+            </div>
+            <div id="modalListaComentarios" style="flex: 1; overflow-y: auto; padding: 1rem 1.5rem; max-height: 300px;"></div>
+            <div style="padding: 1rem 1.5rem; border-top: 1px solid #F3F4F6; display: flex; gap: 0.5rem;">
+                <input type="text" id="modalInputComentario" placeholder="Escribe un comentario..." style="flex: 1; padding: 0.8rem 1rem; border: 1.5px solid #E5E7EB; border-radius: 2rem; font-size: 1.1rem; outline: none;">
+                <button id="modalBtnEnviar" style="background: #0A66C2; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 2rem; cursor: pointer; font-weight: 600;">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TODOS LOS TRABAJADORES -->
+    <div id="modalTodosTrabajadores" class="modal-trabajadores">
+        <div style="background: white; border-radius: 1.5rem; width: 90%; max-width: 700px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.3);">
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; background: #F8FAFC;">
+                <h3 style="font-size: 1.2rem; font-weight: 700;"><i class="fa-solid fa-users" style="color: #0A66C2;"></i> Todos los trabajadores</h3>
+                <button onclick="cerrarModalTodosTrabajadores()" style="width: 2.5rem; height: 2.5rem; border-radius: 50%; border: none; background: #E5E7EB; cursor: pointer;">✕</button>
+            </div>
+            <div style="padding: 1rem 1.5rem; background: white; border-bottom: 1px solid #E5E7EB;">
+                <div style="position: relative;">
+                    <i class="fa-solid fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #9CA3AF;"></i>
+                    <input type="text" id="buscarTrabajadorModal" placeholder="Buscar trabajador..." style="width: 100%; padding: 0.7rem 1rem 0.7rem 2.5rem; border: 1px solid #E5E7EB; border-radius: 2rem; font-size: 0.85rem;">
+                </div>
+            </div>
+            <div id="modalListaTrabajadores" style="flex: 1; overflow-y: auto; padding: 1rem;"></div>
+            <div style="padding: 1rem 1.5rem; border-top: 1px solid #E5E7EB; background: #F8FAFC;">
+                <button onclick="cerrarModalTodosTrabajadores()" style="width: 100%; padding: 0.7rem; border: 1.5px solid #E5E7EB; background: white; border-radius: 2rem; cursor: pointer;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="chamba-toasts"></div>
+
+    <script>
+        // Variables
+        let currentPublicacionId = null;
+        let todosLosTrabajadores = [];
+
+        // ========== FRASE DEL DÍA ==========
+        const frases = [
+            "El éxito no es la clave de la felicidad. La felicidad es la clave del éxito.",
+            "Cree en ti mismo y todo será posible.",
+            "Pequeños progresos cada día llevan a grandes resultados.",
+            "La calidad nunca es un accidente; es resultado del esfuerzo inteligente.",
+            "No te compares con los demás, compárate con quien fuiste ayer."
+        ];
+        const hoy = new Date();
+        const fechaSpan = document.getElementById('fechaActual');
+        const fraseSpan = document.getElementById('fraseMotivacional');
+        if (fechaSpan) fechaSpan.textContent = hoy.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+        if (fraseSpan) fraseSpan.textContent = frases[hoy.getDate() % frases.length];
+
+        // ========== LIKE ==========
+        document.querySelectorAll('.btn-like-dash').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const pid = this.dataset.pid;
+                fetch(`/like/${pid}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    const icon = document.querySelector(`.like-icon-${pid}`);
+                    const count = document.querySelector(`.like-count-${pid}`);
+                    if (data.liked) {
+                        icon.className = 'fa-solid fa-heart like-icon-' + pid;
+                        icon.style.color = '#EF4444';
+                    } else {
+                        icon.className = 'fa-regular fa-heart like-icon-' + pid;
+                        icon.style.color = '';
+                    }
+                    count.textContent = data.total_likes;
+                });
+            });
+        });
+
+        // ========== COMENTARIOS ==========
+        function abrirModalComentarios(pid) {
+            currentPublicacionId = pid;
+            document.getElementById('modalComentarios').style.display = 'flex';
+            cargarComentarios(pid);
+        }
+
+        function cerrarModalComentarios() {
+            document.getElementById('modalComentarios').style.display = 'none';
+            currentPublicacionId = null;
+        }
+
+        function cargarComentarios(pid) {
+            fetch(`/comentarios/${pid}/`)
+                .then(r => r.json())
+                .then(data => {
+                    let html = '';
+                    data.comentarios.forEach(c => {
+                        html += `<div style="display:flex; gap:0.6rem; margin-bottom:0.8rem; padding:0.6rem; background:#F9FAFB; border-radius:0.8rem;">
+                            <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name=${c.usuario}" style="width:2.2rem; height:2.2rem; border-radius:50%;">
+                            <div style="flex:1;">
+                                <strong style="font-size:1rem;">${c.usuario}</strong>
+                                <small style="color:#9CA3AF; margin-left:0.5rem;">${c.fecha}</small>
+                                <p style="margin:0.2rem 0 0 0; font-size:1.1rem; color:#374151;">${c.texto}</p>
+                            </div>
+                        </div>`;
+                    });
+                    if (!html) html = '<p style="text-align:center; color:#9CA3AF; padding:2rem;">Sé el primero en comentar ✨</p>';
+                    document.getElementById('modalListaComentarios').innerHTML = html;
+                });
+        }
+
+        function enviarComentario() {
+            const texto = document.getElementById('modalInputComentario').value.trim();
+            if (!texto || !currentPublicacionId) return;
+            const formData = new FormData();
+            formData.append('texto', texto);
+            fetch(`/comentar/${currentPublicacionId}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('modalInputComentario').value = '';
+                    cargarComentarios(currentPublicacionId);
+                    const count = document.querySelector(`.com-count-${currentPublicacionId}`);
+                    count.textContent = parseInt(count.textContent) + 1;
+                    showToast('Comentario publicado');
+                }
+            });
+        }
+
+        document.querySelectorAll('.btn-comentar-dash').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const pid = this.dataset.pid;
+                abrirModalComentarios(pid);
+            });
+        });
+
+        document.getElementById('modalBtnEnviar')?.addEventListener('click', enviarComentario);
+        document.getElementById('modalInputComentario')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') enviarComentario();
+        });
+        document.getElementById('modalComentarios')?.addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalComentarios();
+        });
+
+        // ========== MODAL TRABAJADORES ==========
+        function abrirModalTodosTrabajadores() {
+            document.getElementById('modalTodosTrabajadores').style.display = 'flex';
+            cargarTodosTrabajadores();
+        }
+
+        function cerrarModalTodosTrabajadores() {
+            document.getElementById('modalTodosTrabajadores').style.display = 'none';
+        }
+
+        function cargarTodosTrabajadores() {
+            fetch('/api/todos-trabajadores/')
+                .then(r => r.json())
+                .then(data => {
+                    todosLosTrabajadores = data.trabajadores;
+                    mostrarListaTrabajadores(todosLosTrabajadores);
+                    const buscarInput = document.getElementById('buscarTrabajadorModal');
+                    if (buscarInput) {
+                        buscarInput.removeEventListener('input', filtrarTrabajadores);
+                        buscarInput.addEventListener('input', filtrarTrabajadores);
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('modalListaTrabajadores').innerHTML = '<div style="text-align: center; padding: 2rem; color: #EF4444;">Error al cargar</div>';
+                });
+        }
+
+        function filtrarTrabajadores() {
+            const searchText = document.getElementById('buscarTrabajadorModal').value.toLowerCase().trim();
+            const filtrados = searchText === '' ? todosLosTrabajadores : todosLosTrabajadores.filter(t => 
+                t.nombre.toLowerCase().includes(searchText) || t.oficio.toLowerCase().includes(searchText)
+            );
+            mostrarListaTrabajadores(filtrados);
+        }
+
+        function mostrarListaTrabajadores(trabajadores) {
+            const container = document.getElementById('modalListaTrabajadores');
+            if (trabajadores.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #9CA3AF;">No se encontraron trabajadores</div>';
+                return;
+            }
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+            trabajadores.forEach(t => {
+                const estrellas = '⭐'.repeat(Math.floor(t.calificacion)) + '☆'.repeat(5 - Math.floor(t.calificacion));
+                html += `<div onclick="window.location.href='/perfil-trabajador/${t.id}/'" style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem; border-radius: 1rem; cursor: pointer;">
+                    <img src="${t.foto || 'https://ui-avatars.com/api/?background=0A66C2&color=fff&name=' + encodeURIComponent(t.nombre)}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                    <div style="flex:1;">
+                        <div style="font-weight: 700;">${t.nombre}</div>
+                        <div style="font-size: 0.75rem; color: #6B7280;">${t.oficio}</div>
+                        <div style="font-size: 0.7rem; color: #F59E0B;">${estrellas}</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div><div style="border-bottom: 1px solid #F3F4F6;"></div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        document.getElementById('modalTodosTrabajadores')?.addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalTodosTrabajadores();
+        });
+
+        // ========== TOAST ==========
+        function showToast(message) {
+            const toasts = document.getElementById('chamba-toasts');
+            const toast = document.createElement('div');
+            toast.className = 'chamba-toast';
+            toast.innerHTML = `<i class="fa-solid fa-circle-info" style="margin-right: 0.8rem;"></i> ${message}`;
+            toasts.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

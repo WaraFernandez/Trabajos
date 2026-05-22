@@ -1,0 +1,730 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA - Empleos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/principal.css' %}">
+    <style>
+        .job-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+            border-left-color: #0A66C2;
+        }
+        .company-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid #E5E7EB;
+        }
+        .badge-oferta {
+            background: #E8F0FE;
+            color: #0A66C2;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .badge-mia {
+            background: #10B981;
+            color: white;
+        }
+        .badge-estado {
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .chip-oficio, .chip-ubicacion, .chip-remuneracion {
+            background: #F3F4F6;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .chip-remuneracion {
+            background: #E8F0FE;
+            color: #0A66C2;
+        }
+        .section-header {
+            background: #0A66C2;
+            color: white;
+            text-align: center;
+            border: none;
+            padding: 1.5rem;
+            border-radius: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .section-header p {
+            margin-top: 0.3rem;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        .modal-content {
+            animation: modalSlide 0.3s ease;
+        }
+        @keyframes modalSlide {
+            from { opacity: 0; transform: scale(0.95) translateY(-20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .btn-whatsapp {
+            background: #0A66C2;
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.7rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-whatsapp:hover {
+            background: #004182;
+            transform: translateY(-2px);
+        }
+        .btn-editar-oferta {
+            background: #10B981;
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.7rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-editar-oferta:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        .filtros-widget {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .filtros-titulo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0A66C2;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid #E8F0FE;
+            padding-bottom: 0.5rem;
+        }
+        .filtro-grupo {
+            margin-bottom: 1.2rem;
+        }
+        .filtro-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .filtro-select, .filtro-input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            background: #F9FAFB;
+            transition: all 0.2s;
+        }
+        .filtro-select:focus, .filtro-input:focus {
+            outline: none;
+            border-color: #0A66C2;
+            box-shadow: 0 0 0 2px rgba(10, 102, 194, 0.1);
+        }
+        .btn-filtrar {
+            width: 100%;
+            background: #0A66C2;
+            color: white;
+            border: none;
+            padding: 0.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-filtrar:hover {
+            background: #004182;
+            transform: translateY(-2px);
+        }
+        .btn-limpiar {
+            width: 100%;
+            background: #F3F4F6;
+            color: #4B5563;
+            border: 1px solid #E5E7EB;
+            padding: 0.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-limpiar:hover {
+            background: #E5E7EB;
+        }
+        .modal-edit {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-edit-content {
+            background: white;
+            border-radius: 1.5rem;
+            max-width: 550px;
+            width: 90%;
+            padding: 1.5rem;
+            animation: modalSlide 0.3s ease;
+        }
+        .modal-edit-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #0A66C2;
+        }
+        .modal-edit-content input,
+        .modal-edit-content textarea,
+        .modal-edit-content select {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.8rem;
+            font-size: 1.2rem;
+            font-family: inherit;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        .modal-buttons button {
+            background: #0A66C2;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            cursor: pointer;
+        }
+        .modal-buttons button:first-child {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+        @media (max-width: 768px) {
+            .chamba-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="chamba-dashboard">
+
+    {% include 'includes/navbar.html' %}
+
+    <div class="chamba-layout">
+
+        <aside class="chamba-sidebar">
+            <div class="chamba-card">
+                {% if user.perfil.foto_perfil %}
+                <img src="{{ user.perfil.foto_perfil.url }}" class="chamba-profile-pic">
+                {% else %}
+                <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ user.first_name|default:user.username }}" class="chamba-profile-pic">
+                {% endif %}
+                <div class="chamba-name">{{ user.first_name }} {{ user.last_name }}</div>
+                <div class="chamba-role">
+                    {% if user.perfil.tipo == 'trabajador' %}
+                    <i class="fa-solid fa-bolt"></i> {{ user.perfil.oficios|default:"Trabajador" }}
+                    {% else %}
+                    <i class="fa-solid fa-building"></i> {{ user.perfil.nombre_empresa|default:"Empleador" }}
+                    {% endif %}
+                </div>
+                <div class="chamba-stats">
+                    <div><div class="chamba-stat-num">{{ user.perfil.total_trabajos|default:"0" }}</div><div class="chamba-stat-label">Trabajos</div></div>
+                    <div><div class="chamba-stat-num">{{ user.perfil.promedio_calificacion|default:"0" }} ★</div><div class="chamba-stat-label">Rating</div></div>
+                </div>
+                {% if user.perfil.tipo == 'empleador' %}
+                <a href="{% url 'publicar_oferta' %}" class="chamba-publish" style="width:100%; margin-top:1rem; text-decoration:none; display:inline-block; text-align:center;"><i class="fa-solid fa-plus-circle"></i> Publicar oferta</a>
+                {% else %}
+                <a href="{% url 'ofrecer_servicio' %}" class="chamba-publish" style="width:100%; margin-top:1rem; background:#0A66C2; text-decoration:none; display:inline-block; text-align:center;"><i class="fa-solid fa-plus-circle"></i> Ofrecer servicio</a>
+                {% endif %}
+            </div>
+            <div class="chamba-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                    <span style="font-size: 1.1rem; color: #0A66C2;"><i class="fa-regular fa-lightbulb"></i> Frase del día</span>
+                    <span style="font-size: 1rem; color: #999;"><i class="fa-regular fa-calendar"></i> <span id="fechaActual"></span></span>
+                </div>
+                <p style="font-size: 1.3rem; line-height: 1.5; color: #444; margin: 0.5rem 0;"><span id="fraseMotivacional">Cargando...</span></p>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #aaa;">— CHAMBA —</div>
+            </div>
+        </aside>
+
+        <main class="chamba-feed">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-briefcase"></i> Ofertas laborales</h2>
+                <p>Encuentra el trabajo que estás buscando</p>
+            </div>
+
+            <div id="ofertas-container">
+                {% if ofertas %}
+                {% for oferta in ofertas %}
+                <div class="chamba-card job-card" 
+                     data-id="{{ oferta.id }}"
+                     data-titulo="{{ oferta.titulo|lower|escapejs }}" 
+                     data-oficio="{{ oferta.oficio|lower|escapejs }}" 
+                     data-ubicacion="{{ oferta.ubicacion|lower|escapejs }}"
+                     data-descripcion="{{ oferta.descripcion|lower|escapejs }}"
+                     data-empresa="{{ oferta.empleador.perfil.nombre_empresa|default:oferta.empleador.get_full_name|escapejs }}"
+                     data-es-propia="{% if oferta.empleador == user %}true{% else %}false{% endif %}"
+                     data-estado="{{ oferta.estado }}"
+                     data-fecha-limite="{{ oferta.fecha_limite|date:'Y-m-d' }}">
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1.2rem;">
+                        {% if oferta.empleador.perfil.foto_perfil %}
+                        <img src="{{ oferta.empleador.perfil.foto_perfil.url }}" class="company-avatar">
+                        {% else %}
+                        <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ oferta.empleador.username }}" class="company-avatar">
+                        {% endif %}
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <strong>{{ oferta.empleador.perfil.nombre_empresa|default:oferta.empleador.get_full_name }}</strong>
+                                <span class="badge-oferta"><i class="fa-solid fa-check-circle"></i> Verificada</span>
+                                {% if oferta.empleador == user %}
+                                <span class="badge-oferta badge-mia"><i class="fa-solid fa-user"></i> Tu oferta</span>
+                                {% endif %}
+                            </div>
+                            <span style="color: #9CA3AF; font-size: 0.85rem;">
+                                <i class="fa-regular fa-clock"></i> Publicado {{ oferta.fecha_publicacion|timesince }} atrás
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <span class="badge-oferta"><i class="fa-solid fa-briefcase"></i> Oferta</span>
+                            <span class="badge-estado" style="background: {{ oferta.estado_color }}20; color: {{ oferta.estado_color }};">
+                                <i class="fa-solid {% if oferta.estado == 'Caducada' %}fa-calendar-xmark{% elif oferta.estado == '¡Por vencer!' %}fa-clock{% else %}fa-check-circle{% endif %}"></i>
+                                {{ oferta.estado }}
+                            </span>
+                        </div>
+                    </div>
+                    <div style="padding: 0 1.2rem 0.8rem;">
+                        <h3 style="font-size: 1.4rem; font-weight: 700;" class="oferta-titulo">{{ oferta.titulo }}</h3>
+                        <div class="chips-container">
+                            <span class="chip-oficio"><i class="fa-solid fa-bolt"></i> {{ oferta.oficio }}</span>
+                            <span class="chip-ubicacion"><i class="fa-solid fa-location-dot"></i> {{ oferta.ubicacion }}</span>
+                            {% if oferta.remuneracion %}
+                            <span class="chip-remuneracion"><i class="fa-solid fa-money-bill-wave"></i> {{ oferta.remuneracion }} Bs</span>
+                            {% endif %}
+                            {% if oferta.fecha_limite %}
+                            <span class="chip-remuneracion" style="background: #FEF2F2; color: #DC2626;">
+                                <i class="fa-regular fa-calendar"></i> Límite: {{ oferta.fecha_limite|date:"d/m/Y" }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div style="padding: 0.8rem 1.2rem; border-top: 1px solid var(--borde); background: #F9FAFB;">
+                        <span style="color: #0A66C2;"><i class="fa-regular fa-eye"></i> Haz clic para ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="chamba-card" style="text-align:center; padding:3rem; color:#9CA3AF;" id="no-ofertas">
+                    <i class="fa-solid fa-briefcase" style="font-size:3rem; margin-bottom:1rem; display:block;"></i>
+                    <p>No hay ofertas laborales disponibles aún</p>
+                    {% if user.perfil.tipo == 'empleador' %}
+                    <a href="{% url 'publicar_oferta' %}" class="btn-whatsapp" style="display:inline-block; margin-top:1rem; text-decoration:none;">Publicar mi primera oferta</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- MODAL DETALLES -->
+            <div id="modalDetalle" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); z-index:10000; align-items:center; justify-content:center;">
+                <div class="modal-content" style="background:white; border-radius:1.5rem; width:95%; max-width:550px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.3);">
+                    <div style="padding:1rem 1.5rem; border-bottom:1px solid #E5E7EB; display:flex; justify-content:space-between; align-items:center; background:#F8FAFC;">
+                        <h3 style="font-size:1.2rem; font-weight:700;"><i class="fa-solid fa-briefcase" style="color:#0A66C2;"></i> Detalle de la oferta</h3>
+                        <button onclick="cerrarModal()" style="width:2.5rem; height:2.5rem; border-radius:50%; border:none; background:#E5E7EB; cursor:pointer;">✕</button>
+                    </div>
+                    <div id="modalContenido" style="flex:1; overflow-y:auto; padding:1.5rem;"></div>
+                    <div id="modalBotones" style="padding:1rem 1.5rem; border-top:1px solid #E5E7EB; display:flex; gap:1rem; background:#F8FAFC;">
+                        <button onclick="cerrarModal()" class="btn-cerrar-modal" style="flex:1; padding:0.7rem; border:1.5px solid #E5E7EB; background:white; border-radius:2rem; cursor:pointer;">Cerrar</button>
+                        <button class="btn-whatsapp" style="flex:1;" onclick="contactar()"><i class="fa-brands fa-whatsapp"></i> Contactar por WhatsApp</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="chamba-sidebar-right">
+    <div class="filtros-widget">
+        <div class="filtros-titulo">
+            <i class="fa-regular fa-heart"></i> Frase del día
+        </div>
+        <div style="text-align: center; padding: 1rem;">
+            <i class="fa-regular fa-lightbulb" style="font-size: 2rem; color: #0A66C2; margin-bottom: 0.8rem; display: block;"></i>
+            <p id="fraseMotivacionalSidebar" style="font-size: 1rem; color: #374151; line-height: 1.5; font-style: italic;">
+                "El éxito no es la clave de la felicidad. La felicidad es la clave del éxito."
+            </p>
+            <p style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.8rem;">— CHAMBA —</p>
+        </div>
+    </div>
+
+    <div class="filtros-widget">
+        <div class="filtros-titulo">
+            <i class="fa-solid fa-chart-simple"></i> Estadísticas
+        </div>
+        <div style="text-align: center; padding: 0.5rem 0;">
+            <div style="font-size: 2rem; font-weight: 700; color: #0A66C2;" id="total-ofertas">0</div>
+            <div style="font-size: 0.75rem; color: #6B7280;">ofertas disponibles</div>
+        </div>
+    </div>
+</aside>
+
+<script>
+    // Frases motivacionales para el sidebar
+    const frasesSidebar = [
+        "El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
+        "No busques el éxito, busca hacer un trabajo que te apasione.",
+        "El trabajo duro siempre vence al talento cuando el talento no trabaja duro.",
+        "Cree en ti mismo y todo será posible.",
+        "La calidad nunca es un accidente; es resultado del esfuerzo inteligente.",
+        "Pequeños progresos cada día llevan a grandes resultados.",
+        "Tu único límite es tu mente. Atrévete a soñar más allá.",
+        "El mejor momento para empezar fue ayer. El segundo mejor es hoy."
+    ];
+    const indiceFrase = new Date().getDate() % frasesSidebar.length;
+    const fraseElemento = document.getElementById('fraseMotivacionalSidebar');
+    if (fraseElemento) {
+        fraseElemento.textContent = frasesSidebar[indiceFrase];
+    }
+</script>
+    </div>
+
+    <!-- MODAL DE EDICIÓN DE OFERTA -->
+    <div id="modalEditarOferta" class="modal-edit">
+        <div class="modal-edit-content">
+            <h3><i class="fas fa-edit"></i> Editar oferta</h3>
+            <form id="formEditarOferta">
+                {% csrf_token %}
+                <input type="hidden" id="editOfertaId">
+                <input type="text" id="editTitulo" placeholder="Título" required>
+                <select id="editOficio" required>
+                    <option value="">Selecciona un oficio</option>
+                    <option value="Electricista">⚡ Electricista</option>
+                    <option value="Plomero">🔧 Plomero</option>
+                    <option value="Carpintero">🪵 Carpintero</option>
+                    <option value="Cocinero">🍳 Cocinero</option>
+                    <option value="Limpieza">🧹 Limpieza</option>
+                    <option value="Construcción">🏗️ Construcción</option>
+                    <option value="Pintor">🎨 Pintor</option>
+                    <option value="Jardinero">🌿 Jardinero</option>
+                    <option value="Mecánico">🔧 Mecánico</option>
+                </select>
+                <textarea id="editDescripcion" rows="5" placeholder="Descripción detallada" required></textarea>
+                <input type="text" id="editUbicacion" placeholder="Ubicación" required>
+                <input type="text" id="editRemuneracion" placeholder="Remuneración (ej: 2000 Bs)">
+                <input type="date" id="editFechaLimite">
+                <div class="modal-buttons">
+                    <button type="button" onclick="cerrarModalEditarOferta()">Cancelar</button>
+                    <button type="button" onclick="guardarEdicionOferta()">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentId = null;
+        let todasOfertas = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const ofertasItems = document.querySelectorAll('#ofertas-container .job-card');
+            todasOfertas = Array.from(ofertasItems);
+            actualizarTotal();
+
+            document.getElementById('btn-filtrar').addEventListener('click', aplicarFiltros);
+            document.getElementById('btn-limpiar').addEventListener('click', limpiarFiltros);
+            
+            document.getElementById('filtro-buscar').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') aplicarFiltros();
+            });
+            document.getElementById('filtro-ubicacion').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') aplicarFiltros();
+            });
+        });
+
+        function aplicarFiltros() {
+            const buscarTexto = document.getElementById('filtro-buscar').value.toLowerCase().trim();
+            const oficioFiltro = document.getElementById('filtro-oficio').value.toLowerCase();
+            const ubicacionFiltro = document.getElementById('filtro-ubicacion').value.toLowerCase().trim();
+            const estadoFiltro = document.getElementById('filtro-estado').value;
+            let contador = 0;
+            
+            todasOfertas.forEach(oferta => {
+                const titulo = oferta.dataset.titulo || '';
+                const oficio = oferta.dataset.oficio || '';
+                const ubicacion = oferta.dataset.ubicacion || '';
+                const descripcion = oferta.dataset.descripcion || '';
+                const estado = oferta.dataset.estado || '';
+                let mostrar = true;
+                
+                if (buscarTexto && !titulo.includes(buscarTexto) && !oficio.includes(buscarTexto) && !descripcion.includes(buscarTexto)) {
+                    mostrar = false;
+                }
+                if (oficioFiltro && !oficio.includes(oficioFiltro)) {
+                    mostrar = false;
+                }
+                if (ubicacionFiltro && !ubicacion.includes(ubicacionFiltro)) {
+                    mostrar = false;
+                }
+                if (estadoFiltro && estado !== estadoFiltro) {
+                    mostrar = false;
+                }
+                
+                oferta.style.display = mostrar ? 'block' : 'none';
+                if (mostrar) contador++;
+            });
+            actualizarTotal(contador);
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filtro-buscar').value = '';
+            document.getElementById('filtro-oficio').value = '';
+            document.getElementById('filtro-ubicacion').value = '';
+            document.getElementById('filtro-estado').value = '';
+            todasOfertas.forEach(oferta => oferta.style.display = 'block');
+            actualizarTotal(todasOfertas.length);
+        }
+
+        function actualizarTotal(total = null) {
+            const contador = total !== null ? total : todasOfertas.filter(o => o.style.display !== 'none').length;
+            const totalElement = document.getElementById('total-ofertas');
+            if (totalElement) totalElement.innerText = contador;
+        }
+
+        function verDetalle(id, tipo) {
+            currentId = id;
+            fetch(`/api/${tipo}/${id}/`)
+                .then(r => r.json())
+                .then(data => {
+                    const esPropia = data.es_propia || false;
+                    const modalContenido = document.getElementById('modalContenido');
+                    const modalBotones = document.getElementById('modalBotones');
+                    
+                    const estadoColor = data.estado === 'Caducada' ? '#EF4444' : (data.estado === '¡Por vencer!' ? '#F59E0B' : '#10B981');
+                    const estadoIcono = data.estado === 'Caducada' ? 'fa-calendar-xmark' : (data.estado === '¡Por vencer!' ? 'fa-clock' : 'fa-check-circle');
+                    
+                    if (modalContenido) {
+                        modalContenido.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #E5E7EB;">
+                                <img src="${data.foto}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
+                                <div>
+                                    <strong style="font-size: 1.3rem;">${data.empresa || data.trabajador}</strong>
+                                    <span style="background: #E8F0FE; color: #0A66C2; padding: 0.2rem 0.6rem; border-radius: 1rem; font-size: 0.7rem; font-weight: 600;"><i class="fa-solid fa-check-circle"></i> Verificada</span>
+                                    <span style="color: #9CA3AF; font-size: 0.8rem;"><i class="fa-regular fa-calendar"></i> Publicado: ${data.fecha}</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h4 style="font-size: 1.5rem; font-weight: 700;">${data.titulo}</h4>
+                                <span class="badge-estado" style="background: ${estadoColor}20; color: ${estadoColor}; padding: 0.3rem 0.8rem;">
+                                    <i class="fa-solid ${estadoIcono}"></i> ${data.estado || 'Abierta'}
+                                </span>
+                            </div>
+                            <div class="chips-container">
+                                <span class="chip-oficio"><i class="fa-solid fa-bolt"></i> ${data.oficio}</span>
+                                <span class="chip-ubicacion"><i class="fa-solid fa-location-dot"></i> ${data.ubicacion}</span>
+                                ${data.remuneracion ? `<span class="chip-remuneracion"><i class="fa-solid fa-money-bill-wave"></i> ${data.remuneracion} Bs</span>` : ''}
+                            </div>
+                            <div style="background: #F9FAFB; padding: 1rem; border-radius: 1rem; margin-top: 0.5rem;">
+                                <p style="font-weight:600; margin-bottom:0.5rem;"><i class="fa-regular fa-file-lines"></i> DESCRIPCIÓN</p>
+                                <p style="line-height: 1.6;">${data.descripcion}</p>
+                            </div>
+                            ${data.fecha_limite ? `
+                            <div style="margin-top: 1rem; background: ${estadoColor}20; padding: 0.8rem; border-radius: 0.8rem; border-left: 4px solid ${estadoColor};">
+                                <p style="color: ${estadoColor}; font-weight: 600;">
+                                    <i class="fa-solid ${estadoIcono}"></i> Estado: ${data.estado}
+                                </p>
+                                <p style="margin-top: 0.3rem;"><i class="fa-regular fa-calendar-xmark"></i> Fecha límite: ${data.fecha_limite}</p>
+                            </div>
+                            ` : ''}
+                            <div style="margin-top: 1rem; padding: 0.8rem; background: #E8F0FE; border-radius: 0.8rem; color:#0A66C2;">
+                                <i class="fa-brands fa-whatsapp"></i> Contacto WhatsApp: ${data.telefono || 'No disponible'}
+                            </div>
+                        `;
+                    }
+                    
+                    if (modalBotones && esPropia) {
+                        modalBotones.innerHTML = `
+                            <button onclick="cerrarModal()" style="flex:1; padding:0.7rem; border:1.5px solid #E5E7EB; background:white; border-radius:2rem; cursor:pointer;">Cerrar</button>
+                            <button onclick="abrirModalEditarOferta(${id})" class="btn-editar-oferta" style="flex:1;"><i class="fas fa-edit"></i> Editar oferta</button>
+                            <button onclick="eliminarOferta(${id})" style="flex:1; background:#EF4444; color:white; border:none; border-radius:2rem; cursor:pointer;"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                        `;
+                    } else if (modalBotones) {
+                        modalBotones.innerHTML = `
+                            <button onclick="cerrarModal()" style="flex:1; padding:0.7rem; border:1.5px solid #E5E7EB; background:white; border-radius:2rem; cursor:pointer;">Cerrar</button>
+                            <button class="btn-whatsapp" style="flex:1;" onclick="contactar()"><i class="fa-brands fa-whatsapp"></i> Contactar por WhatsApp</button>
+                        `;
+                    }
+                    
+                    document.getElementById('modalDetalle').style.display = 'flex';
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalDetalle').style.display = 'none';
+            currentId = null;
+        }
+
+        function contactar() {
+            if (currentId) {
+                fetch(`/api/oferta/${currentId}/`)
+                    .then(r => r.json())
+                    .then(data => {
+                        const telefono = data.telefono;
+                        if (telefono) {
+                            let numeroLimpio = telefono.toString().replace(/\D/g, '');
+                            if (numeroLimpio.length === 8) numeroLimpio = '591' + numeroLimpio;
+                            window.open(`https://wa.me/${numeroLimpio}?text=Hola%2C%20vi%20tu%20oferta%20"${encodeURIComponent(data.titulo)}"%20en%20CHAMBA%20y%20estoy%20interesado.`, '_blank');
+                        } else {
+                            alert('El empleador no ha registrado un número de teléfono');
+                        }
+                    });
+            }
+        }
+
+        function abrirModalEditarOferta(id) {
+            fetch(`/api/oferta/${id}/`)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('editOfertaId').value = id;
+                    document.getElementById('editTitulo').value = data.titulo;
+                    document.getElementById('editOficio').value = data.oficio;
+                    document.getElementById('editDescripcion').value = data.descripcion;
+                    document.getElementById('editUbicacion').value = data.ubicacion;
+                    document.getElementById('editRemuneracion').value = data.remuneracion || '';
+                    document.getElementById('editFechaLimite').value = data.fecha_limite || '';
+                    document.getElementById('modalEditarOferta').style.display = 'flex';
+                });
+        }
+
+        function cerrarModalEditarOferta() {
+            document.getElementById('modalEditarOferta').style.display = 'none';
+        }
+
+        function guardarEdicionOferta() {
+            const id = document.getElementById('editOfertaId').value;
+            const formData = new FormData();
+            formData.append('titulo', document.getElementById('editTitulo').value);
+            formData.append('oficio', document.getElementById('editOficio').value);
+            formData.append('descripcion', document.getElementById('editDescripcion').value);
+            formData.append('ubicacion', document.getElementById('editUbicacion').value);
+            formData.append('remuneracion', document.getElementById('editRemuneracion').value);
+            formData.append('fecha_limite', document.getElementById('editFechaLimite').value);
+
+            fetch(`/api/oferta/editar/${id}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    cerrarModalEditarOferta();
+                    cerrarModal();
+                    location.reload();
+                } else {
+                    alert('Error al guardar cambios');
+                }
+            });
+        }
+
+        function eliminarOferta(id) {
+            if (confirm('¿Estás seguro de eliminar esta oferta?')) {
+                fetch(`/api/oferta/eliminar/${id}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        cerrarModal();
+                        location.reload();
+                    }
+                });
+            }
+        }
+
+        document.querySelectorAll('.job-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('.btn-editar-pub') || e.target.closest('.btn-eliminar-pub')) return;
+                const id = this.dataset.id;
+                if (id) verDetalle(id, 'oferta');
+            });
+        });
+
+        document.getElementById('modalDetalle')?.addEventListener('click', function(e) {
+            if (e.target === this) cerrarModal();
+        });
+        document.getElementById('modalEditarOferta')?.addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalEditarOferta();
+        });
+
+        const frases = ["El éxito es la suma de pequeños esfuerzos repetidos día tras día.", "No busques el éxito, busca hacer un trabajo que te apasione.", "El trabajo duro siempre vence al talento cuando el talento no trabaja duro."];
+        const hoy = new Date();
+        const fechaSpan = document.getElementById('fechaActual');
+        const fraseSpan = document.getElementById('fraseMotivacional');
+        if (fechaSpan) fechaSpan.textContent = hoy.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+        if (fraseSpan) fraseSpan.textContent = frases[hoy.getDate() % frases.length];
+    </script>
+</body>
+
+</html>

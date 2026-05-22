@@ -1,0 +1,383 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAMBA — Conecta tu talento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-inner contenedor">
+            <a href="/" class="nav-logo"
+                style="display: flex; align-items: center; padding: 0; line-height: 1; overflow: visible;">
+                <img src="{% static 'img/logochamba.png' %}" alt="CHAMBA"
+                    style="height: 150px; width: auto; object-fit: contain; margin: -40px -10px; transform: scale(0.9); filter: brightness(0) saturate(100%) invert(100%);">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#como-funciona">Cómo funciona</a></li>
+                <li><a href="#oficios">Oficios</a></li>
+                <li><a href="#empresas">Para empleadores</a></li>
+            </ul>
+            <div class="nav-acciones">
+                <a href="{% url 'login' %}" class="btn-nav-login">Iniciar sesión</a>
+                <a href="{% url 'register' %}" class="btn-nav-registro">Registrarse</a>
+            </div>
+            <button class="nav-hamburger" id="hamburger" aria-label="Abrir menú">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-video-wrap">
+            <video autoplay muted loop playsinline class="hero-video">
+                <source src="{% static 'videos/videofondoheader.mp4' %}" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-contenido contenedor">
+
+            <h1 class="hero-titulo">
+                Conecta tu<br>
+                <span class="hero-titulo-acento">talento</span> con<br>
+                quien lo necesita
+            </h1>
+            <p class="hero-subtitulo">
+                Electricistas, plomeros, carpinteros, cocineros y más —<br>
+                encuentra trabajo o contrata al profesional ideal hoy mismo.
+            </p>
+            <div class="hero-botones">
+                <a href="{% url 'register' %}?tipo=trabajador" class="btn-hero-primario">
+                    <i class="fa-solid fa-user-tie"></i>
+                    Soy trabajador
+                </a>
+                <a href="{% url 'register' %}?tipo=empleador" class="btn-hero-secundario">
+                    <i class="fa-solid fa-building"></i>
+                    Soy empleador
+                </a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="contenedor stats-bar-inner">
+            <div class="stat-item">
+                <span class="stat-numero">+12,000</span>
+                <span class="stat-texto">Trabajadores registrados</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-numero">+3,400</span>
+                <span class="stat-texto">Empleadores activos</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-numero">+28,000</span>
+                <span class="stat-texto">Trabajos completados</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-numero">4.9 ★</span>
+                <span class="stat-texto">Calificación promedio</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="oficios" id="oficios">
+        <div class="contenedor">
+            <div class="seccion-header">
+                <span class="seccion-tag">Categorías</span>
+                <h2>Oficios más buscados</h2>
+                <p>Encuentra el profesional que necesitas entre cientos de categorías</p>
+            </div>
+            <div class="oficios-grid">
+                <a href="#" class="oficio-card">
+                    <div class="oficio-icono" style="--color-oficio: #FFF3CD; --color-icon: #F59E0B;">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <span class="oficio-nombre">Electricista</span>
+                    <span class="oficio-cantidad">842 disponibles</span>
+                </a>
+                <a href="#" class="oficio-card">
+                    <div class="oficio-icono" style="--color-oficio: #DBEAFE; --color-icon: #3B82F6;">
+                        <i class="fa-solid fa-droplet"></i>
+                    </div>
+                    <span class="oficio-nombre">Plomero</span>
+                    <span class="oficio-cantidad">613 disponibles</span>
+                </a>
+                <a href="#" class="oficio-card">
+                    <div class="oficio-icono" style="--color-oficio: #DCFCE7; --color-icon: #16A34A;">
+                        <i class="fa-solid fa-tree"></i>
+                    </div>
+                    <span class="oficio-nombre">Carpintero</span>
+                    <span class="oficio-cantidad">489 disponibles</span>
+                </a>
+                <a href="#" class="oficio-card">
+                    <div class="oficio-icono" style="--color-oficio: #FEE2E2; --color-icon: #DC2626;">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <span class="oficio-nombre">Cocinero</span>
+                    <span class="oficio-cantidad">721 disponibles</span>
+                </a>
+                <a href="#" class="oficio-card">
+                    <div class="oficio-icono" style="--color-oficio: #F3E8FF; --color-icon: #9333EA;">
+                        <i class="fa-solid fa-broom"></i>
+                    </div>
+                    <span class="oficio-nombre">Limpieza</span>
+                    <span class="oficio-cantidad">954 disponibles</span>
+                </a>
+                <a href="#" class="oficio-card">
+                    <div class="oficio-icono" style="--color-oficio: #FFF7ED; --color-icon: #EA580C;">
+                        <i class="fa-solid fa-helmet-safety"></i>
+                    </div>
+                    <span class="oficio-nombre">Construcción</span>
+                    <span class="oficio-cantidad">1,120 disponibles</span>
+                </a>
+                <a href="#" class="oficio-card">
+                    <div class="oficio-icono" style="--color-oficio: #ECFEFF; --color-icon: #0891B2;">
+                        <i class="fa-solid fa-car-wrench"></i>
+                    </div>
+                    <span class="oficio-nombre">Mecánico</span>
+                    <span class="oficio-cantidad">378 disponibles</span>
+                </a>
+                <a href="#" class="oficio-card oficio-card--ver-mas">
+                    <div class="oficio-icono" style="--color-oficio: #F1F5F9; --color-icon: #64748B;">
+                        <i class="fa-solid fa-ellipsis"></i>
+                    </div>
+                    <span class="oficio-nombre">Ver todos</span>
+                    <span class="oficio-cantidad">+60 categorías</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="como-funciona" id="como-funciona">
+        <div class="contenedor">
+            <div class="seccion-header">
+                <span class="seccion-tag">Simple y rápido</span>
+                <h2>¿Cómo funciona CHAMBA?</h2>
+                <p>En tres pasos ya estás conectado con el trabajo que buscas</p>
+            </div>
+
+            <div class="tabs-rol">
+                <button class="tab-btn tab-activo" data-tab="trabajador">
+                    <i class="fa-solid fa-user-tie"></i> Para trabajadores
+                </button>
+                <button class="tab-btn" data-tab="empleador">
+                    <i class="fa-solid fa-building"></i> Para empleadores
+                </button>
+            </div>
+
+            <div class="pasos-wrap" id="pasos-trabajador">
+                <div class="paso-card">
+                    <div class="paso-numero">01</div>
+                    <div class="paso-icono">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <h3>Crea tu perfil</h3>
+                    <p>Registra tu oficio, experiencia, zona de trabajo y sube fotos de tus trabajos anteriores.</p>
+                </div>
+                <div class="paso-flecha"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="paso-card">
+                    <div class="paso-numero">02</div>
+                    <div class="paso-icono">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <h3>Descubre oportunidades</h3>
+                    <p>Explora trabajos disponibles cerca tuyo o recibe ofertas directas de empleadores interesados.</p>
+                </div>
+                <div class="paso-flecha"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="paso-card">
+                    <div class="paso-numero">03</div>
+                    <div class="paso-icono">
+                        <i class="fa-solid fa-handshake"></i>
+                    </div>
+                    <h3>Trabaja y crece</h3>
+                    <p>Completa el trabajo, recibe tu calificación y construye tu reputación en la plataforma.</p>
+                </div>
+            </div>
+
+            <div class="pasos-wrap pasos-oculto" id="pasos-empleador">
+                <div class="paso-card">
+                    <div class="paso-numero">01</div>
+                    <div class="paso-icono">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                    </div>
+                    <h3>Publica tu necesidad</h3>
+                    <p>Describe el trabajo que necesitas, la zona, el presupuesto y cuándo lo necesitas.</p>
+                </div>
+                <div class="paso-flecha"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="paso-card">
+                    <div class="paso-numero">02</div>
+                    <div class="paso-icono">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3>Recibe propuestas</h3>
+                    <p>Trabajadores calificados te contactan. Revisa perfiles, reseñas y elige al mejor.</p>
+                </div>
+                <div class="paso-flecha"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="paso-card">
+                    <div class="paso-numero">03</div>
+                    <div class="paso-icono">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h3>Problema resuelto</h3>
+                    <p>Confirma el trabajo finalizado, paga con seguridad y deja tu reseña para la comunidad.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="empresas" id="empresas">
+        <div class="contenedor empresas-inner">
+            <div class="empresas-texto">
+                <span class="seccion-tag">Para empleadores</span>
+                <h2>¿Tienes un negocio y necesitas personal?</h2>
+                <p>Restaurantes, talleres, tiendas, constructoras — CHAMBA te conecta con trabajadores verificados
+                    listos para empezar.</p>
+                <ul class="empresas-lista">
+                    <li>
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Trabajadores verificados con identidad confirmada</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-star"></i>
+                        <span>Sistema de reseñas y calificaciones real</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Respuesta en menos de 2 horas promedio</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>Filtra por zona, precio y disponibilidad</span>
+                    </li>
+                </ul>
+                <a href="{% url 'register' %}?tipo=empleador" class="btn-empresas">
+                    Publicar un trabajo gratis
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="empresas-imagen">
+                <div class="empresas-mockup">
+                    <div class="mock-card">
+                        <div class="mock-avatar">JM</div>
+                        <div class="mock-info">
+                            <strong>Juan Mamani</strong>
+                            <span>Electricista · La Paz</span>
+                        </div>
+                        <div class="mock-rating">★ 4.9</div>
+                    </div>
+                    <div class="mock-card">
+                        <div class="mock-avatar mock-avatar--verde">CR</div>
+                        <div class="mock-info">
+                            <strong>Carlos Ríos</strong>
+                            <span>Plomero · El Alto</span>
+                        </div>
+                        <div class="mock-rating">★ 4.8</div>
+                    </div>
+                    <div class="mock-card">
+                        <div class="mock-avatar mock-avatar--naranja">LP</div>
+                        <div class="mock-info">
+                            <strong>Lucía Poma</strong>
+                            <span>Cocinera · Cochabamba</span>
+                        </div>
+                        <div class="mock-rating">★ 5.0</div>
+                    </div>
+                    <div class="mock-badge">
+                        <i class="fa-solid fa-bolt"></i> 3 propuestas recibidas
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-final">
+        <div class="contenedor cta-inner">
+            <h2>¿Listo para empezar?</h2>
+            <p>Únete a miles de bolivianos que ya encontraron trabajo o al profesional ideal en CHAMBA.</p>
+            <div class="cta-botones">
+                <a href="{% url 'register' %}?tipo=trabajador" class="btn-cta-primario">
+                    <i class="fa-solid fa-user-tie"></i> Buscar trabajo
+                </a>
+                <a href="{% url 'register' %}?tipo=empleador" class="btn-cta-secundario">
+                    <i class="fa-solid fa-building"></i> Contratar ahora
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="footer-wrapper">
+        <div class="waves">
+            <div class="wave" id="wave1" style="background-image: url('{% static 'img/wave.png' %}');"></div>
+            <div class="wave" id="wave2" style="background-image: url('{% static 'img/wave.png' %}');"></div>
+            <div class="wave" id="wave3" style="background-image: url('{% static 'img/wave.png' %}');"></div>
+            <div class="wave" id="wave4" style="background-image: url('{% static 'img/wave.png' %}');"></div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-container contenedor">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fa-solid fa-hammer"></i> CHAMBA
+                    </div>
+                    <p class="footer-desc">La plataforma que conecta trabajadores de oficios con quienes los necesitan
+                        en Bolivia.</p>
+                    <div class="footer-redes">
+                        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Plataforma</h4>
+                    <ul>
+                        <li><a href="#">Cómo funciona</a></li>
+                        <li><a href="#">Oficios disponibles</a></li>
+                        <li><a href="#">Para empleadores</a></li>
+                        <li><a href="#">Precios</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Empresa</h4>
+                    <ul>
+                        <li><a href="#">Nosotros</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Prensa</a></li>
+                        <li><a href="#">Trabaja con nosotros</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Soporte</h4>
+                    <ul>
+                        <li><a href="#">Centro de ayuda</a></li>
+                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#">Términos de uso</a></li>
+                        <li><a href="#">Privacidad</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="contenedor">
+                    <span>© 2025 CHAMBA. Hecho con <i class="fa-solid fa-heart" style="color:#E74C3C"></i> en
+                        Bolivia.</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/landing.js' %}"></script>
+</body>
+
+</html>

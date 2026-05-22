@@ -1,0 +1,359 @@
+{% load static %}
+<nav class="chamba-nav">
+    <div class="chamba-nav-inner">
+        <a href="{% url 'dashboard' %}" class="chamba-logo">
+            <img src="{% static 'img/logochamba.png' %}" alt="CHAMBA" style="height: 200px; width: auto; ">
+        </a>
+
+        <!-- BUSCADOR CON VENTANA EMERGENTE -->
+        <div class="chamba-search" style="position: relative; flex: 1; max-width: 38rem;">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Buscar trabajadores, oficios, servicios..."
+                autocomplete="off">
+
+            <!-- VENTANA EMERGENTE DE RESULTADOS -->
+            <div id="searchDropdown"
+                style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 1.2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 1000; max-height: 550px; overflow-y: auto; margin-top: 0.8rem; border: 1px solid #E5E7EB;">
+                <div id="searchResults" style="padding: 0.5rem 0;">
+                    <div style="padding: 2rem; text-align: center; color: #9CA3AF; font-size: 1.5rem;">
+                        <i class="fa-solid fa-search"></i> Escribe para buscar
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chamba-links">
+            <a href="{% url 'dashboard' %}" class="chamba-link {% if request.path == '/dashboard/' %}active{% endif %}">
+                <i class="fa-solid fa-house"></i> Inicio
+            </a>
+            <a href="{% url 'empleos' %}" class="chamba-link {% if request.path == '/empleos/' %}active{% endif %}">
+                <i class="fa-solid fa-briefcase"></i> Empleos
+            </a>
+            <a href="{% url 'trabajadores' %}"
+                class="chamba-link {% if request.path == '/trabajadores/' %}active{% endif %}">
+                <i class="fa-solid fa-users"></i> Trabajadores
+            </a>
+            <a href="{% url 'mapa' %}" class="chamba-link {% if request.path == '/mapa/' %}active{% endif %}">
+                <i class="fa-solid fa-map-location-dot"></i> Mapa
+            </a>
+            <a href="{% url 'perfil' %}" class="chamba-link {% if request.path == '/perfil/' %}active{% endif %}">
+                <i class="fa-solid fa-user"></i> Mi Perfil
+            </a>
+        </div>
+
+        <div class="chamba-actions">
+            <a href="{% url 'logout' %}" class="chamba-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Salir
+            </a>
+        </div>
+    </div>
+</nav>
+
+<style>
+    /* ========== FUENTES MÁS GRANDES Y LEGIBLES - TONOS AZULES ========== */
+
+    /* Logo principal */
+    .chamba-logo {
+        font-size: 2.2rem !important;
+        font-weight: 900 !important;
+        color: #0A66C2 !important;
+        letter-spacing: -0.5px !important;
+    }
+
+    /* Links de navegación */
+    .chamba-link {
+        font-size: 1.6rem !important;
+        font-weight: 600 !important;
+        color: #4B5563 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .chamba-link:hover,
+    .chamba-link.active {
+        color: #0A66C2 !important;
+        border-bottom: 3px solid #0A66C2 !important;
+    }
+
+    /* Botón de logout */
+    .chamba-logout {
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+        color: #6B7280 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .chamba-logout:hover {
+        color: #DC2626 !important;
+    }
+
+    /* Input del buscador */
+    .chamba-search input {
+        font-size: 1.5rem !important;
+        padding: 1.1rem 1.2rem 1.1rem 4.5rem !important;
+        border-radius: 3rem !important;
+        border: 1.5px solid #E5E7EB !important;
+        background: #F9FAFB !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .chamba-search input:focus {
+        border-color: #0A66C2 !important;
+        outline: none !important;
+        background: white !important;
+        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1) !important;
+    }
+
+    /* Icono del buscador */
+    .chamba-search i {
+        font-size: 1.8rem !important;
+        left: 1.5rem !important;
+        color: #9CA3AF !important;
+    }
+
+    /* ========== RESULTADOS DE BÚSQUEDA - TAMAÑOS GRANDES ========== */
+    .search-result-item {
+        display: flex;
+        align-items: center;
+        gap: 1.4rem;
+        padding: 1.4rem 1.8rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border-bottom: 1px solid #F3F4F6;
+    }
+
+    .search-result-item:hover {
+        background: #F0F7FF;
+    }
+
+    /* Avatares más grandes */
+    .search-result-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #E5E7EB;
+    }
+
+    .search-result-avatar-square {
+        border-radius: 14px;
+    }
+
+    /* Información del resultado */
+    .search-result-info {
+        flex: 1;
+    }
+
+    /* Título principal */
+    .search-result-title {
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: #1F2937;
+        margin-bottom: 0.4rem;
+        line-height: 1.3;
+    }
+
+    /* Subtítulo y detalles */
+    .search-result-subtitle {
+        font-size: 1.3rem;
+        color: #6B7280;
+        line-height: 1.4;
+    }
+
+    /* Badges de categoría */
+    .search-result-badge {
+        font-size: 1.2rem;
+        padding: 0.5rem 1.2rem;
+        border-radius: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+    }
+
+    /* Colores de badges - tonos azules */
+    .badge-oferta {
+        background: #E8F0FE;
+        color: #0A66C2;
+    }
+
+    .badge-servicio {
+        background: #E0F2FE;
+        color: #0284C7;
+    }
+
+    .badge-trabajador {
+        background: #DBEAFE;
+        color: #1D4ED8;
+    }
+
+    /* Encabezados de sección */
+    .search-section-header {
+        font-size: 1.3rem !important;
+        padding: 1rem 1.8rem !important;
+        font-weight: 700 !important;
+    }
+
+    /* Precio y remuneración destacados */
+    .price-highlight {
+        color: #0A66C2 !important;
+        font-weight: 600 !important;
+        margin-top: 0.3rem !important;
+        font-size: 1.25rem !important;
+    }
+
+    /* Estrellas de calificación */
+    .stars-rating {
+        margin-top: 0.3rem;
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+    }
+</style>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const searchDropdown = document.getElementById('searchDropdown');
+    const searchResults = document.getElementById('searchResults');
+    let searchTimeout;
+
+    // Cerrar dropdown al hacer clic fuera
+    document.addEventListener('click', function (e) {
+        if (!searchDropdown.contains(e.target) && e.target !== searchInput) {
+            searchDropdown.style.display = 'none';
+        }
+    });
+
+    // Buscar mientras escribe
+    searchInput.addEventListener('input', function () {
+        const query = this.value.trim();
+
+        if (query.length < 2) {
+            searchDropdown.style.display = 'none';
+            return;
+        }
+
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            realizarBusqueda(query);
+        }, 300);
+    });
+
+    function realizarBusqueda(query) {
+        fetch(`/api/buscar-ajax/?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                mostrarResultados(data);
+                searchDropdown.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                searchResults.innerHTML = `<div style="padding: 2rem; text-align: center; color: #EF4444; font-size: 1.4rem;">❌ Error al buscar</div>`;
+                searchDropdown.style.display = 'block';
+            });
+    }
+
+    // Función para ver detalle de oferta
+    function verDetalleOferta(id) {
+        window.location.href = `/empleos/?ver=${id}`;
+    }
+
+    // Función para ver detalle de servicio
+    function verDetalleServicio(id) {
+        window.location.href = `/trabajadores/?ver=${id}`;
+    }
+
+    // Función para ver perfil de trabajador
+    function verPerfilTrabajador(id) {
+        window.location.href = `/perfil-trabajador/${id}/`;
+    }
+
+    function mostrarResultados(data) {
+        const ofertas = data.ofertas || [];
+        const servicios = data.servicios || [];
+        const trabajadores = data.trabajadores || [];
+
+        if (ofertas.length === 0 && servicios.length === 0 && trabajadores.length === 0) {
+            searchResults.innerHTML = `<div style="padding: 3rem; text-align: center; color: #9CA3AF; font-size: 1.4rem;">
+                <i class="fa-solid fa-face-frown" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                No se encontraron resultados para "<strong>${escapeHtml(searchInput.value.trim())}</strong>"
+            </div>`;
+            return;
+        }
+
+        let html = '';
+
+        // OFERTAS LABORALES
+        if (ofertas.length > 0) {
+            html += `<div style="padding: 1rem 1.8rem; background: #F8FAFC; font-size: 1.3rem; font-weight: 800; color: #0A66C2; border-bottom: 2px solid #E5E7EB;">
+                <i class="fa-solid fa-briefcase"></i> OFERTAS LABORALES (${ofertas.length})
+            </div>`;
+            ofertas.forEach(item => {
+                html += `
+                    <div class="search-result-item" onclick="verDetalleOferta(${item.id})">
+                        <img src="${item.foto || 'https://ui-avatars.com/api/?background=0A66C2&color=fff&bold=true&name=' + encodeURIComponent(item.empresa)}" class="search-result-avatar search-result-avatar-square">
+                        <div class="search-result-info">
+                            <div class="search-result-title">${escapeHtml(item.titulo)}</div>
+                            <div class="search-result-subtitle">🏢 ${escapeHtml(item.empresa)} • 📍 ${escapeHtml(item.ubicacion)}</div>
+                            ${item.remuneracion ? `<div class="search-result-subtitle price-highlight">💰 ${escapeHtml(item.remuneracion)}</div>` : ''}
+                        </div>
+                        <span class="search-result-badge badge-oferta">📢 Oferta</span>
+                    </div>
+                `;
+            });
+        }
+
+        // SERVICIOS OFRECIDOS
+        if (servicios.length > 0) {
+            html += `<div style="padding: 1rem 1.8rem; background: #F8FAFC; font-size: 1.3rem; font-weight: 800; color: #0284C7; border-bottom: 2px solid #E5E7EB; margin-top: 0.5rem;">
+                <i class="fa-solid fa-tools"></i> SERVICIOS OFRECIDOS (${servicios.length})
+            </div>`;
+            servicios.forEach(item => {
+                html += `
+                    <div class="search-result-item" onclick="verDetalleServicio(${item.id})">
+                        <img src="${item.foto || 'https://ui-avatars.com/api/?background=0284C7&color=fff&bold=true&name=' + encodeURIComponent(item.trabajador)}" class="search-result-avatar">
+                        <div class="search-result-info">
+                            <div class="search-result-title">${escapeHtml(item.titulo)}</div>
+                            <div class="search-result-subtitle">👤 ${escapeHtml(item.trabajador)} • 📍 ${escapeHtml(item.ubicacion)}</div>
+                            ${item.precio ? `<div class="search-result-subtitle price-highlight">💰 ${escapeHtml(item.precio)} Bs</div>` : ''}
+                        </div>
+                        <span class="search-result-badge badge-servicio">🔧 Servicio</span>
+                    </div>
+                `;
+            });
+        }
+
+        // TRABAJADORES
+        if (trabajadores.length > 0) {
+            html += `<div style="padding: 1rem 1.8rem; background: #F8FAFC; font-size: 1.3rem; font-weight: 800; color: #1D4ED8; border-bottom: 2px solid #E5E7EB; margin-top: 0.5rem;">
+                <i class="fa-solid fa-users"></i> TRABAJADORES (${trabajadores.length})
+            </div>`;
+            trabajadores.forEach(item => {
+                const estrellas = item.calificacion ? '★'.repeat(Math.floor(item.calificacion)) + '☆'.repeat(5 - Math.floor(item.calificacion)) : '☆☆☆☆☆';
+                html += `
+                    <div class="search-result-item" onclick="verPerfilTrabajador(${item.id})">
+                        <img src="${item.foto || 'https://ui-avatars.com/api/?background=1D4ED8&color=fff&bold=true&name=' + encodeURIComponent(item.nombre)}" class="search-result-avatar">
+                        <div class="search-result-info">
+                            <div class="search-result-title">${escapeHtml(item.nombre)}</div>
+                            <div class="search-result-subtitle">🔨 ${escapeHtml(item.oficio || 'Trabajador')} • 📍 ${escapeHtml(item.ubicacion)}</div>
+                            <div class="stars-rating" style="color: #F59E0B;">${estrellas} <span style="color: #6B7280; font-size: 1.1rem;">(${item.total_calificaciones || 0} calificaciones)</span></div>
+                        </div>
+                        <span class="search-result-badge badge-trabajador">👤 Perfil</span>
+                    </div>
+                `;
+            });
+        }
+
+        searchResults.innerHTML = html;
+    }
+
+    // Función para escapar HTML y prevenir XSS
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Abrir dropdown al hacer foco
+    searchInput.addEventListener('focus', function () {
+        if (this.value.trim().length >= 2) {
+            realizarBusqueda(this.value.trim());
+        }
+    });
+</script>
