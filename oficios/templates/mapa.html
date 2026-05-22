@@ -8,7 +8,6 @@
     <title>Mapa de profesionales - CHAMBA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <link rel="stylesheet" href="{% static 'css/principal.css' %}">
     <style>
         * {
@@ -126,7 +125,8 @@
             border-color: #0A66C2;
         }
 
-        .filtro-select, .filtro-input {
+        .filtro-select,
+        .filtro-input {
             width: 100%;
             padding: 0.7rem;
             border: 1px solid #E5E7EB;
@@ -149,11 +149,23 @@
             background: #0A66C2;
             color: white;
             border: none;
-            padding: 0.6rem;
+            padding: 0.8rem;
             border-radius: 0.8rem;
             cursor: pointer;
             margin-top: 0.5rem;
             width: 100%;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-geolocalizar:hover {
+            background: #004182;
+            transform: translateY(-2px);
         }
 
         .btn-limpiar-filtros {
@@ -283,6 +295,7 @@
             .mapa-grid {
                 grid-template-columns: 1fr;
             }
+
             #map {
                 height: 400px;
             }
@@ -386,8 +399,9 @@
                             <option value="km" selected>km</option>
                         </select>
                     </div>
-                    <input type="text" id="ubicacion-busqueda" class="filtro-input" placeholder="Escribe tu ubicación...">
-                    <button class="btn-geolocalizar" id="btn-geolocalizar"><i class="fa-solid fa-location-crosshairs"></i> Usar mi ubicación actual</button>
+                    <button class="btn-geolocalizar" id="btn-geolocalizar">
+                        <i class="fa-solid fa-location-crosshairs"></i> Usar mi ubicación actual
+                    </button>
                     <div id="ubicacion-actual-info" class="ubicacion-actual" style="display: none;">
                         <i class="fa-solid fa-check-circle"></i> Ubicación seleccionada
                     </div>
@@ -440,28 +454,14 @@
 
         // Función para calcular distancia entre dos puntos (Haversine)
         function calcularDistancia(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radio de la Tierra en km
+            const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             return R * c;
-        }
-
-        function obtenerCoordenadasDesdeTexto(texto, callback) {
-            if (geocoder) {
-                geocoder.geocode(texto, function(results) {
-                    if (results && results.length > 0) {
-                        callback(results[0].center);
-                    } else {
-                        callback(null);
-                    }
-                });
-            } else {
-                callback(null);
-            }
         }
 
         function obtenerCoordenadasCiudad(ubicacion) {
@@ -482,9 +482,6 @@
                 subdomains: 'abcd',
                 maxZoom: 19
             }).addTo(map);
-
-            // Inicializar geocoder
-            geocoder = new L.Control.Geocoder.Nominatim();
 
             cargarUbicaciones();
         }
@@ -526,21 +523,19 @@
             const ciudadFiltro = document.getElementById('filtro-ciudad').value.toLowerCase();
             const radioValor = parseFloat(document.getElementById('distancia-radio').value) || 5;
             const unidad = document.getElementById('distancia-unidad').value;
-            let radioKm = unidad === 'm' ? radioValor / 1000 : radioValor;
+            // CORREGIDO: conversión correcta de metros a km
+            let radioKm = unidad === 'km' ? radioValor : radioValor / 1000;
 
             let filtradas = [...todasUbicaciones];
 
-            // Filtrar por tipo
             if (currentTipo !== 'todos') {
                 filtradas = filtradas.filter(u => u.tipo === currentTipo);
             }
 
-            // Filtrar por oficio
             if (oficioFiltro) {
                 filtradas = filtradas.filter(u => u.oficio.includes(oficioFiltro));
             }
 
-            // Filtrar por experiencia
             if (experienciaFiltro) {
                 const [min, max] = experienciaFiltro.split('-');
                 if (max === '+') {
@@ -550,24 +545,20 @@
                 }
             }
 
-            // Filtrar por puntuación
             if (puntuacionMin > 0) {
                 filtradas = filtradas.filter(u => u.calificacion >= puntuacionMin);
             }
 
-            // Filtrar por ciudad
             if (ciudadFiltro) {
                 filtradas = filtradas.filter(u => u.ubicacion.toLowerCase().includes(ciudadFiltro));
             }
 
-            // Filtrar por distancia si hay ubicación de usuario
             if (ubicacionUsuario && radioKm > 0) {
                 filtradas = filtradas.filter(u => {
                     const distancia = calcularDistancia(ubicacionUsuario.lat, ubicacionUsuario.lng, u.lat, u.lng);
                     u.distancia = distancia;
                     return distancia <= radioKm;
                 });
-                // Ordenar por distancia
                 filtradas.sort((a, b) => (a.distancia || Infinity) - (b.distancia || Infinity));
             }
 
@@ -596,7 +587,7 @@
 
                 const color = u.tipo === 'trabajador' ? '#0A66C2' : '#9333EA';
                 const experienciaNivel = u.anios_experiencia >= 10 ? '🏆' : (u.anios_experiencia >= 5 ? '⭐' : (u.anios_experiencia >= 2 ? '📈' : '🌱'));
-                
+
                 const icono = L.divIcon({
                     html: `<div style="background:${color};width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.2);font-size:18px;position:relative;">
                                 <i class="fas ${u.tipo === 'trabajador' ? 'fa-hard-hat' : 'fa-building'}"></i>
@@ -615,7 +606,7 @@
                     <div style="text-align:center;min-width:220px;padding:0.3rem;">
                         <div style="font-weight:700;font-size:1.1rem;margin-bottom:0.3rem;">${u.nombre}</div>
                         <div style="font-size:0.85rem;color:#0A66C2;"><strong>${u.oficio}</strong></div>
-                        <div style="font-size:0.75rem;margin:0.2rem 0;">${experienciaNivel} ${u.anios_experiencia} años de experiencia</div>
+                        <div style="font-size:0.75rem;margin:0.2rem 0;">${experienciaNivel} ${u.anios_experiencia} años</div>
                         <div style="font-size:0.8rem;margin:0.2rem 0;">${estrellas} (${u.calificacion})</div>
                         ${distanciaTexto}
                         <div style="font-size:0.7rem;color:#6B7280;"><i class="fas fa-map-marker-alt"></i> ${u.ubicacion || 'Bolivia'}</div>
@@ -646,7 +637,7 @@
             document.getElementById('resultados-count').innerHTML = `(${ubicaciones.length})`;
 
             if (ubicaciones.length === 0) {
-                container.innerHTML = '<div style="text-align:center;padding:2rem;"><i class="fa-regular fa-face-frown"></i> No hay profesionales con estos filtros</div>';
+                container.innerHTML = '<div style="text-align:center;padding:2rem;"><i class="fa-regular fa-face-frown"></i> No hay profesionales con esos filtros</div>';
                 return;
             }
 
@@ -655,7 +646,7 @@
                 const estrellas = '⭐'.repeat(Math.floor(u.calificacion)) + '☆'.repeat(5 - Math.floor(u.calificacion));
                 const experienciaIcon = u.anios_experiencia >= 10 ? '🏆' : (u.anios_experiencia >= 5 ? '⭐' : (u.anios_experiencia >= 2 ? '📈' : '🌱'));
                 const distanciaTexto = u.distancia ? `<div class="resultado-distancia"><i class="fa-solid fa-location-dot"></i> A ${u.distancia.toFixed(1)} km</div>` : '';
-                
+
                 html += `
                     <div class="resultado-item" onclick="window.location.href='/perfil-trabajador/${u.id}/'">
                         <img class="resultado-avatar" src="${u.foto || 'https://ui-avatars.com/api/?background=0A66C2&color=fff&name=' + encodeURIComponent(u.nombre)}">
@@ -687,7 +678,6 @@
             document.getElementById('filtro-experiencia').value = '';
             document.getElementById('filtro-puntuacion').value = '0';
             document.getElementById('filtro-ciudad').value = '';
-            document.getElementById('ubicacion-busqueda').value = '';
             document.getElementById('distancia-radio').value = '5';
             document.getElementById('distancia-unidad').value = 'km';
             ubicacionUsuario = null;
@@ -697,7 +687,7 @@
 
         // Event listeners
         document.querySelectorAll('[data-tipo]').forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function() {
                 document.querySelectorAll('[data-tipo]').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 currentTipo = this.dataset.tipo;
@@ -728,22 +718,6 @@
                 });
             } else {
                 alert('Tu navegador no soporta geolocalización');
-            }
-        });
-
-        document.getElementById('ubicacion-busqueda').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const texto = this.value;
-                obtenerCoordenadasDesdeTexto(texto, (coords) => {
-                    if (coords) {
-                        ubicacionUsuario = { lat: coords.lat, lng: coords.lng };
-                        document.getElementById('ubicacion-actual-info').innerHTML = `<i class="fa-solid fa-check-circle"></i> Ubicación: ${texto}`;
-                        document.getElementById('ubicacion-actual-info').style.display = 'block';
-                        aplicarFiltros();
-                    } else {
-                        alert('No se encontró la ubicación');
-                    }
-                });
             }
         });
 

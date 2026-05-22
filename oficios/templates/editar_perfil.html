@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - CHAMBA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/principal.css' %}">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+        }
+        .form-container h2 {
+            color: #0A66C2;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #E8F0FE;
+            padding-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-size: 1.3rem;
+        }
+        .form-group label i {
+            margin-right: 0.5rem;
+            color: #0A66C2;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 1rem;
+            font-size: 1.4rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0A66C2;
+            box-shadow: 0 0 0 3px rgba(10,102,194,0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-group input:disabled {
+            background: #F9FAFB;
+            color: #9CA3AF;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .seccion {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E7EB;
+        }
+        .seccion h3 {
+            color: #0A66C2;
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+        }
+        .btn-guardar {
+            background: #0A66C2;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.5rem;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .btn-guardar:hover {
+            background: #004182;
+            transform: translateY(-2px);
+        }
+        .btn-cancelar {
+            background: #F3F4F6;
+            color: #6B7280;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            margin-top: 1rem;
+            width: 100%;
+            font-size: 1.4rem;
+        }
+        .btn-cancelar:hover {
+            background: #E5E7EB;
+        }
+        .info-box {
+            background: #E8F0FE;
+            padding: 1.2rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            color: #0A66C2;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .info-box i {
+            font-size: 1.5rem;
+        }
+        small {
+            font-size: 1rem;
+            color: #6B7280;
+            display: block;
+            margin-top: 0.3rem;
+        }
+        @media (max-width: 700px) {
+            .form-container { margin: 1rem; padding: 1.5rem; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+            .form-group label { font-size: 1.2rem; }
+            .form-group input, .form-group select, .form-group textarea { font-size: 1.2rem; padding: 0.8rem; }
+            .btn-guardar { font-size: 1.3rem; }
+            .seccion h3 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body class="chamba-dashboard">
+
+    {% include 'includes/navbar.html' %}
+
+    <div class="form-container">
+        <h2><i class="fas fa-user-edit"></i> Editar Perfil</h2>
+        
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i> Actualiza tu información personal. Cuantos más datos completes, más oportunidades tendrás.
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- ========== DATOS PERSONALES ========== -->
+            <div class="seccion">
+                <h3><i class="fas fa-user"></i> Datos personales</h3>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-user-circle"></i> Nombre completo</label>
+                    <input type="text" name="nombre" value="{{ user.first_name|default:'' }}" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Teléfono</label>
+                        <input type="tel" name="telefono" value="{{ perfil.telefono|default:'' }}" placeholder="Ej: 61234567">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Correo electrónico</label>
+                        <input type="email" value="{{ user.email }}" disabled>
+                        <small>El correo no se puede cambiar</small>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Ubicación</label>
+                    <input type="text" name="ubicacion" value="{{ perfil.ubicacion|default:'' }}" placeholder="Ej: La Paz, Zona Sur">
+                </div>
+            </div>
+            
+            <!-- ========== DATOS SEGÚN ROL ========== -->
+            {% if perfil.tipo == 'trabajador' %}
+            <div class="seccion">
+                <h3><i class="fas fa-briefcase"></i> Información profesional</h3>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-tools"></i> Oficios / Especialidades</label>
+                    <input type="text" name="oficios" value="{{ perfil.oficios|default:'' }}" placeholder="Ej: Electricista, Plomero, Carpintero">
+                    <small>Separa múltiples oficios con comas</small>
+                </div>
+                
+                <div class="form-row">
+                    
+                    
+                    
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-file-alt"></i> Descripción personal</label>
+                    <textarea name="descripcion_personal" placeholder="Describe tu experiencia, habilidades, formación, especialidades...">{{ perfil.descripcion_personal|default:'' }}</textarea>
+                    <small>Completa esta descripción para que los empleadores te conozcan mejor</small>
+                </div>
+            </div>
+            {% else %}
+            <div class="seccion">
+                <h3><i class="fas fa-building"></i> Información de la empresa</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-building"></i> Nombre de la empresa</label>
+                        <input type="text" name="nombre_empresa" value="{{ perfil.nombre_empresa|default:'' }}" placeholder="Nombre de tu negocio o empresa">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Rubro</label>
+                        <input type="text" name="rubro" value="{{ perfil.rubro|default:'' }}" placeholder="Ej: Construcción, Gastronomía, Servicios">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-alt"></i> Años en el rubro</label>
+                    <input type="number" name="anios_experiencia" min="0" max="50" value="{{ perfil.anios_experiencia|default:0 }}">
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-file-alt"></i> Descripción de la empresa</label>
+                    <textarea name="descripcion_personal" placeholder="Describe tu empresa, misión, valores, qué tipo de profesionales buscas...">{{ perfil.descripcion_personal|default:'' }}</textarea>
+                    <small>Una buena descripción atrae a mejores profesionales</small>
+                </div>
+            </div>
+            {% endif %}
+            
+            
+            
+            <button type="submit" class="btn-guardar"><i class="fas fa-save"></i> Guardar todos los cambios</button>
+            <a href="{% url 'perfil' %}" class="btn-cancelar"><i class="fas fa-times"></i> Cancelar</a>
+        </form>
+    </div>
+
+</body>
+</html>

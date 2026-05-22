@@ -10,16 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/principal.css' %}">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
-        }
+       
 
         .perfil-publico {
             max-width: 1100px;
@@ -210,38 +201,56 @@
             color: #1F2937;
         }
 
+        /* ========== PORTAFOLIO - SIEMPRE VISIBLE ========== */
         .portafolio-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
             margin-top: 1rem;
         }
 
-        .portafolio-item {
-            position: relative;
+        .portafolio-card {
+            background: #f8fafc;
             border-radius: 1rem;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             cursor: pointer;
+            border: 1px solid #eef2f7;
         }
 
-        .portafolio-item:hover {
+        .portafolio-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
-        .portafolio-item img {
+        .portafolio-card img {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: cover;
-            transition: transform 0.3s ease;
         }
 
-        .portafolio-item:hover img {
-            transform: scale(1.05);
+        .portafolio-card-info {
+            padding: 1rem;
         }
 
+        .portafolio-card-titulo {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0A66C2;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .portafolio-card-descripcion {
+            font-size: 0.8rem;
+            color: #6B7280;
+            line-height: 1.4;
+        }
+
+        /* ========== SERVICIOS ========== */
         .servicios-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -326,27 +335,94 @@
             transform: translateX(5px);
         }
 
-        .modal {
+        /* MODAL PARA VER FOTO - DISEÑO BONITO */
+        .modal-foto {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
             z-index: 10000;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
         }
 
-        .modal-content {
+        .modal-foto-content {
+            max-width: 90%;
+            max-height: 90%;
             background: white;
             border-radius: 1.5rem;
-            width: 95%;
-            max-width: 500px;
-            padding: 1.5rem;
-            animation: slideIn 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-foto-img {
+            width: 100%;
+            max-height: 65vh;
+            object-fit: contain;
+            background: #f8fafc;
+        }
+
+        .modal-foto-info {
+            padding: 1.2rem 1.5rem;
+            background: white;
+        }
+
+        .modal-foto-titulo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0A66C2;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-foto-descripcion {
+            font-size: 0.9rem;
+            color: #6B7280;
+            line-height: 1.5;
+        }
+
+        .modal-foto-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: white;
+            color: #1F2937;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-foto-close:hover {
+            background: #0A66C2;
+            color: white;
+            transform: scale(1.1);
         }
 
         @keyframes slideIn {
@@ -392,10 +468,19 @@
                 grid-template-columns: 1fr;
             }
             .portafolio-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
             .servicios-grid {
                 grid-template-columns: 1fr;
+            }
+            .modal-foto-info {
+                padding: 1rem;
+            }
+            .modal-foto-titulo {
+                font-size: 1rem;
+            }
+            .modal-foto-descripcion {
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -439,7 +524,15 @@
                 {% if perfil.tipo == 'trabajador' %}Sobre mí{% else %}Sobre la empresa{% endif %}
             </div>
             <p style="font-size: 0.95rem; line-height: 1.6; color: #475569;">
-                {{ perfil.descripcion_personal|default:"{% if perfil.tipo == 'trabajador' %}Este trabajador aún no ha agregado una descripción personal.{% else %}Esta empresa aún no ha agregado una descripción.{% endif %}" }}
+                {% if perfil.descripcion_personal %}
+                    {{ perfil.descripcion_personal|linebreaksbr }}
+                {% else %}
+                    {% if perfil.tipo == 'trabajador' %}
+                        Este trabajador aún no ha agregado una descripción personal.
+                    {% else %}
+                        Esta empresa aún no ha agregado una descripción.
+                    {% endif %}
+                {% endif %}
             </p>
         </div>
 
@@ -510,7 +603,7 @@
             </div>
         </div>
 
-        <!-- PORTAFOLIO (solo para trabajadores) -->
+        <!-- PORTAFOLIO (solo para trabajadores) - TÍTULO Y DESCRIPCIÓN SIEMPRE VISIBLES -->
         {% if perfil.tipo == 'trabajador' and portafolio_fotos %}
         <div class="seccion">
             <div class="seccion-titulo">
@@ -518,10 +611,19 @@
             </div>
             <div class="portafolio-grid">
                 {% for foto in portafolio_fotos %}
-                <div class="portafolio-item" onclick="verFoto('{{ foto.imagen.url }}')">
-                    <img src="{{ foto.imagen.url }}" alt="{{ foto.titulo }}">
-                    <div class="portafolio-overlay">
-                        {% if foto.titulo %}<i class="fa-regular fa-image"></i> {{ foto.titulo }}{% endif %}
+                <div class="portafolio-card" onclick="verFoto('{{ foto.imagen.url }}', '{{ foto.titulo|escapejs }}', '{{ foto.descripcion|escapejs }}')">
+                    <img src="{{ foto.imagen.url }}" alt="{{ foto.titulo|default:'Foto de portafolio' }}">
+                    <div class="portafolio-card-info">
+                        {% if foto.titulo %}
+                        <div class="portafolio-card-titulo">
+                            <i class="fa-regular fa-image"></i> {{ foto.titulo }}
+                        </div>
+                        {% endif %}
+                        {% if foto.descripcion %}
+                        <div class="portafolio-card-descripcion">
+                            {{ foto.descripcion }}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -607,8 +709,8 @@
     </div>
 
     <!-- MODAL CALIFICAR -->
-    <div id="modalCalificar" class="modal">
-        <div class="modal-content">
+    <div id="modalCalificar" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: 1.5rem; width: 95%; max-width: 500px; padding: 1.5rem; animation: slideIn 0.3s ease;">
             <div class="seccion-titulo" style="border-bottom: none; margin-bottom: 0;">
                 <i class="fa-solid fa-star"></i> Calificar experiencia
             </div>
@@ -630,11 +732,20 @@
         </div>
     </div>
 
-    <!-- MODAL PARA VER FOTO -->
-    <div id="modalFoto" class="modal" onclick="cerrarModalFoto()">
-        <div style="background: transparent; max-width: 90%; max-height: 90%;">
-            <img id="modalFotoImg" src="" style="max-width: 100%; max-height: 90vh; border-radius: 1rem; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+    <!-- MODAL PARA VER FOTO - DISEÑO BONITO Y GRANDE -->
+    <div id="modalFoto" class="modal-foto" onclick="cerrarModalFoto()">
+        <div class="modal-foto-content" onclick="event.stopPropagation()">
+            <img id="modalFotoImg" class="modal-foto-img" src="" alt="Foto ampliada">
+            <div class="modal-foto-info">
+                <div class="modal-foto-titulo">
+                    <i class="fa-regular fa-image"></i> <span id="modalFotoTitulo"></span>
+                </div>
+                <div class="modal-foto-descripcion" id="modalFotoDescripcion"></div>
+            </div>
         </div>
+        <button class="modal-foto-close" onclick="cerrarModalFoto()">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
     <script>
@@ -741,13 +852,17 @@
             }
         }
 
-        function verFoto(url) {
+        function verFoto(url, titulo, descripcion) {
             document.getElementById('modalFotoImg').src = url;
+            document.getElementById('modalFotoTitulo').innerHTML = titulo || 'Sin título';
+            document.getElementById('modalFotoDescripcion').innerHTML = descripcion || 'Sin descripción';
             document.getElementById('modalFoto').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
 
         function cerrarModalFoto() {
             document.getElementById('modalFoto').style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
 
         document.getElementById('modalCalificar').addEventListener('click', function(e) {

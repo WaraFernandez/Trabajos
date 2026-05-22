@@ -11,9 +11,8 @@
     <!-- Tu CSS base -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <style>
-        /* ========== ESTILOS MEJORADOS PARA LOGIN ========== */
+        /* ========== ESTILOS PARA LOGIN ========== */
 
-        /* Contenedor principal */
         .celular {
             display: flex;
             align-items: center;
@@ -26,57 +25,51 @@
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
-            position: relative;
         }
 
-        /* Botón volver - VERSIÓN CORREGIDA */
-        .auth-back {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-            background: white;
-            border: 1px solid #E5E7EB;
-            border-radius: 2.5rem;
-            padding: 0.7rem 1.4rem;
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #0A66C2;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
-            width: fit-content;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .auth-back i {
-            font-size: 1.2rem;
-            transition: transform 0.2s ease;
-        }
-
-        .auth-back:hover {
-            background: #0A66C2;
-            color: white;
-            border-color: #0A66C2;
-            transform: translateX(-3px);
-            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.2);
-        }
-
-        .auth-back:hover i {
-            transform: translateX(-3px);
-        }
-
-        /* Tarjeta de login - MÁS BONITA */
+        /* Tarjeta de login */
         .auth-card {
             background: white;
             border-radius: 2rem;
             padding: 3rem 2.5rem;
             box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.04);
         }
 
-        .auth-card:hover {
-            transform: translateY(-3px);
+        /* VOLVER - BOTÓN CON FONDO */
+        .back-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            background: #F3F4F6;
+            border: 1px solid #E5E7EB;
+            border-radius: 2.5rem;
+            padding: 0.7rem 1.4rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #4B5563;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .auth-back i {
+            font-size: 1.2rem;
+            color: #4B5563;
+        }
+
+        .auth-back:hover {
+            background: #0A66C2;
+            border-color: #0A66C2;
+            color: white;
+        }
+
+        .auth-back:hover i {
+            color: white;
         }
 
         /* Header con logo */
@@ -93,20 +86,8 @@
         }
 
         .auth-logo img {
-            height: 150px;
+            height: 90px;
             width: auto;
-            transition: transform 0.3s ease;
-        }
-
-        .auth-logo img:hover {
-            transform: scale(1.05);
-        }
-
-        .auth-logo span {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #0A66C2;
-            letter-spacing: -0.5px;
         }
 
         .auth-sub {
@@ -135,9 +116,22 @@
             color: #374151;
         }
 
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 1.2rem;
+            color: #9CA3AF;
+            font-size: 1.3rem;
+        }
+
         .auth-input {
             width: 100%;
-            padding: 1rem 1.4rem;
+            padding: 1rem 1.4rem 1rem 3.8rem;
             font-size: 1.4rem;
             font-family: "Inter", sans-serif;
             border: 1.5px solid #E5E7EB;
@@ -150,7 +144,7 @@
             outline: none;
             border-color: #0A66C2;
             background: white;
-            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.08);
         }
 
         /* Opciones */
@@ -181,7 +175,6 @@
             color: #0A66C2;
             font-weight: 500;
             text-decoration: none;
-            transition: color 0.2s;
         }
 
         .auth-forgot:hover {
@@ -192,33 +185,27 @@
         /* Botón principal */
         .auth-btn {
             width: 100%;
-            background: linear-gradient(135deg, #0A66C2 0%, #0052a3 100%);
+            background: #0A66C2;
             color: white;
             font-family: "Inter", sans-serif;
             font-size: 1.5rem;
             font-weight: 700;
             padding: 1.1rem;
-            border-radius: 1.2rem;
+            border-radius: 1rem;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.8rem;
-            transition: all 0.3s ease;
+            transition: background 0.2s ease;
         }
 
         .auth-btn:hover {
-            transform: translateY(-2px);
-            background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
-            box-shadow: 0 8px 20px rgba(10, 102, 194, 0.3);
+            background: #004182;
         }
 
-        .auth-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Mensajes (error y éxito) */
+        /* Mensajes */
         .message-box {
             text-align: center;
             padding: 0.8rem;
@@ -256,7 +243,6 @@
             color: #0A66C2;
             font-weight: 600;
             text-decoration: none;
-            transition: color 0.2s;
         }
 
         .auth-footer a:hover {
@@ -271,16 +257,11 @@
             }
 
             .auth-logo img {
-                height: 55px;
+                height: 65px;
             }
 
             .auth-title {
                 font-size: 1.7rem;
-            }
-
-            .auth-back {
-                padding: 0.5rem 1.2rem;
-                font-size: 1.2rem;
             }
         }
     </style>
@@ -290,13 +271,15 @@
 
     <div class="celular">
         <div class="contenedor">
-            <!-- Botón volver -->
-            <a href="/" class="auth-back">
-                <i class="fas fa-arrow-left"></i>
-                <span>Volver al inicio</span>
-            </a>
-
             <div class="auth-card">
+                <!-- VOLVER - BOTÓN CON FONDO DENTRO DE LA TARJETA -->
+                <div class="back-section">
+                    <a href="/" class="auth-back">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Volver al inicio</span>
+                    </a>
+                </div>
+
                 <div class="auth-header">
                     <div class="auth-logo">
                         <img src="{% static 'img/logochamba.png' %}" alt="CHAMBA">
@@ -310,11 +293,17 @@
                     {% csrf_token %}
                     <div class="auth-form-group">
                         <label class="auth-label">Correo electrónico</label>
-                        <input type="email" name="email" class="auth-input" placeholder="tu@email.com" required>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" name="email" class="auth-input" placeholder="tu@email.com" required>
+                        </div>
                     </div>
                     <div class="auth-form-group">
                         <label class="auth-label">Contraseña</label>
-                        <input type="password" name="password" class="auth-input" placeholder="••••••••" required>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" class="auth-input" placeholder="••••••••" required>
+                        </div>
                     </div>
 
                     <div class="auth-options">
@@ -329,19 +318,15 @@
                         <i class="fas fa-sign-in-alt"></i> Iniciar sesión
                     </button>
 
-                    <!-- Mostrar mensajes de Django (success, error, etc.) -->
                     {% if messages %}
                     {% for message in messages %}
-                    <div
-                        class="message-box {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
-                        <i
-                            class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                    <div class="message-box {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
                         {{ message }}
                     </div>
                     {% endfor %}
                     {% endif %}
 
-                    <!-- Mostrar error de login específico -->
                     {% if error %}
                     <div class="message-box message-error">
                         <i class="fas fa-exclamation-circle"></i> {{ error }}

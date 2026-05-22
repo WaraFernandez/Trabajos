@@ -161,6 +161,8 @@ class Servicio(models.Model):
     # En models.py, dentro de la clase Servicio:
     latitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
     longitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
+    imagen = models.ImageField(upload_to="servicios/", blank=True, null=True)  # ← AGREGAR ESTO
+
     def __str__(self):
         return self.titulo
 

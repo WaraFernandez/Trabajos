@@ -7,55 +7,341 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>CHAMBA - Crear cuenta | Registro por pasos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Syne:wght@400..800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Syne:wght@400..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <style>
-        .logo-header {
-            text-align: center;
-            border-bottom: 1px solid #E5E7EB;
+<style>
+    .logo-header {
+        text-align: center;
+        border-bottom: 1px solid #E5E7EB;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+    .logo-header img {
+        height: 130px;
+        width: auto;
+    }
+    .info-box {
+        background: #E8F0FE;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin-top: 1rem;
+        text-align: center;
+    }
+    .info-box i {
+        font-size: 1.8rem;
+        color: #0A66C2;
+        margin-bottom: 0.5rem;
+    }
+    .info-box p {
+        margin: 0.3rem 0;
+        font-size: 1.2rem;
+        color: #1F2937;
+    }
+    .input-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    .input-group i {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9CA3AF;
+        font-size: 1.3rem;
+        z-index: 1;
+    }
+    .input-group input, .input-group select, .input-group textarea {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3.2rem;
+        border: 1.5px solid #E5E7EB;
+        border-radius: 1rem;
+        font-size: 1.3rem;
+        font-family: 'Inter', sans-serif;
+        background: #F9FAFB;
+        transition: all 0.2s;
+    }
+    .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+        outline: none;
+        border-color: #0A66C2;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(10,102,194,0.1);
+    }
+    .input-group textarea {
+        padding: 1rem 1rem 1rem 3.2rem;
+        resize: vertical;
+        min-height: 100px;
+    }
+    .toggle-password {
+        position: absolute;
+        right: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #9CA3AF;
+        font-size: 1.2rem;
+        z-index: 2;
+    }
+    .toggle-password:hover {
+        color: #0A66C2;
+    }
+    .modal-terminos {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-terminos-content {
+        background: white;
+        border-radius: 1.5rem;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 1.5rem;
+        animation: modalSlideIn 0.3s ease;
+    }
+    @keyframes modalSlideIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .modal-terminos-content h3 {
+        color: #0A66C2;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+    .modal-terminos-content p {
+        margin-bottom: 1rem;
+        line-height: 1.6;
+        font-size: 1.2rem;
+    }
+    .modal-terminos-content button {
+        background: #0A66C2;
+        color: white;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 2rem;
+        cursor: pointer;
+        margin-top: 1rem;
+        font-size: 1.2rem;
+    }
+    .terms a {
+        color: #0A66C2;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .terms a:hover {
+        text-decoration: underline;
+    }
+    .strength-meter {
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .strength-bar {
+        flex: 1;
+        height: 6px;
+        background: #E5E7EB;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .strength-fill {
+        width: 0%;
+        height: 100%;
+        transition: width 0.2s;
+        border-radius: 10px;
+    }
+    .strength-text {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .error-msg {
+        color: #DC2626;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .error-msg.show {
+        display: flex;
+    }
+    .role-tabs {
+        display: flex;
+        gap: 0.8rem;
+        margin-bottom: 2rem;
+        background: #F3F4F6;
+        padding: 0.6rem;
+        border-radius: 3rem;
+    }
+    .role-tab {
+        flex: 1;
+        text-align: center;
+        padding: 0.9rem;
+        border-radius: 2rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: #6B7280;
+        transition: all 0.2s;
+    }
+    .role-tab i {
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
+    }
+    .role-tab.active {
+        background: white;
+        color: #0A66C2;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .hidden {
+        display: none;
+    }
+    .step-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid #E5E7EB;
+    }
+    .btn-step {
+        padding: 0.9rem 2rem;
+        border-radius: 2rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+    }
+    .btn-prev {
+        background: #F3F4F6;
+        color: #6B7280;
+    }
+    .btn-prev:hover {
+        background: #E5E7EB;
+    }
+    .btn-next {
+        background: #0A66C2;
+        color: white;
+    }
+    .btn-next:hover {
+        background: #004182;
+        transform: translateY(-2px);
+    }
+    .step-content {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+    .step-content.active {
+        display: block;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .steps-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+        gap: 0.8rem;
+    }
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        color: #9CA3AF;
+    }
+    .step.active {
+        color: #0A66C2;
+    }
+    .step.completed {
+        color: #10B981;
+    }
+    .step-number {
+        width: 2.2rem;
+        height: 2.2rem;
+        border-radius: 50%;
+        background: #E5E7EB;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+    .step.active .step-number {
+        background: #0A66C2;
+        color: white;
+    }
+    .step.completed .step-number {
+        background: #10B981;
+        color: white;
+    }
+    .step-line {
+        width: 2.5rem;
+        height: 2px;
+        background: #E5E7EB;
+    }
+    .wizard-container {
+        max-width: 650px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+    .wizard-card {
+        background: white;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+        padding: 2.5rem;
+        border: 1px solid #E5E7EB;
+    }
+    .back-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6B7280;
+        text-decoration: none;
+        font-size: 1.2rem;
+        margin-bottom: 1.2rem;
+        transition: color 0.2s;
+    }
+    .back-home i {
+        font-size: 1rem;
+    }
+    .back-home:hover {
+        color: #0A66C2;
+    }
+    @media (max-width: 600px) {
+        .wizard-card {
+            padding: 1.8rem;
         }
-
+        .step span:not(.step-number) {
+            display: none;
+        }
+        .step-line {
+            width: 1rem;
+        }
         .logo-header img {
-            height: 150px;
-            width: auto;
+            height: 90px;
         }
-
-        .logo-header span {
-            display: block;
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #0A66C2;
-            margin-top: 0.5rem;
-        }
-
-        .info-box {
-            background: #E8F0FE;
-            border-radius: 1rem;
-            padding: 1rem;
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .info-box i {
-            font-size: 1.5rem;
-            color: #0A66C2;
-            margin-bottom: 0.5rem;
-        }
-
-        .info-box p {
-            margin: 0.3rem 0;
-            font-size: 0.8rem;
-            color: #1F2937;
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body class="body-register">
 
     <div class="wizard-container">
-        <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> Volver</a>
+        <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
         <div class="wizard-card">
             <div class="logo-header">
                 <img src="{% static 'img/logochamba.png' %}" alt="CHAMBA">
@@ -63,46 +349,62 @@
 
             <div class="steps-indicator">
                 <div class="step" id="step1-indicator">
-                    <div class="step-number">1</div><span>Datos personales</span>
+                    <div class="step-number">1</div><span>Datos</span>
                 </div>
                 <div class="step-line"></div>
                 <div class="step" id="step2-indicator">
-                    <div class="step-number">2</div><span>Rol en la plataforma</span>
+                    <div class="step-number">2</div><span>Rol</span>
                 </div>
                 <div class="step-line"></div>
                 <div class="step" id="step3-indicator">
-                    <div class="step-number">3</div><span>Confirmar y registrarse</span>
+                    <div class="step-number">3</div><span>Confirmar</span>
                 </div>
             </div>
 
-            <form id="registerForm" method="post">
+            <form id="registerForm" method="post" action="{% url 'register' %}">
                 {% csrf_token %}
                 <input type="hidden" name="rol" id="rolInput" value="trabajador">
 
-                <!-- PASO 1 -->
+                <!-- PASO 1 - DATOS PERSONALES -->
                 <div id="step1" class="step-content active">
-                    <div class="input-group"><i class="fas fa-user"></i><input type="text" name="nombre" id="nombre"
-                            placeholder="Nombre completo" required></div>
-                    <div class="input-group"><i class="fas fa-envelope"></i><input type="email" name="email" id="email"
-                            placeholder="Correo electrónico" required></div>
-                    <div class="input-group"><i class="fas fa-phone"></i><input type="tel" name="telefono" id="telefono"
-                            placeholder="Teléfono" required></div>
-                    <div class="input-group"><i class="fas fa-map-marker-alt"></i><input type="text" name="ubicacion"
-                            id="ubicacion" placeholder="Ubicación (ciudad/zona)" required></div>
-                    <div class="input-group"><i class="fas fa-lock"></i><input type="password" name="password"
-                            id="password" placeholder="Contraseña" required></div>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="nombre" id="nombre" placeholder="Nombre completo" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" id="email" placeholder="Correo electrónico" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" name="telefono" id="telefono" placeholder="Teléfono" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" name="ubicacion" id="ubicacion" placeholder="Ubicación (ciudad/zona)" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" id="password" placeholder="Contraseña" required>
+                        <i class="fas fa-eye toggle-password" data-target="password"></i>
+                    </div>
                     <div class="strength-meter" id="strengthMeter" style="display: none;">
                         <div class="strength-bar">
                             <div class="strength-fill" id="strengthFill"></div>
-                        </div><span class="strength-text" id="strengthText">Débil</span>
+                        </div>
+                        <span class="strength-text" id="strengthText">Débil</span>
                     </div>
-                    <div class="input-group"><i class="fas fa-check-circle"></i><input type="password"
-                            id="confirmPassword" placeholder="Confirmar contraseña" required></div>
-                    <div id="confirmError" class="error-msg"><i class="fas fa-exclamation-circle"></i> Las contraseñas
-                        no coinciden</div>
+                    <div class="input-group">
+                        <i class="fas fa-check-circle"></i>
+                        <input type="password" id="confirmPassword" placeholder="Confirmar contraseña" required>
+                        <i class="fas fa-eye toggle-password" data-target="confirmPassword"></i>
+                    </div>
+                    <div id="confirmError" class="error-msg">
+                        <i class="fas fa-exclamation-circle"></i> Las contraseñas no coinciden
+                    </div>
                 </div>
 
-                <!-- PASO 2 -->
+                <!-- PASO 2 - ROL Y DESCRIPCIÓN -->
                 <div id="step2" class="step-content">
                     <div class="role-tabs">
                         <button type="button" id="tab-trabajador" class="role-tab active">
@@ -116,31 +418,32 @@
                         </button>
                     </div>
 
-                    <!-- Campos para TRABAJADOR (ofrece servicios) -->
+                    <!-- Campos para TRABAJADOR -->
                     <div id="trabajadorFields" class="dynamic-fields">
-                        <div class="input-group"><i class="fas fa-tools"></i>
+                        <div class="input-group">
+                            <i class="fas fa-tools"></i>
                             <select name="oficio" id="oficio">
                                 <option value="">Selecciona tu oficio principal</option>
-                                <option>Carpintería</option>
-                                <option>Plomería</option>
-                                <option>Electricidad</option>
-                                <option>Cocina / Gastronomía</option>
+                                <option>Electricista</option>
+                                <option>Plomero</option>
+                                <option>Carpintero</option>
+                                <option>Cocinero</option>
                                 <option>Limpieza</option>
                                 <option>Construcción</option>
-                                <option>Pintura</option>
-                                <option>Mecánica</option>
-                                <option>Jardinería</option>
-                                <option>Albañilería</option>
-                                <option>Soldadura</option>
+                                <option>Pintor</option>
+                                <option>Mecánico</option>
+                                <option>Jardinero</option>
+                                <option>Albañil</option>
+                                <option>Soldador</option>
                             </select>
                         </div>
-                        <div class="input-group"><i class="fas fa-calendar-alt"></i>
-                            <input type="number" name="anios_experiencia" id="anios_experiencia"
-                                placeholder="Años de experiencia" min="0" max="50" value="0">
+                        <div class="input-group">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="number" name="anios_experiencia" id="anios_experiencia" placeholder="Años de experiencia" min="0" max="50" value="0">
                         </div>
-                        <div class="input-group"><i class="fas fa-file-alt"></i>
-                            <textarea name="descripcion_personal" rows="2"
-                                placeholder="Describe tu experiencia, habilidades y servicios..."></textarea>
+                        <div class="input-group">
+                            <i class="fas fa-file-alt"></i>
+                            <textarea name="descripcion_personal_trabajador" id="descripcion_personal_trabajador" rows="4" placeholder="Describe tu experiencia, habilidades, formación y servicios que ofreces..."></textarea>
                         </div>
                         <div class="info-box">
                             <i class="fas fa-tools"></i>
@@ -151,19 +454,19 @@
                         </div>
                     </div>
 
-                    <!-- Campos para EMPLEADOR (publica ofertas, tiene empresa) -->
+                    <!-- Campos para EMPLEADOR -->
                     <div id="empleadorFields" class="dynamic-fields hidden">
-                        <div class="input-group"><i class="fas fa-building"></i>
-                            <input type="text" name="nombre_empresa" id="empresaNombre"
-                                placeholder="Nombre de la empresa / negocio">
+                        <div class="input-group">
+                            <i class="fas fa-building"></i>
+                            <input type="text" name="nombre_empresa" id="empresaNombre" placeholder="Nombre de la empresa / negocio">
                         </div>
-                        <div class="input-group"><i class="fas fa-tag"></i>
-                            <input type="text" name="rubro" id="rubro"
-                                placeholder="Rubro (ej: Construcción, Restaurante, Servicios)">
+                        <div class="input-group">
+                            <i class="fas fa-tag"></i>
+                            <input type="text" name="rubro" id="rubro" placeholder="Rubro (ej: Construcción, Restaurante, Servicios)">
                         </div>
-                        <div class="input-group"><i class="fas fa-info-circle"></i>
-                            <textarea name="descripcion_empresa" rows="2"
-                                placeholder="Descripción de tu empresa..."></textarea>
+                        <div class="input-group">
+                            <i class="fas fa-info-circle"></i>
+                            <textarea name="descripcion_personal_empleador" id="descripcion_personal_empleador" rows="4" placeholder="Describe tu empresa, misión, valores y qué tipo de profesionales buscas..."></textarea>
                         </div>
                         <div class="info-box">
                             <i class="fas fa-bullhorn"></i>
@@ -174,8 +477,12 @@
                         </div>
                     </div>
 
-                    <!-- Campos para CLIENTE (solo datos básicos, puede publicar ofertas) -->
+                    <!-- Campos para CLIENTE -->
                     <div id="clienteFields" class="dynamic-fields hidden">
+                        <div class="input-group">
+                            <i class="fas fa-file-alt"></i>
+                            <textarea name="descripcion_personal_cliente" id="descripcion_personal_cliente" rows="4" placeholder="Cuéntanos sobre ti, qué tipo de servicios buscas o contratas..."></textarea>
+                        </div>
                         <div class="info-box" style="background: #F0FDF4;">
                             <i class="fas fa-store" style="color: #10B981;"></i>
                             <p><strong>Como cliente podrás:</strong></p>
@@ -183,57 +490,82 @@
                             <p>✓ Buscar y contratar trabajadores</p>
                             <p>✓ Calificar las experiencias</p>
                             <p>✓ Guardar tus trabajadores favoritos</p>
-                            <p style="margin-top: 0.5rem; font-size: 0.75rem;">No necesitas empresa ni oficio, solo
-                                regístrate con tus datos.</p>
                         </div>
-                        <input type="hidden" name="oficio" value="">
-                        <input type="hidden" name="anios_experiencia" value="0">
-                        <input type="hidden" name="descripcion_personal" value="Usuario cliente de CHAMBA">
-                        <input type="hidden" name="nombre_empresa" value="">
-                        <input type="hidden" name="rubro" value="">
+                        <input type="hidden" name="oficio_cliente" value="">
+                        <input type="hidden" name="anios_experiencia_cliente" value="0">
+                        <input type="hidden" name="nombre_empresa_cliente" value="">
+                        <input type="hidden" name="rubro_cliente" value="">
                     </div>
                 </div>
 
-                <!-- PASO 3 -->
+                <!-- PASO 3 - CONFIRMAR -->
                 <div id="step3" class="step-content">
-                    <div
-                        style="background: var(--gris-claro); border-radius: 1.5rem; padding: 1.5rem; margin-bottom: 1.5rem;">
-                        <p><i class="fas fa-check-circle" style="color: #10b981;"></i> <strong>Revisa tus datos antes de
-                                registrarte:</strong></p>
-                        <div id="reviewData" style="margin-top: 1rem; font-size: 1.3rem;"></div>
+                    <div style="background: #F8FAFC; border-radius: 1rem; padding: 1rem; margin-bottom: 1rem;">
+                        <p><i class="fas fa-check-circle" style="color: #10B981;"></i> <strong>Revisa tus datos:</strong></p>
+                        <div id="reviewData" style="margin-top: 0.8rem; font-size: 0.85rem;"></div>
                     </div>
-                    <label class="terms">
+                    <label class="terms" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;">
                         <input type="checkbox" id="termsCheckbox" required>
-                        Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>
+                        Acepto los <a id="showTermsBtn">Términos y Condiciones</a> y la
+                        <a id="showPrivacyBtn">Política de Privacidad</a>
                     </label>
-                    <div id="termError" class="error-msg" style="display: none;">Debes aceptar los términos para
-                        continuar</div>
+                    <div id="termError" class="error-msg" style="display: none;">Debes aceptar los términos para continuar</div>
                 </div>
 
                 <div class="step-buttons">
-                    <button type="button" id="prevBtn" class="btn-step btn-prev"><i class="fas fa-arrow-left"></i>
-                        Anterior</button>
-                    <button type="button" id="nextBtn" class="btn-step btn-next">Siguiente <i
-                            class="fas fa-arrow-right"></i></button>
-                    <button type="submit" id="submitBtn" class="btn-step btn-next" style="display: none;">Registrarme <i
-                            class="fas fa-user-plus"></i></button>
+                    <button type="button" id="prevBtn" class="btn-step btn-prev"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="button" id="nextBtn" class="btn-step btn-next">Siguiente <i class="fas fa-arrow-right"></i></button>
+                    <button type="submit" id="submitBtn" class="btn-step btn-next" style="display: none;">Registrarme <i class="fas fa-user-plus"></i></button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL TÉRMINOS -->
+    <div id="modalTerminos" class="modal-terminos">
+        <div class="modal-terminos-content">
+            <h3><i class="fas fa-file-contract"></i> Términos y Condiciones</h3>
+            <p><strong>1. Aceptación de los términos</strong><br>Al registrarte en CHAMBA, aceptas cumplir con estos términos y condiciones.</p>
+            <p><strong>2. Uso de la plataforma</strong><br>CHAMBA es una plataforma que conecta trabajadores y empleadores.</p>
+            <p><strong>3. Responsabilidades</strong><br>Eres responsable de la veracidad de la información que proporcionas.</p>
+            <p><strong>4. Prohibiciones</strong><br>No está permitido publicar contenido ilegal u ofensivo.</p>
+            <p><strong>5. Modificaciones</strong><br>CHAMBA puede modificar estos términos en cualquier momento.</p>
+            <p><strong>6. Contacto</strong><br>soporte@chamba.com</p>
+            <button onclick="cerrarModalTerminos()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- MODAL PRIVACIDAD -->
+    <div id="modalPrivacidad" class="modal-terminos">
+        <div class="modal-terminos-content">
+            <h3><i class="fas fa-shield-alt"></i> Política de Privacidad</h3>
+            <p><strong>1. Información recopilada</strong><br>Nombre, email, teléfono, ubicación y datos de perfil.</p>
+            <p><strong>2. Uso de la información</strong><br>Para conectar trabajadores con empleadores.</p>
+            <p><strong>3. Protección de datos</strong><br>Implementamos medidas de seguridad.</p>
+            <p><strong>4. Compartir información</strong><br>No vendemos tu información a terceros.</p>
+            <p><strong>5. Tus derechos</strong><br>Puedes solicitar la eliminación de tu cuenta.</p>
+            <p><strong>6. Cookies</strong><br>Usamos cookies para mejorar tu experiencia.</p>
+            <button onclick="cerrarModalPrivacidad()">Cerrar</button>
+        </div>
+    </div>
+
     <script>
-        (function () {
+        (function() {
             const step1 = document.getElementById('step1');
             const step2 = document.getElementById('step2');
             const step3 = document.getElementById('step3');
-            const stepIndicators = { 1: document.getElementById('step1-indicator'), 2: document.getElementById('step2-indicator'), 3: document.getElementById('step3-indicator') };
+            const stepIndicators = {
+                1: document.getElementById('step1-indicator'),
+                2: document.getElementById('step2-indicator'),
+                3: document.getElementById('step3-indicator')
+            };
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const submitBtn = document.getElementById('submitBtn');
             let currentStep = 1;
             const totalSteps = 3;
 
+            // Elementos
             const nombreInput = document.getElementById('nombre');
             const emailInput = document.getElementById('email');
             const telefonoInput = document.getElementById('telefono');
@@ -249,6 +581,9 @@
             const clienteDiv = document.getElementById('clienteFields');
             const oficioSelect = document.getElementById('oficio');
             const empresaNombre = document.getElementById('empresaNombre');
+            const descripcionTrabajador = document.getElementById('descripcion_personal_trabajador');
+            const descripcionEmpleador = document.getElementById('descripcion_personal_empleador');
+            const descripcionCliente = document.getElementById('descripcion_personal_cliente');
             const strengthMeter = document.getElementById('strengthMeter');
             const strengthFill = document.getElementById('strengthFill');
             const strengthText = document.getElementById('strengthText');
@@ -258,17 +593,38 @@
             const form = document.getElementById('registerForm');
             const rolInput = document.getElementById('rolInput');
 
+            // Mostrar/ocultar contraseña
+            document.querySelectorAll('.toggle-password').forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const targetId = this.dataset.target;
+                    const input = document.getElementById(targetId);
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.classList.remove('fa-eye');
+                        this.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        this.classList.remove('fa-eye-slash');
+                        this.classList.add('fa-eye');
+                    }
+                });
+            });
+
             function showStep(step) {
-                step1.classList.remove('active'); step2.classList.remove('active'); step3.classList.remove('active');
+                step1.classList.remove('active');
+                step2.classList.remove('active');
+                step3.classList.remove('active');
                 if (step === 1) step1.classList.add('active');
                 else if (step === 2) step2.classList.add('active');
                 else if (step === 3) step3.classList.add('active');
+                
                 for (let i = 1; i <= totalSteps; i++) {
                     const indicator = stepIndicators[i];
                     indicator.classList.remove('active', 'completed');
                     if (i < step) indicator.classList.add('completed');
                     else if (i === step) indicator.classList.add('active');
                 }
+                
                 if (step === totalSteps) {
                     nextBtn.style.display = 'none';
                     submitBtn.style.display = 'inline-flex';
@@ -286,6 +642,7 @@
                 const ubicacion = ubicacionInput.value.trim();
                 const pwd = passwordInput.value;
                 const confirm = confirmInput.value;
+                
                 if (!nombre || !email || !telefono || !ubicacion) {
                     alert('Completa todos los campos personales.');
                     return false;
@@ -306,51 +663,78 @@
             function validateStep2() {
                 const isTrabajador = tabTrabajador.classList.contains('active');
                 const isEmpleador = tabEmpleador.classList.contains('active');
-
-                if (isTrabajador) {
-                    if (!oficioSelect.value) {
-                        alert('Por favor selecciona tu oficio.');
-                        return false;
-                    }
+                
+                if (isTrabajador && !oficioSelect.value) {
+                    alert('Por favor selecciona tu oficio.');
+                    return false;
                 }
-                else if (isEmpleador) {
-                    const empNombre = empresaNombre ? empresaNombre.value.trim() : '';
-                    if (!empNombre) {
-                        alert('Ingresa el nombre de tu empresa.');
-                        return false;
-                    }
+                if (isEmpleador && (!empresaNombre.value.trim())) {
+                    alert('Ingresa el nombre de tu empresa.');
+                    return false;
                 }
-                // Cliente no necesita validación adicional
                 return true;
             }
 
-            function updateReviewData() {
-                const isTrabajador = tabTrabajador.classList.contains('active');
-                const isEmpleador = tabEmpleador.classList.contains('active');
-                const isCliente = tabCliente.classList.contains('active');
+            function getCurrentRole() {
+                if (tabTrabajador.classList.contains('active')) return 'trabajador';
+                if (tabEmpleador.classList.contains('active')) return 'empleador';
+                return 'cliente';
+            }
 
+            function getCurrentDescripcion() {
+                const role = getCurrentRole();
+                if (role === 'trabajador') return descripcionTrabajador?.value || '';
+                if (role === 'empleador') return descripcionEmpleador?.value || '';
+                return descripcionCliente?.value || '';
+            }
+
+            function getCurrentOficio() {
+                const role = getCurrentRole();
+                if (role === 'trabajador') return oficioSelect?.value || '';
+                return '';
+            }
+
+            function getCurrentAniosExperiencia() {
+                const role = getCurrentRole();
+                if (role === 'trabajador') return document.getElementById('anios_experiencia')?.value || '0';
+                return '0';
+            }
+
+            function getCurrentNombreEmpresa() {
+                const role = getCurrentRole();
+                if (role === 'empleador') return empresaNombre?.value || '';
+                return '';
+            }
+
+            function getCurrentRubro() {
+                const role = getCurrentRole();
+                if (role === 'empleador') return document.getElementById('rubro')?.value || '';
+                return '';
+            }
+
+            function updateReviewData() {
+                const role = getCurrentRole();
                 let roleText = '';
                 let specificInfo = '';
-
-                if (isTrabajador) {
+                
+                if (role === 'trabajador') {
                     roleText = 'Trabajador';
-                    const años = document.getElementById('anios_experiencia')?.value || '0';
-                    specificInfo = `<strong>Oficio:</strong> ${oficioSelect.value || 'No seleccionado'}<br>
-                                   <strong>Años de experiencia:</strong> ${años}<br>
+                    specificInfo = `<strong>Oficio:</strong> ${getCurrentOficio() || 'No seleccionado'}<br>
+                                   <strong>Años de experiencia:</strong> ${getCurrentAniosExperiencia()}<br>
+                                   <strong>Descripción:</strong> ${getCurrentDescripcion() || 'No especificada'}<br>
                                    <strong>Rol:</strong> Ofrece servicios`;
-                }
-                else if (isEmpleador) {
+                } else if (role === 'empleador') {
                     roleText = 'Empleador';
-                    specificInfo = `<strong>Empresa:</strong> ${empresaNombre ? empresaNombre.value : ''}<br>
-                                   <strong>Rubro:</strong> ${document.getElementById('rubro') ? document.getElementById('rubro').value : ''}<br>
+                    specificInfo = `<strong>Empresa:</strong> ${getCurrentNombreEmpresa() || 'No especificada'}<br>
+                                   <strong>Rubro:</strong> ${getCurrentRubro() || 'No especificado'}<br>
+                                   <strong>Descripción:</strong> ${getCurrentDescripcion() || 'No especificada'}<br>
                                    <strong>Rol:</strong> Publica ofertas y contrata`;
-                }
-                else {
+                } else {
                     roleText = 'Cliente';
-                    specificInfo = `<strong>Rol:</strong> Publica ofertas y contrata servicios<br>
-                                   <em>No requiere empresa ni oficio</em>`;
+                    specificInfo = `<strong>Descripción:</strong> ${getCurrentDescripcion() || 'No especificada'}<br>
+                                   <strong>Rol:</strong> Publica ofertas y contrata servicios`;
                 }
-
+                
                 reviewData.innerHTML = `<p><strong>Nombre:</strong> ${nombreInput.value}</p>
                                        <p><strong>Email:</strong> ${emailInput.value}</p>
                                        <p><strong>Teléfono:</strong> ${telefonoInput.value}</p>
@@ -401,8 +785,9 @@
                     trabajadorDiv.classList.add('hidden');
                     empleadorDiv.classList.add('hidden');
                     clienteDiv.classList.remove('hidden');
-                    rolInput.value = 'empleador';  // Cliente se guarda como empleador sin empresa
+                    rolInput.value = 'empleador';
                 }
+                if (currentStep === 3) updateReviewData();
             }
 
             tabTrabajador.addEventListener('click', () => setRole('trabajador'));
@@ -410,7 +795,10 @@
             tabCliente.addEventListener('click', () => setRole('cliente'));
 
             function checkStrength(pwd) {
-                if (!pwd) { strengthMeter.style.display = 'none'; return; }
+                if (!pwd) {
+                    strengthMeter.style.display = 'none';
+                    return;
+                }
                 strengthMeter.style.display = 'flex';
                 let score = 0;
                 if (pwd.length >= 6) score++;
@@ -429,7 +817,7 @@
                 strengthText.style.color = color;
             }
 
-            passwordInput.addEventListener('input', function () {
+            passwordInput.addEventListener('input', function() {
                 checkStrength(this.value);
                 validateConfirm();
             });
@@ -440,8 +828,7 @@
                 if (confirm && pwd !== confirm) {
                     confirmError.classList.add('show');
                     return false;
-                }
-                else {
+                } else {
                     confirmError.classList.remove('show');
                     return true;
                 }
@@ -449,7 +836,8 @@
 
             confirmInput.addEventListener('input', validateConfirm);
 
-            form.addEventListener('submit', function (e) {
+            // Enviar formulario con los datos correctos
+            form.addEventListener('submit', function(e) {
                 if (!validateStep1() || !validateStep2()) {
                     e.preventDefault();
                     alert('Revisa los datos en los pasos anteriores.');
@@ -461,11 +849,69 @@
                     return;
                 }
                 termError.style.display = 'none';
+                
+                const role = getCurrentRole();
+                const descripcion = getCurrentDescripcion();
+                
+                // Crear campo de descripción personal
+                let descripcionField = document.createElement('input');
+                descripcionField.type = 'hidden';
+                descripcionField.name = 'descripcion_personal';
+                descripcionField.value = descripcion;
+                this.appendChild(descripcionField);
+                
+                // Asegurar que los campos específicos tengan los nombres correctos
+                if (role === 'trabajador') {
+                    let oficioField = document.createElement('input');
+                    oficioField.type = 'hidden';
+                    oficioField.name = 'oficio';
+                    oficioField.value = getCurrentOficio();
+                    this.appendChild(oficioField);
+                    
+                    let expField = document.createElement('input');
+                    expField.type = 'hidden';
+                    expField.name = 'anios_experiencia';
+                    expField.value = getCurrentAniosExperiencia();
+                    this.appendChild(expField);
+                } else if (role === 'empleador') {
+                    let empresaField = document.createElement('input');
+                    empresaField.type = 'hidden';
+                    empresaField.name = 'nombre_empresa';
+                    empresaField.value = getCurrentNombreEmpresa();
+                    this.appendChild(empresaField);
+                    
+                    let rubroField = document.createElement('input');
+                    rubroField.type = 'hidden';
+                    rubroField.name = 'rubro';
+                    rubroField.value = getCurrentRubro();
+                    this.appendChild(rubroField);
+                }
             });
 
             showStep(1);
             if (passwordInput.value === '') strengthMeter.style.display = 'none';
         })();
+
+        function abrirModalTerminos() {
+            document.getElementById('modalTerminos').style.display = 'flex';
+        }
+        function cerrarModalTerminos() {
+            document.getElementById('modalTerminos').style.display = 'none';
+        }
+        function abrirModalPrivacidad() {
+            document.getElementById('modalPrivacidad').style.display = 'flex';
+        }
+        function cerrarModalPrivacidad() {
+            document.getElementById('modalPrivacidad').style.display = 'none';
+        }
+        document.getElementById('showTermsBtn')?.addEventListener('click', abrirModalTerminos);
+        document.getElementById('showPrivacyBtn')?.addEventListener('click', abrirModalPrivacidad);
+        document.getElementById('modalTerminos')?.addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalTerminos();
+        });
+        document.getElementById('modalPrivacidad')?.addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalPrivacidad();
+        });
     </script>
 </body>
 

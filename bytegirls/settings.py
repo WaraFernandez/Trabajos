@@ -11,25 +11,24 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
+# ========== SEGURIDAD ==========
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure---=vx!!l2$6t0uc-@dzqk-3=3l%30aa#$!+1g%7jyq8tl2s*yt"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Permitir todas las conexiones (para túnel SSH - SOLO DESARROLLO)
+ALLOWED_HOSTS = ['*']
 
 
-# Application definition
-
+# ========== APLICACIONES ==========
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -70,9 +69,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "bytegirls.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
+# ========== BASE DE DATOS ==========
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -81,9 +78,7 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
-
+# ========== VALIDACIÓN DE CONTRASEÑAS ==========
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -100,44 +95,92 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-
-LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "UTC"
-
+# ========== INTERNACIONALIZACIÓN ==========
+LANGUAGE_CODE = "es-es"
+TIME_ZONE = "America/La_Paz"
 USE_I18N = True
-
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
+# ========== ARCHIVOS ESTÁTICOS ==========
 STATIC_URL = "static/"
-
-import os
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_URL = "/login/"
-
+# ========== ARCHIVOS MEDIA (IMÁGENES) ==========
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# Configuración con Gmail usando contraseña de aplicación
+
+# ========== CONFIGURACIÓN DE EMAIL (Gmail) ==========
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "mishelldiaz400@gmail.com"
-EMAIL_HOST_PASSWORD = "ogfj wvfd bifb hyym"  # Tu contraseña de aplicación
+EMAIL_HOST_PASSWORD = "ogfj wvfd bifb hyym"
 DEFAULT_FROM_EMAIL = "CHAMBA <mishelldiaz400@gmail.com>"
-# Configuración de seguridad para mapas
+
+
+# ========== CONFIGURACIÓN DE SESIÓN ==========
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/dashboard/"
+LOGOUT_REDIRECT_URL = "/"
+
+
+# ========== CONFIGURACIÓN DE SEGURIDAD (para túnel SSH) ==========
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+
+# Tamaño máximo de subida de archivos (10MB)
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
+
+
+# ========== CONFIGURACIÓN DE CSRF (para túnel) ==========
+# Permite cualquier origen para el túnel
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'http://0.0.0.0:8080',
+    'https://782274df250dbb06-138-199-50-140.serveousercontent.com',
+    'https://*.serveousercontent.com',
+    'http://*.serveousercontent.com',
+    'https://*.serveo.net',
+    'http://*.serveo.net',
+]
+
+
+# ========== CONFIGURACIÓN DE CACHE ==========
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+
+
+# ========== CONFIGURACIÓN DE LOGGING ==========
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comentarios - CHAMBA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/principal.css' %}">
+    <style>
+        .container { max-width: 700px; margin: 2rem auto; background: white; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1); }
+        .comentario { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
+        .comentario:last-child { border-bottom: none; }
+        .comentario-usuario { font-weight: 700; color: #0A66C2; }
+        .comentario-fecha { font-size: 0.7rem; color: #9CA3AF; margin-left: 0.5rem; }
+        .comentario-texto { margin-top: 0.3rem; color: #374151; }
+        .form-comentario { margin-top: 1.5rem; display: flex; gap: 0.5rem; }
+        .form-comentario input { flex: 1; padding: 0.8rem; border: 1.5px solid #E5E7EB; border-radius: 2rem; }
+        .form-comentario button { background: #0A66C2; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 2rem; cursor: pointer; }
+        .volver { display: inline-block; margin-bottom: 1rem; color: #0A66C2; text-decoration: none; }
+    </style>
+</head>
+<body style="background: #F3F4F6; min-height: 100vh;">
+    <div class="container">
+        <a href="{% url 'perfil' %}" class="volver"><i class="fas fa-arrow-left"></i> Volver al perfil</a>
+        <h2><i class="fas fa-comments"></i> Comentarios</h2>
+        <p><strong>Publicación:</strong> {{ publicacion.contenido|truncatechars:100 }}</p>
+        
+        <div class="comentarios-lista">
+            {% for comentario in comentarios %}
+            <div class="comentario">
+                <div>
+                    <span class="comentario-usuario">{{ comentario.usuario.get_full_name|default:comentario.usuario.username }}</span>
+                    <span class="comentario-fecha">{{ comentario.fecha|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="comentario-texto">{{ comentario.texto }}</div>
+            </div>
+            {% empty %}
+            <p style="text-align: center; color: #9CA3AF;">No hay comentarios aún. ¡Sé el primero en comentar!</p>
+            {% endfor %}
+        </div>
+        
+        <form method="post" class="form-comentario">
+            {% csrf_token %}
+            <input type="text" name="texto" placeholder="Escribe un comentario..." required>
+            <button type="submit"><i class="fas fa-paper-plane"></i> Enviar</button>
+        </form>
+    </div>
+</body>
+</html>

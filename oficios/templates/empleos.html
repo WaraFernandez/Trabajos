@@ -405,59 +405,48 @@
         </main>
 
         <aside class="chamba-sidebar-right">
-            <div class="filtros-widget">
-                <div class="filtros-titulo">
-                    <i class="fa-solid fa-filter"></i> Filtrar búsqueda
-                </div>
-                <div class="filtro-grupo">
-                    <label class="filtro-label"><i class="fa-solid fa-magnifying-glass"></i> Buscar</label>
-                    <input type="text" id="filtro-buscar" class="filtro-input" placeholder="Ej: electricista, construcción...">
-                </div>
-                <div class="filtro-grupo">
-                    <label class="filtro-label"><i class="fa-solid fa-bolt"></i> Oficio</label>
-                    <select id="filtro-oficio" class="filtro-select">
-                        <option value="">Todos los oficios</option>
-                        <option value="electricista">⚡ Electricista</option>
-                        <option value="plomero">🔧 Plomero</option>
-                        <option value="carpintero">🪵 Carpintero</option>
-                        <option value="cocinero">🍳 Cocinero</option>
-                        <option value="limpieza">🧹 Limpieza</option>
-                        <option value="construcción">🏗️ Construcción</option>
-                        <option value="pintor">🎨 Pintor</option>
-                        <option value="jardinero">🌿 Jardinero</option>
-                        <option value="mecánico">🔧 Mecánico</option>
-                    </select>
-                </div>
-                <div class="filtro-grupo">
-                    <label class="filtro-label"><i class="fa-solid fa-location-dot"></i> Ubicación</label>
-                    <input type="text" id="filtro-ubicacion" class="filtro-input" placeholder="Ej: La Paz, Santa Cruz...">
-                </div>
-                <div class="filtro-grupo">
-                    <label class="filtro-label"><i class="fa-solid fa-calendar"></i> Estado</label>
-                    <select id="filtro-estado" class="filtro-select">
-                        <option value="">Todos</option>
-                        <option value="Abierta">✅ Abiertas</option>
-                        <option value="¡Por vencer!">⚠️ Por vencer</option>
-                        <option value="Caducada">❌ Caducadas</option>
-                    </select>
-                </div>
-                <button id="btn-filtrar" class="btn-filtrar">
-                    <i class="fa-solid fa-magnifying-glass"></i> Aplicar filtros
-                </button>
-                <button id="btn-limpiar" class="btn-limpiar">
-                    <i class="fa-solid fa-trash"></i> Limpiar filtros
-                </button>
-            </div>
-            <div class="filtros-widget">
-                <div class="filtros-titulo">
-                    <i class="fa-solid fa-chart-simple"></i> Estadísticas
-                </div>
-                <div style="text-align: center; padding: 0.5rem 0;">
-                    <div style="font-size: 2rem; font-weight: 700; color: #0A66C2;" id="total-ofertas">0</div>
-                    <div style="font-size: 0.75rem; color: #6B7280;">ofertas encontradas</div>
-                </div>
-            </div>
-        </aside>
+    <div class="filtros-widget">
+        <div class="filtros-titulo">
+            <i class="fa-regular fa-heart"></i> Frase del día
+        </div>
+        <div style="text-align: center; padding: 1rem;">
+            <i class="fa-regular fa-lightbulb" style="font-size: 2rem; color: #0A66C2; margin-bottom: 0.8rem; display: block;"></i>
+            <p id="fraseMotivacionalSidebar" style="font-size: 1rem; color: #374151; line-height: 1.5; font-style: italic;">
+                "El éxito no es la clave de la felicidad. La felicidad es la clave del éxito."
+            </p>
+            <p style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.8rem;">— CHAMBA —</p>
+        </div>
+    </div>
+
+    <div class="filtros-widget">
+        <div class="filtros-titulo">
+            <i class="fa-solid fa-chart-simple"></i> Estadísticas
+        </div>
+        <div style="text-align: center; padding: 0.5rem 0;">
+            <div style="font-size: 2rem; font-weight: 700; color: #0A66C2;" id="total-ofertas">0</div>
+            <div style="font-size: 0.75rem; color: #6B7280;">ofertas disponibles</div>
+        </div>
+    </div>
+</aside>
+
+<script>
+    // Frases motivacionales para el sidebar
+    const frasesSidebar = [
+        "El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
+        "No busques el éxito, busca hacer un trabajo que te apasione.",
+        "El trabajo duro siempre vence al talento cuando el talento no trabaja duro.",
+        "Cree en ti mismo y todo será posible.",
+        "La calidad nunca es un accidente; es resultado del esfuerzo inteligente.",
+        "Pequeños progresos cada día llevan a grandes resultados.",
+        "Tu único límite es tu mente. Atrévete a soñar más allá.",
+        "El mejor momento para empezar fue ayer. El segundo mejor es hoy."
+    ];
+    const indiceFrase = new Date().getDate() % frasesSidebar.length;
+    const fraseElemento = document.getElementById('fraseMotivacionalSidebar');
+    if (fraseElemento) {
+        fraseElemento.textContent = frasesSidebar[indiceFrase];
+    }
+</script>
     </div>
 
     <!-- MODAL DE EDICIÓN DE OFERTA -->

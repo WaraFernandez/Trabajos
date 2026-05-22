@@ -1,0 +1,308 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Publicación - CHAMBA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/principal.css' %}">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+        }
+        .form-container h2 {
+            color: #0A66C2;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #E8F0FE;
+            padding-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-size: 1.3rem;
+        }
+        .form-group label .required {
+            color: #EF4444;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.9rem;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 0.8rem;
+            font-size: 1.4rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0A66C2;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .imagen-actual {
+            margin-top: 0.5rem;
+            padding: 0.8rem;
+            background: #F9FAFB;
+            border-radius: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .imagen-actual img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+        .btn-eliminar-img {
+            background: #EF4444;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .checkbox-group input {
+            width: 1.5rem;
+            height: 1.5rem;
+            cursor: pointer;
+            accent-color: #10B981;
+        }
+        .btn-guardar {
+            background: #0A66C2;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .btn-guardar:hover {
+            background: #004182;
+        }
+        .btn-cancelar {
+            background: #F3F4F6;
+            color: #6B7280;
+            border: none;
+            padding: 1rem;
+            border-radius: 2rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .info-box {
+            background: #E8F0FE;
+            padding: 1rem;
+            border-radius: 0.8rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            color: #0A66C2;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        @media (max-width: 600px) {
+            .form-container { margin: 1rem; padding: 1.5rem; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+</head>
+<body class="chamba-dashboard">
+
+    {% include 'includes/navbar.html' %}
+
+    <div class="form-container">
+        <h2>
+            <i class="fas fa-edit"></i> 
+            {% if es_oferta %}
+                Editar Oferta Laboral
+            {% elif es_servicio %}
+                Editar Servicio
+            {% else %}
+                Editar Publicación
+            {% endif %}
+        </h2>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i> 
+            {% if es_servicio %}
+                Completa los datos para actualizar tu servicio.
+            {% elif es_oferta %}
+                Completa los datos para actualizar tu oferta laboral.
+            {% else %}
+                Actualiza el contenido de tu publicación.
+            {% endif %}
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- ========== PARA OFERTA ========== -->
+            {% if es_oferta %}
+            <div class="form-group">
+                <label>Título <span class="required">*</span></label>
+                <input type="text" name="titulo" value="{{ objeto.titulo }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Oficio <span class="required">*</span></label>
+                <select name="oficio" required>
+                    <option value="Electricista" {% if objeto.oficio == 'Electricista' %}selected{% endif %}>⚡ Electricista</option>
+                    <option value="Plomero" {% if objeto.oficio == 'Plomero' %}selected{% endif %}>🔧 Plomero</option>
+                    <option value="Carpintero" {% if objeto.oficio == 'Carpintero' %}selected{% endif %}>🪵 Carpintero</option>
+                    <option value="Cocinero" {% if objeto.oficio == 'Cocinero' %}selected{% endif %}>🍳 Cocinero</option>
+                    <option value="Limpieza" {% if objeto.oficio == 'Limpieza' %}selected{% endif %}>🧹 Limpieza</option>
+                    <option value="Construcción" {% if objeto.oficio == 'Construcción' %}selected{% endif %}>🏗️ Construcción</option>
+                    <option value="Pintor" {% if objeto.oficio == 'Pintor' %}selected{% endif %}>🎨 Pintor</option>
+                    <option value="Jardinero" {% if objeto.oficio == 'Jardinero' %}selected{% endif %}>🌿 Jardinero</option>
+                    <option value="Mecánico" {% if objeto.oficio == 'Mecánico' %}selected{% endif %}>🔧 Mecánico</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción <span class="required">*</span></label>
+                <textarea name="descripcion" rows="5" required>{{ objeto.descripcion }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ubicación</label>
+                    <input type="text" name="ubicacion" value="{{ objeto.ubicacion }}">
+                </div>
+                <div class="form-group">
+                    <label>Remuneración (Bs)</label>
+                    <input type="text" name="remuneracion" value="{{ objeto.remuneracion }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha límite</label>
+                    <input type="date" name="fecha_limite" value="{{ objeto.fecha_limite|date:'Y-m-d' }}">
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select name="activa">
+                        <option value="True" {% if objeto.activa %}selected{% endif %}>✅ Activa</option>
+                        <option value="False" {% if not objeto.activa %}selected{% endif %}>❌ Inactiva</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ========== PARA SERVICIO ========== -->
+            {% elif es_servicio %}
+            <div class="form-group">
+                <label>Título del servicio <span class="required">*</span></label>
+                <input type="text" name="titulo" value="{{ objeto.titulo }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Oficio / Especialidad <span class="required">*</span></label>
+                <select name="oficio" required>
+                    <option value="">Selecciona tu oficio</option>
+                    <option value="Electricista" {% if objeto.oficio == 'Electricista' %}selected{% endif %}>⚡ Electricista</option>
+                    <option value="Plomero" {% if objeto.oficio == 'Plomero' %}selected{% endif %}>🔧 Plomero</option>
+                    <option value="Carpintero" {% if objeto.oficio == 'Carpintero' %}selected{% endif %}>🪵 Carpintero</option>
+                    <option value="Cocinero" {% if objeto.oficio == 'Cocinero' %}selected{% endif %}>🍳 Cocinero</option>
+                    <option value="Limpieza" {% if objeto.oficio == 'Limpieza' %}selected{% endif %}>🧹 Limpieza</option>
+                    <option value="Construcción" {% if objeto.oficio == 'Construcción' %}selected{% endif %}>🏗️ Construcción</option>
+                    <option value="Pintor" {% if objeto.oficio == 'Pintor' %}selected{% endif %}>🎨 Pintor</option>
+                    <option value="Jardinero" {% if objeto.oficio == 'Jardinero' %}selected{% endif %}>🌿 Jardinero</option>
+                    <option value="Mecánico" {% if objeto.oficio == 'Mecánico' %}selected{% endif %}>🔧 Mecánico</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción del servicio <span class="required">*</span></label>
+                <textarea name="descripcion" rows="5" required>{{ objeto.descripcion }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Zona de trabajo <span class="required">*</span></label>
+                    <input type="text" name="ubicacion" value="{{ objeto.ubicacion }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio (Bs)</label>
+                    <input type="text" name="precio" value="{{ objeto.precio }}">
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" name="disponible" id="disponible" {% if objeto.disponible %}checked{% endif %}>
+                <label for="disponible" style="margin:0; font-weight:normal;">✅ Disponible para trabajar</label>
+            </div>
+
+            <!-- ========== PARA ESTADO ========== -->
+            {% else %}
+            <div class="form-group">
+                <label>Contenido <span class="required">*</span></label>
+                <textarea name="contenido" rows="8" required>{{ objeto.contenido }}</textarea>
+            </div>
+            {% endif %}
+
+            <!-- ========== IMAGEN ========== -->
+            <div class="form-group">
+                <label>Imagen actual</label>
+                <div class="imagen-actual" id="imagenActualDiv">
+                    {% if objeto.imagen %}
+                    <img src="{{ objeto.imagen.url }}" alt="Imagen actual">
+                    <button type="button" class="btn-eliminar-img" onclick="eliminarImagen()">Eliminar imagen</button>
+                    {% else %}
+                    <p style="color:#9CA3AF;">No hay imagen actual</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Cambiar imagen (opcional)</label>
+                <input type="file" name="imagen" accept="image/*">
+                <small>Formatos: JPG, PNG, GIF. Máx 5MB</small>
+            </div>
+
+            <input type="hidden" name="eliminar_imagen" id="eliminarImagenHidden" value="false">
+
+            <button type="submit" class="btn-guardar"><i class="fas fa-save"></i> Guardar cambios</button>
+            <a href="{% url 'perfil' %}" class="btn-cancelar"><i class="fas fa-times"></i> Cancelar</a>
+        </form>
+    </div>
+
+    <script>
+        function eliminarImagen() {
+            if (confirm('¿Eliminar esta imagen?')) {
+                document.getElementById('eliminarImagenHidden').value = 'true';
+                document.getElementById('imagenActualDiv').innerHTML = '<p style="color:#9CA3AF;">Imagen eliminada. Guarda los cambios para confirmar.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

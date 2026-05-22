@@ -103,7 +103,7 @@ urlpatterns = [
         views.eliminar_oferta_api,
         name="eliminar_oferta_api",
     ),
-    # mod admin
+    # Mod admin
     path("dashboard-admin/", views.dashboard_admin, name="dashboard_admin"),
     path("api/usuarios/", views.api_usuarios, name="api_usuarios"),
     path(
@@ -111,24 +111,122 @@ urlpatterns = [
         views.cambiar_estado_usuario,
         name="cambiar_estado_usuario",
     ),
-
     path("usuarios-admin/", views.usuarios_admin, name="usuarios_admin"),
     path("reportes-admin/", views.reportes_admin, name="reportes_admin"),
     path("comentarios-admin/", views.comentarios_admin, name="comentarios_admin"),
     path("publicaciones-admin/", views.publicaciones_admin, name="publicaciones_admin"),
     path("historial-admin/", views.historial_admin, name="historial_admin"),
-
-    path("bloquear-usuario/<int:user_id>/", views.bloquear_usuario, name="bloquear_usuario"),
-    path("reactivar-usuario/<int:user_id>/", views.reactivar_usuario, name="reactivar_usuario"),
-    path("admin-advertir-usuario/<int:user_id>/", views.admin_advertir_usuario, name="admin_advertir_usuario"),
-    path("admin-notificar-usuario/<int:user_id>/", views.admin_notificar_usuario, name="admin_notificar_usuario"),
-
-    path("admin-eliminar-comentario/<int:comentario_id>/", views.admin_eliminar_comentario, name="admin_eliminar_comentario"),
-    path("admin-revisar-comentario/<int:comentario_id>/", views.admin_marcar_comentario_revisado, name="admin_marcar_comentario_revisado"),
-
-    path("admin-eliminar-publicacion/<int:publicacion_id>/", views.admin_eliminar_publicacion, name="admin_eliminar_publicacion"),
-
-    path("admin-reporte-revisado/<int:reporte_id>/", views.admin_marcar_reporte_revisado, name="admin_marcar_reporte_revisado"),
-    path("admin-reporte-resuelto/<int:reporte_id>/", views.admin_resolver_reporte, name="admin_resolver_reporte"),
-    path("publicacion-revisar/<int:publicacion_id>/",views.marcar_publicacion_revisada,name="marcar_publicacion_revisada"),
+    path(
+        "bloquear-usuario/<int:user_id>/",
+        views.bloquear_usuario,
+        name="bloquear_usuario",
+    ),
+    path(
+        "reactivar-usuario/<int:user_id>/",
+        views.reactivar_usuario,
+        name="reactivar_usuario",
+    ),
+    path(
+        "admin-advertir-usuario/<int:user_id>/",
+        views.admin_advertir_usuario,
+        name="admin_advertir_usuario",
+    ),
+    path(
+        "admin-notificar-usuario/<int:user_id>/",
+        views.admin_notificar_usuario,
+        name="admin_notificar_usuario",
+    ),
+    path(
+        "admin-eliminar-comentario/<int:comentario_id>/",
+        views.admin_eliminar_comentario,
+        name="admin_eliminar_comentario",
+    ),
+    path(
+        "admin-revisar-comentario/<int:comentario_id>/",
+        views.admin_marcar_comentario_revisado,
+        name="admin_marcar_comentario_revisado",
+    ),
+    path(
+        "admin-eliminar-publicacion/<int:publicacion_id>/",
+        views.admin_eliminar_publicacion,
+        name="admin_eliminar_publicacion",
+    ),
+    path(
+        "admin-reporte-revisado/<int:reporte_id>/",
+        views.admin_marcar_reporte_revisado,
+        name="admin_marcar_reporte_revisado",
+    ),
+    path(
+        "admin-reporte-resuelto/<int:reporte_id>/",
+        views.admin_resolver_reporte,
+        name="admin_resolver_reporte",
+    ),
+    path(
+        "publicacion-revisar/<int:publicacion_id>/",
+        views.marcar_publicacion_revisada,
+        name="marcar_publicacion_revisada",
+    ),
+    # Editar oferta y servicio
+    path("oferta/editar/<int:pk>/", views.editar_oferta, name="editar_oferta"),
+    path("servicio/editar/<int:pk>/", views.editar_servicio, name="editar_servicio"),
+    # Para editar perfil completo
+    path("perfil/editar/", views.editar_perfil, name="editar_perfil"),
+    path(
+        "perfil/editar-descripcion/",
+        views.editar_descripcion,
+        name="editar_descripcion",
+    ),
+    path(
+        "perfil/editar-experiencia/",
+        views.editar_experiencia,
+        name="editar_experiencia",
+    ),
+    path(
+        "perfil/toggle-disponibilidad/",
+        views.toggle_disponibilidad,
+        name="toggle_disponibilidad",
+    ),
+    # Para portafolio
+    path(
+        "perfil/editar-portafolio/<int:foto_id>/",
+        views.editar_portafolio,
+        name="editar_portafolio",
+    ),
+    path(
+        "perfil/eliminar-portafolio/<int:foto_id>/",
+        views.eliminar_portafolio,
+        name="eliminar_portafolio",
+    ),
+    # Para publicaciones
+    path(
+        "publicacion/editar/<int:pk>/",
+        views.editar_publicacion,
+        name="editar_publicacion",
+    ),
+    path(
+        "publicacion/eliminar/<int:pk>/",
+        views.eliminar_publicacion,
+        name="eliminar_publicacion",
+    ),
+    path("like/<int:publicacion_id>/", views.like_toggle, name="like_toggle"),
+    path(
+        "comentarios/<int:publicacion_id>/",
+        views.comentarios_lista,
+        name="comentarios_lista",
+    ),
+    # Para ofertas y servicios
+    path("oferta/editar/<int:pk>/", views.editar_oferta, name="editar_oferta"),
+    path("servicio/editar/<int:pk>/", views.editar_servicio, name="editar_servicio"),
+    # Editar publicación (para oferta, servicio y estado)
+    path(
+        "publicacion/editar/<int:pk>/",
+        views.editar_publicacion,
+        name="editar_publicacion",
+    ),
+    path(
+        "publicacion/eliminar/<int:pk>/",
+        views.eliminar_publicacion,
+        name="eliminar_publicacion",
+    ),
+    path("perfil/editar-portafolio/<int:foto_id>/", views.editar_portafolio, name="editar_portafolio"),
 ]
