@@ -592,7 +592,7 @@ def editar_perfil(request):
 
 @login_required
 def perfil_user(request):
-    from .models import PortafolioFoto, Calificacion, Oferta, Servicio
+    from .models import PortafolioFoto, Calificacion, Oferta, Servicio, Publicacion, Like, Comentario
 
     calificaciones_recibidas = (
         Calificacion.objects.filter(calificado=request.user)
@@ -600,39 +600,35 @@ def perfil_user(request):
         .order_by("-fecha")
     )
     
-    # Obtener ofertas y servicios del usuario (no las Publicaciones)
+    # Obtener ofertas y servicios del usuario
     ofertas_usuario = Oferta.objects.filter(empleador=request.user).order_by("-fecha_publicacion")
     servicios_usuario = Servicio.objects.filter(trabajador=request.user).order_by("-fecha_publicacion")
     
-    # Combinar para mostrar en "Mis publicaciones"
-    mis_publicaciones = []
+    # Obtener publicaciones de estado del usuario
+    publicaciones_estado = Publicacion.objects.filter(usuario=request.user, tipo='estado').order_by("-fecha_creacion")
     
+    # Crear una lista combinada con objetos reales de Publicacion
+    mis_publicaciones = list(publicaciones_estado)  # Las de estado ya son objetos Publicacion
+    
+    # Para ofertas y servicios, necesitamos obtener o crear sus Publicaciones asociadas
     for oferta in ofertas_usuario:
-        mis_publicaciones.append({
-            'id': oferta.id,
-            'tipo': 'oferta',
-            'usuario': request.user,
-            'contenido': f"📢 OFERTA: {oferta.titulo}\n\n{oferta.descripcion[:200]}",
-            'fecha_creacion': oferta.fecha_publicacion,
-            'imagen': oferta.imagen if hasattr(oferta, 'imagen') else None,
-            'likes': [],  # Los likes están en Publicacion, no en Oferta
-            'comentarios': [],  # Los comentarios están en Publicacion
-        })
+        # Buscar la publicación asociada a esta oferta
+        pub = Publicacion.objects.filter(usuario=request.user, tipo='oferta', contenido__icontains=oferta.titulo).first()
+        if pub:
+            mis_publicaciones.append(pub)
+        else:
+            # Si no existe, crear una publicación temporal (opcional)
+            # Pero lo mejor es asegurarse de que se crea al publicar la oferta
+            pass
     
     for servicio in servicios_usuario:
-        mis_publicaciones.append({
-            'id': servicio.id,
-            'tipo': 'servicio',
-            'usuario': request.user,
-            'contenido': f"🔧 SERVICIO: {servicio.titulo}\n\n{servicio.descripcion[:200]}",
-            'fecha_creacion': servicio.fecha_publicacion,
-            'imagen': servicio.imagen if hasattr(servicio, 'imagen') else None,
-            'likes': [],
-            'comentarios': [],
-        })
+        # Buscar la publicación asociada a este servicio
+        pub = Publicacion.objects.filter(usuario=request.user, tipo='servicio', contenido__icontains=servicio.titulo).first()
+        if pub:
+            mis_publicaciones.append(pub)
     
-    # Ordenar por fecha
-    mis_publicaciones.sort(key=lambda x: x['fecha_creacion'], reverse=True)
+    # Ordenar por fecha (más reciente primero)
+    mis_publicaciones.sort(key=lambda x: x.fecha_creacion, reverse=True)
     
     context = {
         "portafolio_fotos": (
@@ -640,7 +636,7 @@ def perfil_user(request):
             if request.user.perfil.tipo == "trabajador"
             else []
         ),
-        "mis_publicaciones": mis_publicaciones,
+        "mis_publicaciones": mis_publicaciones,  # ✅ Ahora son objetos Publicacion REALES
         "ofertas": ofertas_usuario,
         "servicios": servicios_usuario,
         "calificaciones_recibidas": calificaciones_recibidas,
@@ -649,7 +645,6 @@ def perfil_user(request):
         "anios_experiencia": request.user.perfil.anios_experiencia or 0,
     }
     return render(request, "perfil.html", context)
-
 
 @login_required
 def subir_portafolio(request):
@@ -967,31 +962,51 @@ def api_todos_trabajadores(request):
 
 @login_required
 def editar_publicacion(request, pk):
-    # PRIMERO buscar en Oferta y Servicio por el ID
-    oferta = Oferta.objects.filter(id=pk, empleador=request.user).first()
-    servicio = Servicio.objects.filter(id=pk, trabajador=request.user).first()
+    print(f"🔍 EDITAR PUBLICACIÓN - ID RECIBIDO: {pk}")
     
-    # Si no es oferta ni servicio, buscar en Publicacion
-    publicacion = None
-    if not oferta and not servicio:
-        publicacion = Publicacion.objects.filter(id=pk, usuario=request.user).first()
+    # PRIMERO buscar en Publicacion (porque el ID que viene es de Publicacion)
+    publicacion = Publicacion.objects.filter(id=pk, usuario=request.user).first()
     
     tipo = None
     objeto = None
     
-    if oferta:
-        tipo = 'oferta'
-        objeto = oferta
-        print(f"DEBUG: ES OFERTA - ID: {objeto.id}")
-    elif servicio:
-        tipo = 'servicio'
-        objeto = servicio
-        print(f"DEBUG: ES SERVICIO - ID: {objeto.id}")
-    elif publicacion:
-        tipo = 'estado'
-        objeto = publicacion
-        print(f"DEBUG: ES ESTADO - ID: {objeto.id} - Tipo: {publicacion.tipo}")
-    else:
+    if publicacion:
+        print(f"📝 Publicación encontrada - Tipo: {publicacion.tipo}")
+        
+        if publicacion.tipo == 'oferta':
+            # Buscar la oferta asociada a esta publicación
+            # Buscar por contenido (el título está en el contenido)
+            contenido = publicacion.contenido
+            # Extraer título después de "📢 OFERTA: " o "📢 NUEVA OFERTA: "
+            import re
+            match = re.search(r'OFERTA:\s*(.+?)(?:\n|$)', contenido)
+            if match:
+                titulo_oferta = match.group(1).strip()
+                oferta = Oferta.objects.filter(empleador=request.user, titulo=titulo_oferta).first()
+                if oferta:
+                    tipo = 'oferta'
+                    objeto = oferta
+                    print(f"✅ Oferta encontrada - ID: {oferta.id}")
+        
+        elif publicacion.tipo == 'servicio':
+            # Buscar el servicio asociado
+            contenido = publicacion.contenido
+            import re
+            match = re.search(r'SERVICIO:\s*(.+?)(?:\n|$)', contenido)
+            if match:
+                titulo_servicio = match.group(1).strip()
+                servicio = Servicio.objects.filter(trabajador=request.user, titulo=titulo_servicio).first()
+                if servicio:
+                    tipo = 'servicio'
+                    objeto = servicio
+                    print(f"✅ Servicio encontrado - ID: {servicio.id}")
+        
+        else:  # tipo == 'estado'
+            tipo = 'estado'
+            objeto = publicacion
+            print(f"✅ Estado encontrado - ID: {publicacion.id}")
+    
+    if not objeto:
         messages.error(request, "No tienes permiso para editar esta publicación")
         return redirect('perfil')
     
@@ -1004,26 +1019,12 @@ def editar_publicacion(request, pk):
             objeto.remuneracion = request.POST.get('remuneracion', '')
             objeto.fecha_limite = request.POST.get('fecha_limite') or None
             objeto.activa = request.POST.get('activa') == 'True'
-            
-            if request.FILES.get('imagen'):
-                if hasattr(objeto, 'imagen') and objeto.imagen:
-                    objeto.imagen.delete(save=False)
-                objeto.imagen = request.FILES['imagen']
-            elif request.POST.get('eliminar_imagen') == 'true':
-                if hasattr(objeto, 'imagen') and objeto.imagen:
-                    objeto.imagen.delete(save=False)
-                    objeto.imagen = None
-            
             objeto.save()
             
-            # Actualizar publicación asociada
-            pub = Publicacion.objects.filter(usuario=request.user, tipo='oferta').first()
-            if pub:
-                pub.contenido = f"📢 OFERTA: {objeto.titulo}\n\n{objeto.descripcion[:200]}"
-                if hasattr(objeto, 'imagen') and objeto.imagen:
-                    pub.imagen = objeto.imagen
-                pub.save()
-                
+            # Actualizar la publicación asociada
+            publicacion.contenido = f"📢 OFERTA: {objeto.titulo}\n\n{objeto.descripcion[:200]}"
+            publicacion.save()
+            
         elif tipo == 'servicio':
             objeto.titulo = request.POST.get('titulo')
             objeto.oficio = request.POST.get('oficio')
@@ -1031,26 +1032,12 @@ def editar_publicacion(request, pk):
             objeto.ubicacion = request.POST.get('ubicacion')
             objeto.precio = request.POST.get('precio', '')
             objeto.disponible = request.POST.get('disponible') == 'on'
-            
-            if request.FILES.get('imagen'):
-                if objeto.imagen:
-                    objeto.imagen.delete(save=False)
-                objeto.imagen = request.FILES['imagen']
-            elif request.POST.get('eliminar_imagen') == 'true':
-                if objeto.imagen:
-                    objeto.imagen.delete(save=False)
-                    objeto.imagen = None
-            
             objeto.save()
             
-            # Actualizar publicación asociada
-            pub = Publicacion.objects.filter(usuario=request.user, tipo='servicio').first()
-            if pub:
-                pub.contenido = f"🔧 SERVICIO: {objeto.titulo}\n\n{objeto.descripcion[:200]}"
-                if objeto.imagen:
-                    pub.imagen = objeto.imagen
-                pub.save()
-                
+            # Actualizar la publicación asociada
+            publicacion.contenido = f"🔧 SERVICIO: {objeto.titulo}\n\n{objeto.descripcion[:200]}"
+            publicacion.save()
+            
         else:  # estado
             objeto.contenido = request.POST.get('contenido')
             if request.FILES.get('imagen'):
@@ -1074,6 +1061,7 @@ def editar_publicacion(request, pk):
         'es_estado': tipo == 'estado',
     }
     return render(request, 'editar_publicacion.html', context)
+
 
 @login_required
 def eliminar_publicacion(request, pk):

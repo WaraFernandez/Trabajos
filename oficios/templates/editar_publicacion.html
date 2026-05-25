@@ -53,31 +53,6 @@
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
-        .imagen-actual {
-            margin-top: 0.5rem;
-            padding: 0.8rem;
-            background: #F9FAFB;
-            border-radius: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        .imagen-actual img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 0.5rem;
-        }
-        .btn-eliminar-img {
-            background: #EF4444;
-            color: white;
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 2rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
         .checkbox-group {
             display: flex;
             align-items: center;
@@ -259,35 +234,19 @@
 
             <div class="checkbox-group">
                 <input type="checkbox" name="disponible" id="disponible" {% if objeto.disponible %}checked{% endif %}>
-                <label for="disponible" style="margin:0; font-weight:normal;">✅ Disponible para trabajar</label>
+                <label for="disponible" style="margin:0; font-weight:normal;">Disponible para trabajar</label>
             </div>
 
-            <!-- ========== PARA ESTADO ========== -->
+            <!-- ========== PARA ESTADO (PUBLICACIÓN NORMAL) ========== -->
             {% else %}
             <div class="form-group">
                 <label>Contenido <span class="required">*</span></label>
                 <textarea name="contenido" rows="8" required>{{ objeto.contenido }}</textarea>
             </div>
+
+            <!-- Sección de imagen SOLO para estados -->
+            
             {% endif %}
-
-            <!-- ========== IMAGEN ========== -->
-            <div class="form-group">
-                <label>Imagen actual</label>
-                <div class="imagen-actual" id="imagenActualDiv">
-                    {% if objeto.imagen %}
-                    <img src="{{ objeto.imagen.url }}" alt="Imagen actual">
-                    <button type="button" class="btn-eliminar-img" onclick="eliminarImagen()">Eliminar imagen</button>
-                    {% else %}
-                    <p style="color:#9CA3AF;">No hay imagen actual</p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Cambiar imagen (opcional)</label>
-                <input type="file" name="imagen" accept="image/*">
-                <small>Formatos: JPG, PNG, GIF. Máx 5MB</small>
-            </div>
 
             <input type="hidden" name="eliminar_imagen" id="eliminarImagenHidden" value="false">
 

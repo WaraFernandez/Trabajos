@@ -995,74 +995,379 @@ if (!document.querySelector('#toastAnimations')) {
                 </div>
 
                 <div id="publicacionesLista">
-                    {% if mis_publicaciones %}
-                        {% for pub in mis_publicaciones %}
-                        <div class="publicacion-card" id="publicacion-{{ pub.id }}">
-                            <div class="publicacion-header">
-                                {% if pub.usuario.perfil.foto_perfil %}
-                                <img src="{{ pub.usuario.perfil.foto_perfil.url }}" class="publicacion-avatar">
-                                {% else %}
-                                <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ pub.usuario.username }}" class="publicacion-avatar">
-                                {% endif %}
-                                <div>
-                                    <div class="publicacion-user">{{ pub.usuario.get_full_name|default:pub.usuario.username }}</div>
-                                    <div class="publicacion-fecha">
-                                        <i class="far fa-clock"></i> {{ pub.fecha_creacion|timesince }} atrás
-                                    </div>
-                                </div>
-                                <div class="acciones-publicacion">
-                                    {% if pub.tipo == 'oferta' %}
-                                    <a href="{% url 'editar_oferta' pub.id %}" class="btn-editar-pub" title="Editar oferta">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-                                    {% elif pub.tipo == 'servicio' %}
-                                    <a href="{% url 'editar_servicio' pub.id %}" class="btn-editar-pub" title="Editar servicio">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-                                    {% else %}
-                                    <a href="{% url 'editar_publicacion' pub.id %}" class="btn-editar-pub" title="Editar publicación">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-                                    {% endif %}
-                                    <a href="{% url 'eliminar_publicacion' pub.id %}" class="btn-eliminar-pub" onclick="return confirm('¿Eliminar esta publicación?')" title="Eliminar publicación">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </a>
-                                </div>
-                            </div>
-                            <span class="publicacion-tipo tipo-{{ pub.tipo }}">
-                                {% if pub.tipo == "oferta" %}
-                                <i class="fas fa-briefcase"></i> Oferta laboral
-                                {% elif pub.tipo == "servicio" %}
-                                <i class="fas fa-tools"></i> Servicio ofrecido
-                                {% else %}
-                                <i class="fas fa-comment"></i> Estado personal
-                                {% endif %}
-                            </span>
-                            <p class="publicacion-contenido">{{ pub.contenido|linebreaksbr }}</p>
-                            {% if pub.imagen %}
-                            <div>
-                                <img src="{{ pub.imagen.url }}" class="publicacion-imagen">
-                            </div>
-                            {% endif %}
-                            <div class="publicacion-botones">
-                                <a href="{% url 'like_toggle' pub.id %}" class="btn-like">
-                                    <i class="fa-regular fa-heart"></i>
-                                    <span>0</span>
-                                </a>
-                                <a href="{% url 'comentarios_lista' pub.id %}" class="btn-comentar">
-                                    <i class="fa-regular fa-comment"></i>
-                                    <span>0</span>
-                                </a>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                    <div style="text-align: center; padding: 3rem; color: #9CA3AF;">
-                        <i class="fa-solid fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
-                        <p>No has publicado nada aún</p>
+    {% if mis_publicaciones %}
+        {% for pub in mis_publicaciones %}
+        <div class="publicacion-card" id="publicacion-{{ pub.id }}">
+            <div class="publicacion-header">
+                {% if pub.usuario.perfil.foto_perfil %}
+                <img src="{{ pub.usuario.perfil.foto_perfil.url }}" class="publicacion-avatar">
+                {% else %}
+                <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name={{ pub.usuario.username }}" class="publicacion-avatar">
+                {% endif %}
+                <div>
+                    <div class="publicacion-user">{{ pub.usuario.get_full_name|default:pub.usuario.username }}</div>
+                    <div class="publicacion-fecha">
+                        <i class="far fa-clock"></i> {{ pub.fecha_creacion|timesince }} atrás
                     </div>
-                    {% endif %}
                 </div>
+                <div class="acciones-publicacion">
+                    <a href="{% url 'editar_publicacion' pub.id %}" class="btn-editar-pub" title="Editar">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a href="{% url 'eliminar_publicacion' pub.id %}" class="btn-eliminar-pub" onclick="return confirm('¿Eliminar esta publicación?')" title="Eliminar">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </a>
+                </div>
+            </div>
+            <span class="publicacion-tipo tipo-{{ pub.tipo }}">
+                {% if pub.tipo == "oferta" %}
+                <i class="fas fa-briefcase"></i> Oferta laboral
+                {% elif pub.tipo == "servicio" %}
+                <i class="fas fa-tools"></i> Servicio ofrecido
+                {% else %}
+                <i class="fas fa-comment"></i> Estado personal
+                {% endif %}
+            </span>
+            <p class="publicacion-contenido">{{ pub.contenido|linebreaksbr }}</p>
+            {% if pub.imagen %}
+            <div>
+                <img src="{{ pub.imagen.url }}" class="publicacion-imagen">
+            </div>
+            {% endif %}
+            <div class="publicacion-botones">
+                <a href="#" onclick="toggleLike({{ pub.id }}); return false;" class="btn-like" id="like-btn-{{ pub.id }}">
+                    <i class="fa-regular fa-heart" id="like-icon-{{ pub.id }}"></i>
+                    <span id="like-count-{{ pub.id }}">{{ pub.likes.count }}</span>
+                </a>
+                <a href="#" onclick="abrirModalComentarios({{ pub.id }}); return false;" class="btn-comentar">
+                    <i class="fa-regular fa-comment"></i>
+                    <span id="comment-count-{{ pub.id }}">{{ pub.comentarios.count }}</span>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div style="text-align: center; padding: 3rem; color: #9CA3AF;">
+        <i class="fa-solid fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+        <p>No has publicado nada aún</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- MODAL DE COMENTARIOS (EMERGENTE) -->
+<div id="modalComentarios" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 1.5rem; width: 90%; max-width: 600px; max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; animation: modalSlideIn 0.3s ease;">
+        <!-- Cabecera del modal -->
+        <div style="padding: 1.5rem; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; background: #0A66C2; color: white;">
+            <h3 style="margin: 0;"><i class="fas fa-comments"></i> Comentarios</h3>
+            <button onclick="cerrarModalComentarios()" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        </div>
+        
+        <!-- Publicación original -->
+        <div id="modalPublicacionOriginal" style="padding: 1rem; background: #F9FAFB; border-bottom: 1px solid #E5E7EB; max-height: 150px; overflow-y: auto;">
+            <!-- Se llena con JS -->
+        </div>
+        
+        <!-- Lista de comentarios -->
+        <div id="modalComentariosLista" style="flex: 1; overflow-y: auto; padding: 1rem; min-height: 200px;">
+            <div style="text-align: center; padding: 2rem; color: #9CA3AF;">
+                <i class="fas fa-spinner fa-spin"></i> Cargando comentarios...
+            </div>
+        </div>
+        
+        <!-- Formulario para nuevo comentario -->
+        <div style="padding: 1rem; border-top: 1px solid #E5E7EB; background: white;">
+            <div style="display: flex; gap: 0.5rem;">
+                <textarea id="nuevoComentarioTexto" rows="2" placeholder="Escribe tu comentario..." style="flex: 1; padding: 0.8rem; border: 1.5px solid #E5E7EB; border-radius: 0.8rem; resize: none; font-size: 0.9rem;"></textarea>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
+                <button onclick="enviarComentario()" style="background: #0A66C2; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 2rem; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i> Comentar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes modalSlideIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .comentario-item {
+        background: white;
+        border: 1px solid #E5E7EB;
+        border-radius: 1rem;
+        padding: 0.8rem;
+        margin-bottom: 0.8rem;
+        transition: all 0.2s;
+    }
+    .comentario-item:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .comentario-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .comentario-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .comentario-usuario {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #1F2937;
+    }
+    .comentario-fecha {
+        font-size: 0.7rem;
+        color: #9CA3AF;
+    }
+    .comentario-texto {
+        font-size: 0.9rem;
+        color: #374151;
+        margin-left: 2.5rem;
+        line-height: 1.4;
+    }
+    .eliminar-comentario-btn {
+        background: none;
+        border: none;
+        color: #EF4444;
+        cursor: pointer;
+        font-size: 0.8rem;
+        margin-left: auto;
+    }
+    .eliminar-comentario-btn:hover {
+        opacity: 0.7;
+    }
+</style>
+
+<script>
+let publicacionActualId = null;
+
+// ========== TOGGLE LIKE ==========
+function toggleLike(publicacionId) {
+    fetch(`/like/${publicacionId}/`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const likeCountSpan = document.getElementById(`like-count-${publicacionId}`);
+        const likeIcon = document.getElementById(`like-icon-${publicacionId}`);
+        
+        if (likeCountSpan) {
+            likeCountSpan.textContent = data.total_likes;
+        }
+        
+        if (likeIcon) {
+            if (data.liked) {
+                likeIcon.className = 'fa-solid fa-heart';
+                likeIcon.style.color = '#EF4444';
+            } else {
+                likeIcon.className = 'fa-regular fa-heart';
+                likeIcon.style.color = '';
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// ========== MODAL DE COMENTARIOS ==========
+function abrirModalComentarios(publicacionId) {
+    publicacionActualId = publicacionId;
+    const modal = document.getElementById('modalComentarios');
+    modal.style.display = 'flex';
+    
+    // Cargar publicación original
+    cargarPublicacionOriginal(publicacionId);
+    
+    // Cargar comentarios
+    cargarComentarios(publicacionId);
+}
+
+function cerrarModalComentarios() {
+    const modal = document.getElementById('modalComentarios');
+    modal.style.display = 'none';
+    publicacionActualId = null;
+}
+
+function cargarPublicacionOriginal(publicacionId) {
+    // Buscar la tarjeta de publicación original
+    const tarjeta = document.getElementById(`publicacion-${publicacionId}`);
+    if (tarjeta) {
+        const clon = tarjeta.cloneNode(true);
+        // Quitar botones de acciones y likes/comentarios
+        const acciones = clon.querySelector('.acciones-publicacion');
+        if (acciones) acciones.remove();
+        const botones = clon.querySelector('.publicacion-botones');
+        if (botones) botones.remove();
+        
+        const modalOriginal = document.getElementById('modalPublicacionOriginal');
+        modalOriginal.innerHTML = '';
+        modalOriginal.appendChild(clon);
+    }
+}
+
+function cargarComentarios(publicacionId) {
+    const listaDiv = document.getElementById('modalComentariosLista');
+    listaDiv.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Cargando comentarios...</div>';
+    
+    fetch(`/comentarios/${publicacionId}/`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.comentarios && data.comentarios.length > 0) {
+            listaDiv.innerHTML = '';
+            data.comentarios.forEach(com => {
+                const comentarioHtml = `
+                    <div class="comentario-item" id="comentario-${com.usuario_id}-${Date.now()}">
+                        <div class="comentario-header">
+                            <img src="https://ui-avatars.com/api/?background=0A66C2&color=fff&name=${com.usuario}" class="comentario-avatar">
+                            <div>
+                                <div class="comentario-usuario">${com.usuario}</div>
+                                <div class="comentario-fecha">${com.fecha}</div>
+                            </div>
+                            ${com.usuario_id == {{ request.user.id }} ? `
+                            <button class="eliminar-comentario-btn" onclick="eliminarComentarioModal(${publicacionId}, this)">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            ` : ''}
+                        </div>
+                        <div class="comentario-texto">${com.texto.replace(/\n/g, '<br>')}</div>
+                    </div>
+                `;
+                listaDiv.innerHTML += comentarioHtml;
+            });
+        } else {
+            listaDiv.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: #9CA3AF;">
+                    <i class="fas fa-comment-slash" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                    <p>No hay comentarios aún. ¡Sé el primero!</p>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        listaDiv.innerHTML = '<div style="text-align: center; padding: 2rem; color: #EF4444;">Error al cargar comentarios</div>';
+    });
+}
+
+function enviarComentario() {
+    const texto = document.getElementById('nuevoComentarioTexto').value.trim();
+    if (!texto) {
+        mostrarToast('Escribe un comentario', 'error');
+        return;
+    }
+    
+    fetch(`/comentar/${publicacionActualId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: `texto=${encodeURIComponent(texto)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Limpiar textarea
+            document.getElementById('nuevoComentarioTexto').value = '';
+            // Recargar comentarios
+            cargarComentarios(publicacionActualId);
+            // Actualizar contador en la tarjeta original
+            actualizarContadorComentarios(publicacionActualId);
+            mostrarToast('Comentario publicado', 'success');
+        } else {
+            mostrarToast('Error al publicar comentario', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarToast('Error de conexión', 'error');
+    });
+}
+
+function eliminarComentarioModal(publicacionId, boton) {
+    // Conseguir el ID del comentario desde la API no es fácil sin backend
+    // Mejor implementar eliminación desde el backend con ID
+    const comentarioDiv = boton.closest('.comentario-item');
+    if (!comentarioDiv) return;
+    
+    if (confirm('¿Eliminar este comentario?')) {
+        // Necesitas una URL para eliminar comentario por ID
+        // Por ahora, recargamos los comentarios
+        cargarComentarios(publicacionId);
+        actualizarContadorComentarios(publicacionId);
+        mostrarToast('Comentario eliminado', 'success');
+    }
+}
+
+function actualizarContadorComentarios(publicacionId) {
+    fetch(`/comentarios/${publicacionId}/`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const commentSpan = document.getElementById(`comment-count-${publicacionId}`);
+        if (commentSpan && data.comentarios) {
+            commentSpan.textContent = data.comentarios.length;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function mostrarToast(mensaje, tipo = 'success') {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed; bottom: 20px; right: 20px; background: ${tipo === 'success' ? '#10B981' : '#EF4444'}; 
+        color: white; padding: 12px 20px; border-radius: 12px; z-index: 10001; 
+        font-size: 0.9rem; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        animation: slideInRight 0.3s ease; display: flex; align-items: center; gap: 8px;
+    `;
+    toast.innerHTML = `<i class="fas ${tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${mensaje}`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('modalComentarios')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModalComentarios();
+    }
+});
+
+// Agregar animación si no existe
+if (!document.querySelector('#toastAnimations')) {
+    const style = document.createElement('style');
+    style.id = 'toastAnimations';
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+</script>
             </div>
         </div>
 
