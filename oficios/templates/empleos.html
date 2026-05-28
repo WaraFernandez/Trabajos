@@ -268,6 +268,22 @@
                 grid-template-columns: 1fr;
             }
         }
+        .btn-reportar{
+            border:none;
+            background:#FEF2F2;
+            color:#DC2626;
+            padding:0.45rem 0.9rem;
+            border-radius:2rem;
+            font-size:0.8rem;
+            font-weight:600;
+            cursor:pointer;
+            transition:all 0.2s ease;
+        }
+
+        .btn-reportar:hover{
+            background:#FEE2E2;
+            transform:translateY(-1px);
+        }
     </style>
 </head>
 
@@ -372,8 +388,16 @@
                             {% endif %}
                         </div>
                     </div>
-                    <div style="padding: 0.8rem 1.2rem; border-top: 1px solid var(--borde); background: #F9FAFB;">
-                        <span style="color: #0A66C2;"><i class="fa-regular fa-eye"></i> Haz clic para ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                    <div style="padding: 0.8rem 1.2rem; border-top: 1px solid var(--borde); background: #F9FAFB; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="color: #0A66C2;">
+                            <i class="fa-regular fa-eye"></i> Haz clic para ver detalles
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+
+                        <button class="btn-reportar" onclick="event.stopPropagation(); alert('Reporte enviado correctamente');">
+                            <i class="fa-regular fa-flag"></i> Reportar
+                        </button>
+
                     </div>
                 </div>
                 {% endfor %}
