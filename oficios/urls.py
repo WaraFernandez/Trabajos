@@ -66,6 +66,11 @@ urlpatterns = [
     path("empleos/", views.empleos, name="empleos"),
     path("trabajadores/", views.trabajadores, name="trabajadores"),
     path("mapa/", views.mapa, name="mapa"),
+
+    # Botón reportar
+    path("reportar-oferta/<int:oferta_id>/", views.reportar_oferta, name="reportar_oferta"),
+    path("reportar-servicio/<int:servicio_id>/", views.reportar_servicio, name="reportar_servicio"),
+    
     # Portafolio
     path("perfil/subir-portafolio/", views.subir_portafolio, name="subir_portafolio"),
     path(

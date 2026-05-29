@@ -401,6 +401,44 @@ def trabajadores(request):
     servicios = Servicio.objects.filter(disponible=True).order_by("-fecha_publicacion")
     return render(request, "trabajadores.html", {"servicios": servicios})
 
+# Botón reportar
+@login_required
+def reportar_oferta(request, oferta_id):
+    oferta = get_object_or_404(Oferta, id=oferta_id)
+
+    if request.method == "POST":
+        motivo = request.POST.get("motivo", "Otro motivo")
+        detalle = request.POST.get("detalle", "").strip()
+
+        if oferta.empleador != request.user:
+            Reporte.objects.create(
+                reportante=request.user,
+                usuario_reportado=oferta.empleador,
+                tipo="publicacion",
+                motivo=f"Oferta reportada: {oferta.titulo}. Motivo: {motivo}" + (f". Detalle: {detalle}" if detalle else ""),
+                estado="pendiente"
+            )
+
+    return redirect("empleos")
+
+@login_required
+def reportar_servicio(request, servicio_id):
+    servicio = get_object_or_404(Servicio, id=servicio_id)
+
+    if request.method == "POST":
+        motivo = request.POST.get("motivo", "Otro motivo")
+        detalle = request.POST.get("detalle", "").strip()
+
+        if servicio.trabajador != request.user:
+            Reporte.objects.create(
+                reportante=request.user,
+                usuario_reportado=servicio.trabajador,
+                tipo="publicacion",
+                motivo=f"Servicio reportado: {servicio.titulo}. Motivo: {motivo}" + (f". Detalle: {detalle}" if detalle else ""),
+                estado="pendiente"
+            )
+
+    return redirect("trabajadores")
 
 @login_required
 def api_oferta_detalle(request, oferta_id):

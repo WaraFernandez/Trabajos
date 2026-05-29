@@ -9,6 +9,7 @@ django.setup()
 
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.db import models
 from oficios.models import Perfil, Publicacion, Oferta, Servicio, Calificacion, Like, Comentario
 
 print("=" * 60)

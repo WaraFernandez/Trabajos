@@ -364,7 +364,9 @@
                             <i class="fa-solid fa-arrow-right"></i>
                         </span>
 
-                        <button class="btn-reportar" onclick="event.stopPropagation(); alert('Reporte enviado correctamente');">
+                        <button type="button"
+                                class="btn-reportar"
+                                onclick="event.stopPropagation(); abrirModalReporteServicio('{{ servicio.id }}')">
                             <i class="fa-regular fa-flag"></i> Reportar
                         </button>
                     </div>
@@ -640,6 +642,62 @@
         if (fechaSpan) fechaSpan.textContent = hoy.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
         if (fraseSpan) fraseSpan.textContent = frases[hoy.getDate() % frases.length];
     </script>
+
+    <div id="modalReporteServicio" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:20000; align-items:center; justify-content:center;">
+        <div style="background:white; width:90%; max-width:420px; border-radius:1.2rem; padding:1.5rem;">
+            <h3 style="font-size:1.3rem; font-weight:700; color:#DC2626; margin-bottom:0.8rem;">
+                <i class="fa-regular fa-flag"></i> Reportar servicio
+            </h3>
+
+            <form id="formReporteServicio" method="POST">
+                {% csrf_token %}
+
+                <label style="font-weight:600; font-size:0.9rem;">Motivo del reporte</label>
+
+                <select name="motivo" required style="width:100%; margin-top:0.5rem; padding:0.7rem; border:1px solid #E5E7EB; border-radius:0.8rem;">
+                    <option value="Contenido inapropiado">Contenido inapropiado</option>
+                    <option value="Información falsa o engañosa">Información falsa o engañosa</option>
+                    <option value="Spam o publicación repetitiva">Spam o publicación repetitiva</option>
+                    <option value="Posible estafa">Posible estafa</option>
+                    <option value="Otro motivo">Otro motivo</option>
+                </select>
+
+                <label style="font-weight:600; font-size:0.9rem; display:block; margin-top:1rem;">
+                    Comentario adicional
+                </label>
+
+                <textarea name="detalle"
+                        placeholder="Describe brevemente el motivo del reporte..."
+                        rows="3"
+                        style="width:100%; margin-top:0.5rem; padding:0.7rem; border:1px solid #E5E7EB; border-radius:0.8rem; resize:none;"></textarea>
+
+                <div style="display:flex; gap:0.8rem; margin-top:1.2rem;">
+                    <button type="button" onclick="cerrarModalReporteServicio()" style="flex:1; padding:0.7rem; border-radius:2rem; border:1px solid #E5E7EB; background:white;">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" style="flex:1; padding:0.7rem; border-radius:2rem; border:none; background:#DC2626; color:white; font-weight:700;">
+                        Enviar reporte
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    function abrirModalReporteServicio(id) {
+        const modal = document.getElementById('modalReporteServicio');
+        const form = document.getElementById('formReporteServicio');
+
+        form.action = `/reportar-servicio/${id}/`;
+        modal.style.display = 'flex';
+    }
+
+    function cerrarModalReporteServicio() {
+        document.getElementById('modalReporteServicio').style.display = 'none';
+    }
+    </script>
+
 </body>
 
 </html>
